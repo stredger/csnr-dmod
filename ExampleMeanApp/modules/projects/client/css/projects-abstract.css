@@ -1,0 +1,25 @@
+.home-view {
+  padding: 2rem;
+  overflow-y: auto; }
+  .home-view .angular-google-map-container,
+  .home-view .news-feed {
+    height: 400px; }
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 1) {
+  .home-view .angular-google-map-container {
+    height: 500px; }
+  .home-view .news-feed {
+    height: 545px; }
+  .project-table th {
+    font-size: 1.1rem; }
+  .project-table .comment-col {
+    width: 12rem; }
+  .project-table .decision-col,
+  .project-table .phase-col,
+  .project-table .region-col,
+  .project-table .type-col {
+    width: 10rem; } }
+
+@media (min-width: 1024px) {
+  .project-table .name-col {
+    width: 32rem; } }

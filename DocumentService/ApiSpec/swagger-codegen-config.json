@@ -1,0 +1,7 @@
+{	
+	"packageName" : "nrsdm",    
+	"apiPackage"  : "com.nrsdm.client.api",
+	"modelPackage"  : "com.nrsdm.client.model",
+    "packageVersion" : "1.0.0",
+    "sourceFolder" : "src"
+}
