@@ -1,4 +1,4 @@
-package com.nrsdm.client.api;
+package ca.bc.nrs.dm.microservice.api;
 
 import io.fabric8.utils.Strings;
 import io.fabric8.utils.Systems;

@@ -1,4 +1,4 @@
-package com.nrsdm.client.api;
+package ca.bc.nrs.dm.microservice.api;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -185,14 +185,14 @@
       "displayName": "Name",
       "description": "The name assigned to all of the frontend objects defined in this template.",
       "required": true,
-      "value": "nodejs-mongodb"
+      "value": "dmod"
     },
 	{
       "name": "DOCUMENT_SERVICE_NAME",
       "displayName": "Name",
       "description": "The name assigned to all of the document service objects defined in this template.",
       "required": true,
-      "value": "document-service"
+      "value": "document-microservice"
     },	
     {
       "name": "S2I_NAMESPACE",

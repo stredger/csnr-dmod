@@ -1,4 +1,4 @@
-package com.nrsdm.client.model;
+package ca.bc.nrs.dm.microservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -6,22 +6,21 @@ import io.swagger.annotations.ApiModel;
 
 
 /**
- * Primary object type
+ * Document history
  **/
 
 import io.swagger.annotations.*;
 import java.util.Objects;
-@ApiModel(description = "Primary object type")
+@ApiModel(description = "Document history")
 
-public class Document   {
+public class History   {
   
   private Integer id = null;
-  private String filename = null;
 
   /**
    * A system-generated unique identifier for a Document
    **/
-  public Document id(Integer id) {
+  public History id(Integer id) {
     this.id = id;
     return this;
   }
@@ -36,24 +35,6 @@ public class Document   {
     this.id = id;
   }
 
-  /**
-   * Document Filename
-   **/
-  public Document filename(String filename) {
-    this.filename = filename;
-    return this;
-  }
-
-  
-  @ApiModelProperty(example = "null", value = "Document Filename")
-  @JsonProperty("filename")
-  public String getFilename() {
-    return filename;
-  }
-  public void setFilename(String filename) {
-    this.filename = filename;
-  }
-
 
   @Override
   public boolean equals(Object o) {
@@ -63,23 +44,21 @@ public class Document   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Document document = (Document) o;
-    return Objects.equals(id, document.id) &&
-        Objects.equals(filename, document.filename);
+    History history = (History) o;
+    return Objects.equals(id, history.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, filename);
+    return Objects.hash(id);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class Document {\n");
+    sb.append("class History {\n");
     
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    filename: ").append(toIndentedString(filename)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -1,21 +1,25 @@
-package com.nrsdm.client.api;
+package ca.bc.nrs.dm.microservice.api;
 
-import com.nrsdm.client.model.Document;
-import com.nrsdm.client.model.History;
-import com.nrsdm.client.api.DocumentsApiService;
+import ca.bc.nrs.dm.microservice.model.Document;
+import ca.bc.nrs.dm.microservice.model.History;
+//import ca.bc.nrs.dm.microservice.api.DocumentsApiService;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType; 
 import javax.ws.rs.core.SecurityContext;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+
 import io.swagger.annotations.*;
+import java.io.InputStream;
 
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
 import java.util.List;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 
 @Path("/")
 @RequestScoped
@@ -92,13 +96,16 @@ public class DocumentsApi  {
     }
 
     @POST
-    
-    @Consumes({ "application/json" })
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces({ "text/plain", "application/json", "text/json" })
-    @ApiOperation(value = "", notes = "", response = Document.class, tags={ "Document" })
-    @ApiResponses(value = { 
-        @ApiResponse(code = 201, message = "Document created", response = Document.class) })
-    public Response documentsPost(@ApiParam(value = "" ,required=true) Document item) {
-    	return delegate.documentsPost(item, securityContext);
+    public Response upload(MultipartBody multipart){            
+        Attachment file = multipart.getAttachment("file");
+        
+        if (file == null) {
+            return Response.status(400).entity("Missing file data").type(MediaType.TEXT_PLAIN).build();
+        }
+        
+        
+    	return delegate.documentsPost(file, securityContext);
     }
 }

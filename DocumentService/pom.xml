@@ -4,7 +4,7 @@
   <groupId>io.swagger</groupId>
   <artifactId>swagger-jaxrs-cxf-cdi-server</artifactId>
   <packaging>jar</packaging>
-  <name>swagger-jaxrs-cxf-cdi-server</name>
+  <name>CNSR Document Service</name>
   <version>1.0.0</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -277,8 +277,14 @@
       <groupId>com.brsanthu</groupId>
       <artifactId>migbase64</artifactId>
       <version>2.2</version>
-    </dependency>	
-	<dependency>
+    </dependency>
+    <dependency>
+      <groupId>ca.bc.gov.nrs.dm</groupId>
+      <artifactId>nrs-dm-rest-client</artifactId>
+      <version>1.2.0.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
 		<groupId>javax</groupId>
 		<artifactId>javaee-api</artifactId>
 		<version>7.0</version>
@@ -297,18 +303,7 @@
 		<artifactId>swagger-annotations</artifactId>
 		<version>[1.5.3,2)</version>
 	</dependency>
-	
-	<!-- NRS Document Management Service -->
-	<dependency>
-	<groupId>ca.bc.gov.nrs.dm</groupId>
-	<artifactId>nrs-dm-rest-client</artifactId>
-	<version>1.2.0.4</version>
-	<scope>system</scope>
-	<systemPath>${basedir}/nrs-dm-rest-client-1.2.0.4.jar</systemPath>
-    </dependency>
   </dependencies>
-  
-  
     
   <build>
     <sourceDirectory>src/main/java</sourceDirectory>
@@ -449,20 +444,23 @@
     </plugins>
   </build>
   
-  <repositories>
+  <repositories>                                     
+    <repository>
+        <id>localopenshift</id>
+        <name>localopenshift</name>
+        <url>http://10.1.2.1:8888/repository/maven-public</url>
+    </repository>
+    <repository>
+        <id>central</id>
+        <name>central</name>
+        <url>http://central.maven.org/maven2/</url>
+    </repository>    
     <repository>
       <id>sonatype-snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </repository>
-	<repository>
-        <id>central</id>
-        <url>http://apps.nrs.gov.bc.ca/int/artifactory/libs-release</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
     </repository>
   </repositories>
 </project>
