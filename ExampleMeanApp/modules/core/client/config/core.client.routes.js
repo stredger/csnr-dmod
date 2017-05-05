@@ -32,7 +32,14 @@ angular.module('core').config (
 	.state('recover', {
 		url: '/recover',
 		template: '<tmpl-recover></tmpl-recover>'
-	})
+    })
+    .state('demo', {
+            url: '/',
+            templateUrl: 'modules/core/client/views/demo.client.view.html',
+            data: {
+                ignoreState: true
+            }
+    })
 	// Home state routing
 	.state('not-found', {
 		url: '/not-found',

@@ -113,7 +113,7 @@ module.exports = DBModel.extend ({
 			project: projectid,
 			documentIsLatestVersion: true,
 			$or: [
-				{existsdocumentIsInReview: reviewdocsonly || false},
+				//{existsdocumentIsInReview: reviewdocsonly || false},
 				{existsdocumentIsInReview: {$exists: false }}
 			]
 		},

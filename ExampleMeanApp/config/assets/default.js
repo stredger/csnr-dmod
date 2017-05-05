@@ -1,15 +1,15 @@
 'use strict';
 
 module.exports = {
-	client: {
-		lib: {
-			css: [
-				'public/lib/bootstrap/dist/css/bootstrap.css',
-				'public/lib/angular-toastr/dist/angular-toastr.css',
-				'public/lib/angular-bootstrap/ui-bootstrap-csp.css',
-				'public/lib/angular-bootstrap-datetimepicker/src/css/datetimepicker.css',
-				'public/assimilated/ng-table/dist/ng-table.min.css'
-			],
+  client: {
+    lib: {
+      css: [
+	    'public/lib/bootstrap/dist/css/bootstrap.css',
+	    'public/lib/angular-toastr/dist/angular-toastr.css',
+	    'public/lib/angular-bootstrap/ui-bootstrap-csp.css',
+	    'public/lib/angular-bootstrap-datetimepicker/src/css/datetimepicker.css',
+	    'public/lib/ng-table/dist/ng-table.min.css'
+      ],
 			js: [
 				'public/lib/es6-shim/es6-shim.min.js',
 				'public/lib/angular/angular.js',
@@ -33,8 +33,7 @@ module.exports = {
 				'public/lib/lodash/lodash.min.js',
 				'public/lib/d3/d3.min.js',
 				'public/lib/angular-simple-logger/dist/angular-simple-logger.js',
-				'public/lib/angular-google-maps/dist/angular-google-maps.min.js',
-				'public/assimilated/ng-table/dist/ng-table.js',
+				'public/lib/angular-google-maps/dist/angular-google-maps.min.js',				
 				'public/lib/angularD3/dist/angularD3.js',
 				'public/lib/moment/moment.js',
 				'public/lib/moment-timezone/moment-timezone.js',

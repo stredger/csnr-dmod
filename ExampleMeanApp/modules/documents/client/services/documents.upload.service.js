@@ -53,11 +53,11 @@ angular.module('documents')
 				return o.name.toLowerCase() === f.name.toLowerCase() && o.lastModified === f.lastModified && o.size === f.size && o.type.toLowerCase() === f.type.toLowerCase();
 			});
 			if (!found) {
-				//$log.debug('File not found with name = ', f.name);
-				//$log.debug('  and lastModified = ', f.lastModified);
-				//$log.debug('  and lastModifiedDate = ', f.lastModifiedDate);
-				//$log.debug('  and size = ', f.size);
-				//$log.debug('  and type = ', f.type);
+				$log.debug('File not found with name = ', f.name);
+				$log.debug('  and lastModified = ', f.lastModified);
+				$log.debug('  and lastModifiedDate = ', f.lastModifiedDate);
+				$log.debug('  and size = ', f.size);
+				$log.debug('  and type = ', f.type);
 				service.fileList.push(f);
 				return true;
 			} else {

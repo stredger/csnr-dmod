@@ -4,7 +4,7 @@
   "description": "EAO Project Space",
   "dependencies": {
     "bootstrap": "~3",
-    "angular": "latest",
+    "angular": "~1.5",
     "angular-resource": "~1.5",
     "angular-animate": "~1.5",
     "angular-mocks": "~1.5",

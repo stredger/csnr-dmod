@@ -179,16 +179,12 @@ module.exports = function (app) {
 							// Force read array to be this:
 							readPermissions = ['assessment-admin', 'assessment-lead', 'assessment-team', 'assistant-dm', 'assistant-dmo', 'associate-dm', 'associate-dmo', 'complaince-officer', 'complaince-lead', 'project-eao-staff', 'project-epd', 'project-intake', 'project-qa-officer', 'project-system-admin'];
 						}
-						var datePosted, dateReceived = Date.now();
+                        var datePosted = Date.now();
+                        var dateReceived = Date.now();
 						console.log("new Date(req.headers.datereceived)", new Date(req.headers.datereceived));
 						// Allow override of date posting/received
-						if (req.headers.dateposted) {
-							datePosted = new Date(req.headers.dateposted);
-						}
-						if (req.headers.datereceived) {
-							dateReceived = new Date(req.headers.datereceived);
-						}
-						console.log("creating model");
+
+                        console.log("creating model");
 						return model.create ({
 							// Metadata related to this specific document that has been uploaded.
 							// See the document.model.js for descriptions of the parameters to supply.
@@ -207,7 +203,7 @@ module.exports = function (app) {
 							// NB                   : In EPIC, projectFolders have authors, not the actual documents.
 							projectFolderAuthor     : req.body.projectfolderauthor,
 							// These are the data as it was shown on the EPIC website.
-							documentEPICProjectId 	: req.body.documentepicprojectid,
+                            documentEPICProjectId:   req.body.documentepicprojectid,
 							documentAuthor          : req.body.documentauthor,
 							documentFileName        : req.body.documentfilename,
 							documentFileURL         : req.body.documentfileurl,

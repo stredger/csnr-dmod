@@ -775,12 +775,13 @@ angular.module('documents')
 					self.selectNode(self.currentNode.model.id);
 				};
 
-				$scope.$on('documentMgrRefreshNode', function (event, args) {
-					console.log('documentMgrRefreshNode...', args.directoryStructure);
+				$scope.$on('documentMgrRefreshNode', function (event, args) {					
 					if (args.nodeId) {
 						// Refresh the node
+                        console.log('documentMgrRefreshNode...', args.nodeId);
 						self.selectNode(args.nodeId);
-					} else {
+                    } else {
+                        
 						self.rootNode = tree.parse(args.directoryStructure);
 						self.selectNode(self.currentNode.model.id);
 					}

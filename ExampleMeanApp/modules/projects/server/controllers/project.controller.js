@@ -1024,8 +1024,8 @@ module.exports = DBModel.extend ({
 			var projectIds = _.uniq(_.map(projectRoles, 'context'));
 			//console.log('projectIds ',JSON.stringify(projectIds));
 			var q = {
-				_id: { "$in": projectIds },
-				dateCompleted: { "$eq": null }
+				//_id: { "$in": projectIds },
+				//dateCompleted: { "$eq": null }
 			};
 			return new Promise(function(fulfill, reject) {
 				ProjectModel.find (q)

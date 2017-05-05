@@ -151,7 +151,7 @@ var seedingAsync = function() {
 
 // =========================================================================
 //
-// THings in this section are split into production and non-production
+// Things in this section are split into production and non-production
 //
 // =========================================================================
 	if (process.env.NODE_ENV === 'production') {
@@ -169,11 +169,11 @@ var seedingAsync = function() {
 		//
 		// -------------------------------------------------------------------------
 		require('../seed-data/users-other')();
-		// -------------------------------------------------------------------------
-		//
-		// MEM
-		//
-		// -------------------------------------------------------------------------
+
+        // load the demo data.
+
+        require('../seed-data/loaddemo')();
+
 		checkIntegration('loadmem').then(function () {
 			require('../seed-data/loadmem')();
 		});
