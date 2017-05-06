@@ -1,0 +1,82 @@
+/* MIXINS */
+.project-schedule-view td {
+  padding: 1rem; }
+
+.project-schedule-view .phase-info {
+  margin-bottom: 1.5rem; }
+  .project-schedule-view .phase-info .date-label {
+    margin-bottom: 0.5rem; }
+  .project-schedule-view .phase-info .btn-primary {
+    width: 9rem; }
+
+.project-schedule-view .date-col {
+  width: 14rem; }
+
+.project-schedule-view .phase-dates .schedule-dates {
+  margin-right: 3rem; }
+
+.project-schedule-view .phase-action-col {
+  width: 10rem;
+  padding-right: 0;
+  text-align: left; }
+  .project-schedule-view .phase-action-col .label, .project-schedule-view .phase-action-col .btn {
+    width: 100%;
+    height: 2.1rem;
+    font-weight: normal; }
+
+.project-schedule-view .schedule-dates {
+  font-size: 1.2rem; }
+  .project-schedule-view .schedule-dates label {
+    margin: 0;
+    min-width: 4rem;
+    display: inline-block; }
+  .project-schedule-view .schedule-dates span {
+    min-width: 7rem;
+    display: inline-block;
+    font-weight: normal;
+    text-align: right; }
+
+.project-schedule-view .status-col {
+  width: 10rem; }
+  .project-schedule-view .status-col .label, .project-schedule-view .status-col .btn {
+    width: 100%; }
+
+@media (min-width: 1200px) {
+  .project-schedule-view .date-col {
+    width: 18rem; } }
+
+.panel-heading .collapse-control {
+  -webkit-flex: 1 1 auto;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto; }
+
+.phase-milestones .panel {
+  border: 1px solid #EEE;
+  box-shadow: none; }
+
+.phase-milestones .panel-heading {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  padding: 0;
+  border-bottom: 1px solid #EEE;
+  background-color: #EEE; }
+  .phase-milestones .panel-heading h3 {
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    margin: 0;
+    padding: 1.5rem;
+    font-size: 1.4rem;
+    font-weight: bold; }
+  .phase-milestones .panel-heading .actions {
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    padding: 0.7rem; }
+
+.phase-milestones .milestone-table td {
+  vertical-align: top; }
+  .phase-milestones .milestone-table td.actions-col {
+    padding-top: 0.4rem; }

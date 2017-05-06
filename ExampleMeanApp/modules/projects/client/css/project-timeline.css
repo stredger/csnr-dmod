@@ -1,0 +1,81 @@
+/* MIXINS */
+.project-timeline-container {
+  padding: 1px; }
+  .project-timeline-container .phase {
+    position: relative;
+    color: #888;
+    background: #EEE; }
+    .project-timeline-container .phase .phase-info {
+      position: relative;
+      height: 100%;
+      padding: 1rem;
+      border: 1px solid #FFF; }
+      .project-timeline-container .phase .phase-info .phase-badge {
+        margin-bottom: 1rem; }
+        .project-timeline-container .phase .phase-info .phase-badge .label {
+          padding-top: 0.4rem;
+          padding-bottom: 0.3rem; }
+        .project-timeline-container .phase .phase-info .phase-badge .label-info,
+        .project-timeline-container .phase .phase-info .phase-badge .label-success {
+          border: 2px solid #FFF; }
+        .project-timeline-container .phase .phase-info .phase-badge .label-default {
+          background: #bbb;
+          border: 2px solid #bbb; }
+      .project-timeline-container .phase .phase-info .phase-name {
+        -webkit-flex: 1 1 auto;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        display: block;
+        margin-bottom: 1rem;
+        font-size: 1.6rem;
+        font-weight: bold;
+        line-height: 1.8rem; }
+      .project-timeline-container .phase .phase-info .phase-status {
+        -webkit-flex: 0 0 auto;
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        font-size: 1.2rem;
+        line-height: 1.4rem; }
+    .project-timeline-container .phase.complete {
+      color: #FFF;
+      background: #FFF; }
+    .project-timeline-container .phase.active {
+      color: #FFF;
+      background: #000; }
+      .project-timeline-container .phase.active + .active {
+        display: none; }
+
+@media (min-width: 768px) and (max-device-width: 768px) {
+  .project-timeline-container {
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column; }
+    .project-timeline-container .phase .phase-info {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      padding: 1rem 1.5rem; }
+      .project-timeline-container .phase .phase-info .phase-name {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem; }
+    .project-timeline-container .phase-status {
+      text-align: right; } }
+
+@media (min-width: 1024px) {
+  .project-timeline-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex; }
+    .project-timeline-container .phase {
+      -webkit-flex: 1 1 auto;
+      flex: 1 1 auto;
+      -ms-flex: 1 1 1px;
+      /* IE needs a value for flex-basis or the flex grow/shrink properties won't obey */ }
+      .project-timeline-container .phase .phase-info {
+        flex-flow: column nowrap; }
+        .project-timeline-container .phase .phase-info .phase-badge {
+          text-align: left; }
+        .project-timeline-container .phase .phase-info .phase-status .status-name {
+          display: block; } }

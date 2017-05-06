@@ -1,0 +1,2 @@
+C:\repo\csnr-dmod\ExampleMeanApp\bin\Microsoft.NodejsTools.WebRole.dll
+C:\repo\csnr-dmod\ExampleMeanApp\obj\Debug\Example MEAN App.njsprojResolveAssemblyReference.cache

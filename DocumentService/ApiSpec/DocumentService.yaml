@@ -1,0 +1,176 @@
+swagger: '2.0'
+info:
+  version: v1
+  title: REST API Documentation for the MEM Document Service
+  description: The Document Service acts as a bridge between an OpenShift application and the NRPP document service.
+  termsOfService: N/A
+basePath: /api
+paths:
+  /documents:
+    get:
+      tags:
+        - Document
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Document"
+    post:
+      tags:
+        - Document
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      parameters:
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Document"
+      responses:
+        201:
+          description: Document created
+          headers:
+            Location:
+              description: A link to the Document
+              type: string
+              format: url
+          schema:
+            $ref: "#/definitions/Document"  
+  /documents/{id}:
+    get:
+      tags:
+        - Document
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Document"
+        404:
+          description: Document not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Document to fetch
+          required: true
+          type: integer
+    put:
+      tags:
+        - Document
+      consumes:
+        - application/json
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/Document"
+        404:
+          description: Document not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Document to fetch
+          required: true
+          type: integer
+        - name: item
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Document"
+  /documents/{id}/expire:
+    post:
+      tags:
+        - Document
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+        404:
+          description: Document not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Document to expire
+          required: true
+          type: integer
+  /documents/{id}/history:
+    get:
+      tags:
+        - Document
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/History"
+        404:
+          description: Document not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Document to get history for
+          required: true
+          type: integer
+definitions:
+  Document:
+    type: object
+    description: Primary object type
+    required:
+      - id
+      - status
+    properties:
+      id:
+        format: int32
+        type: integer
+        uniqueItems: true
+        description: A system-generated unique identifier for a Document
+      fileSize:
+        type: int32
+        maxLength: 20
+        description: Document Size
+      filename:
+        type: string
+        maxLength: 2048
+        description: Document Filename
+  History:
+    type: object
+    description: Document history
+    required:
+      - id           
+    properties:
+      id:
+        format: int32
+        type: integer
+        uniqueItems: true
+        description: A system-generated unique identifier for a Document      
+
+securityDefinitions: {}

@@ -1,0 +1,234 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "generic-node-s2i-build",
+    "annotations": {
+      "description": "",
+      "tags": "nodejs",
+      "iconClass": "icon-nodejs"
+    }
+  },
+  "labels": {
+    "template": "nodejs"
+  },
+  "objects": [
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${FRONTEND_NAME}",
+        "annotations": {
+          "description": "Keeps track of changes in the application image"
+        }
+      }
+    },
+	{
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${DOCUMENT_SERVICE_NAME}",
+        "annotations": {
+          "description": "Microservice used to connect to the Document Service"
+        }
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${FRONTEND_NAME}",
+        "annotations": {
+          "description": "Defines how to build the application"
+        }
+      },
+      "spec": {
+        "source": {
+          "type": "Git",
+          "git": {
+            "uri": "${SOURCE_REPOSITORY_URL}",
+            "ref": "${SOURCE_REPOSITORY_REF}"
+          },
+          "contextDir": "ExampleMeanApp"
+        },
+        "strategy": {
+          "type": "Source",
+          "sourceStrategy": {
+            "from": {
+              "kind": "ImageStreamTag",
+              "namespace": "${S2I_NAMESPACE}",
+              "name": "nodejs:0.10"
+            }
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "${FRONTEND_NAME}:latest"
+          }
+        },
+        "triggers": [
+          {
+            "type": "ImageChange"
+          },
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "GitHub",
+            "github": {
+              "secret": "${GITHUB_WEBHOOK_SECRET}"
+            }
+          },
+          {
+            "type": "Generic",
+            "generic": {
+              "secret": "${GENERIC_WEBHOOK_SECRET}"
+            }
+          }
+        ],
+        "postCommit": {
+          "script": "npm test"
+        }
+      }
+    }
+  ,
+  {
+    "kind": "ImageStream",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "fis-java-openshift"
+       
+    },
+     "spec": {
+                "dockerImageRepository": "registry.access.redhat.com/jboss-fuse-6/fis-java-openshift",
+                "tags": [
+                    {
+                        "name": "1.0",
+                        "annotations": {
+                            "description": "JBoss Fuse Integration Services 1.0 Java S2I images.",
+                            "iconClass": "icon-jboss",
+                            "tags": "builder,jboss-fuse,java,xpaas",
+                            "supports":"jboss-fuse:6.2.1,java:8,xpaas:1.2",
+                            "version": "1.0"
+                        }
+                    },
+                    {
+                        "name": "2.0",
+                        "annotations": {
+                            "description": "JBoss Fuse Integration Services 2.0 Java S2I images.",
+                            "iconClass": "icon-jboss",
+                            "tags": "builder,jboss-fuse,java,xpaas",
+                            "supports":"jboss-fuse:6.3.0,java:8,xpaas:1.2",
+                            "version": "2.0"
+                        }
+                    }                    
+                ]
+            }       
+},
+{
+    "kind": "BuildConfig",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "${DOCUMENT_SERVICE_NAME}",
+        "creationTimestamp": null,
+        "labels": {
+            "app": "${DOCUMENT_SERVICE_NAME}"
+        }
+    },
+    "spec": {
+        "triggers": [            
+            {
+                "type": "ImageChange",
+                "imageChange": {}
+            },
+            {
+                "type": "ConfigChange"
+            }
+        ],
+        "runPolicy": "Serial",
+        "source": {
+            "type": "Git",
+            "git": {
+                "uri": "${SOURCE_REPOSITORY_URL}"
+            },
+            "contextDir": "/DocumentService"
+        },
+        "strategy": {
+            "type": "Source",
+            "sourceStrategy": {
+                "from": {
+                    "kind": "ImageStreamTag",
+                    "name": "fis-java-openshift:latest"
+                },
+                "forcePull": true
+            }
+        },
+        "output": {
+            "to": {
+                "kind": "ImageStreamTag",
+				"namespace": "csnr-dmod-tools",
+                "name": "${DOCUMENT_SERVICE_NAME}:latest"
+            }
+        },
+        "resources": {},
+        "postCommit": {},
+        "nodeSelector": null
+    },
+    "status": {
+        "lastVersion": 0
+    }
+}],
+  "parameters": [
+    {
+      "name": "FRONTEND_NAME",
+      "displayName": "Name",
+      "description": "The name assigned to all of the frontend objects defined in this template.",
+      "required": true,
+      "value": "dmod"
+    },
+	{
+      "name": "DOCUMENT_SERVICE_NAME",
+      "displayName": "Name",
+      "description": "The name assigned to all of the document service objects defined in this template.",
+      "required": true,
+      "value": "document-microservice"
+    },	
+    {
+      "name": "S2I_NAMESPACE",
+      "displayName": "Namespace",
+      "description": "The OpenShift Namespace where the S2I ImageStream resides.",
+      "value": "openshift"
+    },
+    {
+      "name": "SOURCE_REPOSITORY_URL",
+      "displayName": "Git Repository URL",
+      "description": "The URL of the repository with your application source code.",
+      "value": "https://github.com/bcgov/csnr-dmod.git"
+    },
+    {
+      "name": "SOURCE_REPOSITORY_REF",
+      "displayName": "Git Reference",
+      "description": "Set this to a branch name, tag or other ref of your repository if you are not using the default branch."
+    },
+    {
+      "name": "CONTEXT_DIR",
+      "displayName": "Context Directory",
+      "description": "Set this to the relative path to your project if it is not in the root of your repository."
+    },
+    {
+      "name": "GITHUB_WEBHOOK_SECRET",
+      "displayName": "GitHub Webhook Secret",
+      "description": "A secret string used to configure the GitHub webhook.",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{40}"
+    },
+    {
+      "name": "GENERIC_WEBHOOK_SECRET",
+      "displayName": "Generic Webhook Secret",
+      "description": "A secret string used to configure the Generic webhook.",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{40}"
+    }
+  ]
+}

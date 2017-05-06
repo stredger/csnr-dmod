@@ -1,0 +1,196 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "The Document Service acts as a bridge between an OpenShift application and the NRPP document service.",
+    "version" : "v1",
+    "title" : "REST API Documentation for the MEM Document Service",
+    "termsOfService" : "N/A"
+  },
+  "basePath" : "/api",
+  "paths" : {
+    "/documents" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "consumes" : [ ],
+        "produces" : [ "text/plain", "application/json", "text/json" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/Documents"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Document" ],
+        "consumes" : [ "application/json" ],
+        "produces" : [ "text/plain", "application/json", "text/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "item",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Documents"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Document created",
+            "schema" : {
+              "$ref" : "#/definitions/Document"
+            },
+            "headers" : {
+              "Location" : {
+                "type" : "string",
+                "format" : "url",
+                "description" : "A link to the Document"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{id}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "consumes" : [ ],
+        "produces" : [ "text/plain", "application/json", "text/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "id of Document to fetch",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/Document"
+            }
+          },
+          "404" : {
+            "description" : "Document not found"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "Document" ],
+        "consumes" : [ "application/json" ],
+        "produces" : [ "text/plain", "application/json", "text/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "id of Document to fetch",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "in" : "body",
+          "name" : "item",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Document"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/Document"
+            }
+          },
+          "404" : {
+            "description" : "Document not found"
+          }
+        }
+      }
+    },
+    "/documents/{id}/expire" : {
+      "post" : {
+        "tags" : [ "Document" ],
+        "consumes" : [ ],
+        "produces" : [ "text/plain", "application/json", "text/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "id of Document to expire",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK"
+          },
+          "404" : {
+            "description" : "Document not found"
+          }
+        }
+      }
+    },
+    "/documents/{id}/history" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "consumes" : [ ],
+        "produces" : [ "text/plain", "application/json", "text/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "id of Document to get history for",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/History"
+              }
+            }
+          },
+          "404" : {
+            "description" : "Document not found"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions" : { },
+  "definitions" : {
+    "Document" : {
+      "type" : "object",
+      "required" : [ "id" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "A system-generated unique identifier for a Document"
+        },
+        "filename" : {
+          "type" : "string",
+          "description" : "Document Filename",
+          "maxLength" : 2048
+        }
+      },
+      "description" : "Primary object type"
+    },
+    "History" : {
+      "type" : "object",
+      "required" : [ "id" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "format" : "int32",
+          "description" : "A system-generated unique identifier for a Document"
+        }
+      },
+      "description" : "Document history"
+    }
+  }
+}

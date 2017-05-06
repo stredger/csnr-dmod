@@ -1,0 +1,14 @@
+<div class="main-panel">
+    <div class="view-title-container">
+        <h1>Document Management Onboarding Demo</h1>
+    </div>
+    <div class="view-body-container">
+
+      <div ng-show="!authentication.user">
+        Please login to view the demo.
+      </div>
+      <div ng-show="authentication.user">
+      <a href="/p/d-1/docs">View the demo</a>   
+      </div>      
+    </div>
+</div>
