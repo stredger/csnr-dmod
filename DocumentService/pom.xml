@@ -282,7 +282,8 @@
       <groupId>ca.bc.gov.nrs.dm</groupId>
       <artifactId>nrs-dm-rest-client</artifactId>
       <version>1.2.0.4</version>
-      <scope>provided</scope>
+      <scope>system</scope>
+	  <systemPath>${basedir}nrs-dm-rest-client-1.2.0.4.jar</systemPath>
     </dependency>
     <dependency>
 		<groupId>javax</groupId>
@@ -320,7 +321,7 @@
 <goal>build</goal>
 </goals>
             <configuration>
-              <javaMainClass>com.nrsdm.client.api.ApplicationStarter</javaMainClass>
+              <javaMainClass>ca.bc.nrs.dm.microservice.api.ApplicationStarter</javaMainClass>
             </configuration>
           </execution>
         </executions>
@@ -342,7 +343,7 @@
                 </assembly>
                 <env>
                   <JAVA_LIB_DIR>/deployments/lib</JAVA_LIB_DIR>
-                  <JAVA_MAIN_CLASS>com.nrsdm.client.api.ApplicationStarter</JAVA_MAIN_CLASS>
+                  <JAVA_MAIN_CLASS>ca.bc.nrs.dm.microservice.api.ApplicationStarter</JAVA_MAIN_CLASS>
                   <HTTP_PORT>${http.port}</HTTP_PORT>
                 </env>
                 <ports>
@@ -360,7 +361,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.4.0</version>
         <configuration>
-          <mainClass>com.nrsdm.client.api.ApplicationStarter</mainClass>
+          <mainClass>ca.bc.nrs.dm.microservice.api.ApplicationStarter</mainClass>
         </configuration>
       </plugin>	
 	
