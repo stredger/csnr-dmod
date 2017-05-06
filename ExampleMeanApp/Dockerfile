@@ -23,10 +23,14 @@ RUN bower install --config.interactive=false --allow-root
 # Make everything available for start
 ADD . /home/mean
 
+WORKDIR /home/mean
+
+RUN grunt buildprod
+
 # Set development environment as default
 ENV NODE_ENV development
 
 # Port 3000 for server
 # Port 35729 for livereload
 EXPOSE 3000 35729
-CMD ["grunt"]
+CMD ["node server.js"]
