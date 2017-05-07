@@ -23,6 +23,24 @@ Install the following:
 - sass (a Ruby package)
 	- Execute `gem install sass` to install
 
+Run Locally
+----------
+`git clone https://github.com/bcgov/csnr-dmod.git`
+`cd cnsr-dmod`
+`npm install`
+`grunt build && node server.js`
+
+
+OpenShift Configuration
+-----------------------
+
+- process and run the build templates (Review the template and add parameter overrides as necessary)
+- `oc project csnr-dmod-tools`
+- `oc process -f dmod-build-template.json | oc create -f -`
+- `oc project csnr-dmod-dev`
+- `oc process -f dmod-deployment-template.json | oc create -f -`
+- Allow the dev project to access the tools project
+`oc policy add-role-to-user system:image-puller system:serviceaccount:csnr-dmod-dev:default -n csnr-dmod-tools`
 
 
 

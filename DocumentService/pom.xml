@@ -283,7 +283,8 @@
       <artifactId>nrs-dm-rest-client</artifactId>
       <version>1.2.0.4</version>
       <scope>system</scope>
-	  <systemPath>${basedir}/nrs-dm-rest-client-1.2.0.4.jar</systemPath>
+      <systemPath>${basedir}/nrs-dm-rest-client-1.2.0.4.jar</systemPath>
+      <type>jar</type>
     </dependency>
     <dependency>
 		<groupId>javax</groupId>
