@@ -1,1 +1,1 @@
-export JAVA_CLASSPATH="$JAVA_CLASSPATH;/deployments"
+export JAVA_CLASSPATH="$JAVA_CLASSPATH;/deployments/nrs-dm-rest-client-1.2.0.4.jar"
