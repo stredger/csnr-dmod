@@ -106,4 +106,4 @@ mongod
 hs_err_pid*
 
 !DocumentService/nrs-dm-rest-client-1.2.0.4.jar
-!DocumentService/src/main/hawt-app/nrs-dm-rest-client-1.2.0.4.jar
+!DocumentService/src/main/hawt-app/lib/nrs-dm-rest-client-1.2.0.4.jar
