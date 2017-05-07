@@ -1,0 +1,1 @@
+export JAVA_CLASSPATH="$JAVA_CLASSPATH;/deployments"
