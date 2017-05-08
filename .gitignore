@@ -105,5 +105,4 @@ mongod
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-!DocumentService/nrs-dm-rest-client-1.2.0.4.jar
-!DocumentService/src/main/hawt-app/nrs-dm-rest-client-1.2.0.4.jar
+!DocumentService/local-maven-repo/nrs-dm-rest-client-1.2.0.4.jar
