@@ -16,8 +16,7 @@
   },
   "scripts": {
     "start": "grunt",
-    "test": "grunt test",
-    "postinstall": "git config --global url.'https://'.insteadOf git:// && bower install --config.interactive=false --allow-root && grunt buildprod"
+    "test": "grunt test"    
   },
   "dependencies": {
     "acl": "~0.4.4",

@@ -53,5 +53,9 @@ fi
 echo "---> Building your Node application from source"
 npm install -d
 
+bower install --config.interactive=false --allow-root
+
+grunt buildprod
+
 # Fix source directory permissions
 fix-permissions ./
