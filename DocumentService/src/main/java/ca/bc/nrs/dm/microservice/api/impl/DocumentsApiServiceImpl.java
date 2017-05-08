@@ -1,7 +1,8 @@
 package ca.bc.nrs.dm.microservice.api.impl;
 
-import ca.bc.nrs.dm.microservice.api.DocumentsApiService;
 import ca.bc.gov.nrs.dm.rest.client.v1.impl.DocumentManagementServiceImpl;
+import ca.bc.nrs.dm.microservice.api.DocumentsApiService;
+
 
 import ca.bc.nrs.dm.microservice.model.Document;
 import java.io.InputStream;

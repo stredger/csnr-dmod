@@ -19,10 +19,10 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
-  <!-- <mirrors>
+  <mirrors>
 	<mirror><id>sti-mirror</id><url>${env.MAVEN_MIRROR_URL}</url><mirrorOf>external:*</mirrorOf>
   </mirror>
-  </mirrors> -->
+  </mirrors> 
   
   <profiles>
     <profile>
