@@ -53,6 +53,8 @@ fi
 echo "---> Building your Node application from source"
 npm install -d
 
+git config --global url.'https://'.insteadOf git://
+
 bower install --config.interactive=false --allow-root
 
 grunt buildprod
