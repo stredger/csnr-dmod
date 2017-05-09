@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "grunt test"    
+    "test": "grunt test"
   },
   "dependencies": {
     "acl": "~0.4.4",
@@ -67,6 +67,7 @@
     "swig": "^1.4.2",
     "tiny-jsonrpc": "~0.2.1",
     "tree-model": "^1.0.6",
+    "uid-safe": "^2.1.4",
     "validator": "^3.41.2"
   },
   "devDependencies": {
