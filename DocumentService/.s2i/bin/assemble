@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # extract the archives from the secrets
-pushd /tmp/src/local-maven-repo/
 unzip ca.zip
 unzip oracle.zip
-popd
+
 
 # run original assemble script
 /usr/local/s2i/assemble
