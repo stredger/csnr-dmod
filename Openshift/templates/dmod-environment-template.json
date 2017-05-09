@@ -149,6 +149,10 @@
                     "name": "DATABASE_SERVICE_NAME",
                     "value": "${DATABASE_SERVICE_NAME}"
                   },
+				  {
+                    "name": "DOCUMENT_MICROSERVICE_NAME",
+                    "value": "${DATABASE_SERVICE_NAME}"
+                  },
                   {
                     "name": "MONGODB_USER",
                     "value": "${DATABASE_USER}"
@@ -345,19 +349,19 @@
           }
         }
       }
-    },
+    },	
 	        {
             "apiVersion": "v1",
             "kind": "Service",
             "metadata": {
-			    "name": "document-microservice",
+			    "name": "${DOCUMENT_MICROSERVICE_NAME}",
                 "annotations": {
                     "description": "Exposes and load balances the document microservice pods"
                 },
                 "labels": {
                     "template": "dmod-environment"
                 },
-                "app": "document-microservice"
+                "app": "${DOCUMENT_MICROSERVICE_NAME}"
             },
             "spec": {
                 "ports": [
@@ -381,7 +385,7 @@
                     }
                 ],
                 "selector": {
-                    "name": "document-microservice"
+                    "name": "${DOCUMENT_MICROSERVICE_NAME}"
                 }
             }
         },        
@@ -392,11 +396,11 @@
                 "creationTimestamp": null,
                 "generation": 1,
                 "labels": {
-                    "app": "document-microservice",
+                    "app": "${DOCUMENT_MICROSERVICE_NAME}",
                     "component": "fuse-server",
                     "container": "java",
                     "group": "quickstarts",
-                    "project": "document-microservice",
+                    "project": "${DOCUMENT_MICROSERVICE_NAME}",
                     "provider": "s2i",
                     "template": "dmod-environment"                    
                 },
@@ -405,11 +409,11 @@
             "spec": {
                 "replicas": 1,
                 "selector": {
-                    "component": "document-microservice",
+                    "component": "${DOCUMENT_MICROSERVICE_NAME}",
                     "container": "java",
-                    "deploymentconfig": "document-microservice",
+                    "deploymentconfig": "${DOCUMENT_MICROSERVICE_NAME}",
                     "group": "quickstarts",
-                    "project": "document-microservice",
+                    "project": "${DOCUMENT_MICROSERVICE_NAME}",
                     "provider": "s2i",
                     "version": "2.2.0.redhat-079"
                 },
@@ -428,8 +432,8 @@
                     "metadata": {                        
                         "creationTimestamp": null,
                         "labels": {
-                            "app": "document-microservice",
-                            "component": "document-microservice",
+                            "app": "${DOCUMENT_MICROSERVICE_NAME}",
+                            "component": "${DOCUMENT_MICROSERVICE_NAME}",
                             "container": "java",
                             "deploymentconfig": "document-microservice",
                             "group": "quickstarts",
@@ -571,6 +575,11 @@
       "displayName": "Database Service Name",
       "value": "mongodb"
     },
+	{
+      "name": "DOCUMENT_MICROSERVICE_NAME",
+      "displayName": "Document Microservice Name",
+      "value": "document-microservice"
+    },
     {
       "name": "DATABASE_USER",
       "displayName": "MongoDB Username",
@@ -588,7 +597,7 @@
     {
       "name": "DATABASE_NAME",
       "displayName": "Database Name",
-      "value": "esm"
+      "value": "dmod"
     },
     {
       "name": "DATABASE_ADMIN_PASSWORD",
@@ -650,14 +659,14 @@
       "name": "APP_IMAGE_NAME",
       "displayName": "Application image name.",
       "description": "Application image name.",
-      "value": "esm",
+      "value": "dmod",
       "required": true
     },
     {
       "name": "APP_IMAGE_NAMESPACE",
       "displayName": "Namespace containing application images.",
       "description": "Namespace containing application images.",
-      "value": "esm",
+      "value": "csnr-dmod-tools",
       "required": true
     },
     {
