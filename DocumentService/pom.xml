@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.swagger</groupId>
-  <artifactId>swagger-jaxrs-cxf-cdi-server</artifactId>
+  <artifactId>nrs-dm-microservice</artifactId>
   <packaging>jar</packaging>
   <name>CNSR Document Service</name>
   <version>1.0.0</version>
@@ -217,7 +217,6 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <!-- testing -->
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -233,7 +232,7 @@
       <artifactId>fabric8-arquillian</artifactId>
       <scope>test</scope>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>io.swagger</groupId>
       <artifactId>swagger-jersey2-jaxrs</artifactId>
       <scope>compile</scope>
@@ -252,56 +251,115 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit-version}</version>
-      <scope>test</scope>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit-version}</version>
+        <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>${servlet-api-version}</version>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${servlet-api-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.glassfish.jersey.containers</groupId>
-      <artifactId>jersey-container-servlet-core</artifactId>
-      <version>${jersey2-version}</version>
+        <groupId>org.glassfish.jersey.containers</groupId>
+        <artifactId>jersey-container-servlet-core</artifactId>
+        <version>${jersey2-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-multipart</artifactId>
-      <version>${jersey2-version}</version>
+        <groupId>org.glassfish.jersey.media</groupId>
+        <artifactId>jersey-media-multipart</artifactId>
+        <version>${jersey2-version}</version>
     </dependency>
       <!-- Base64 encoding that works in both JVM and Android -->
     <dependency>
-      <groupId>com.brsanthu</groupId>
-      <artifactId>migbase64</artifactId>
-      <version>2.2</version>
+        <groupId>com.brsanthu</groupId>
+        <artifactId>migbase64</artifactId>
+        <version>2.2</version>
     </dependency>
     <dependency>
-      <groupId>ca.bc.gov.nrs.dm</groupId>
-      <artifactId>nrs-dm-rest-client</artifactId>
-      <version>1.2.0.4</version>      
+        <groupId>ca.bc.gov.nrs.dm</groupId>
+        <artifactId>nrs-dm-rest-client</artifactId>
+        <version>1.2.0.4</version>      
     </dependency>
     <dependency>
-		<groupId>javax</groupId>
-		<artifactId>javaee-api</artifactId>
-		<version>7.0</version>
-		<scope>provided</scope>
-	</dependency>
+        <groupId>ca.bc.gov.nrs.dm</groupId>
+        <artifactId>nrs-dm-service</artifactId>
+        <version>1.2.0.4</version>      
+    </dependency>
+    <dependency>
+        <groupId>ca.bc.gov.nrs.dm</groupId>
+        <artifactId>nrs-dm-model</artifactId>
+        <version>1.2.0.4</version>      
+    </dependency>
+    <dependency>
+        <groupId>ca.bc.gov.nrs.dm</groupId>
+        <artifactId>nrs-dm-rest-common</artifactId>
+        <version>1.2.0.4</version>      
+    </dependency>
+    <dependency>
+        <groupId>ca.bc.gov.nrs.common</groupId>
+        <artifactId>nrs-common-rest-client</artifactId>
+        <version>1.2.0.6</version>      
+    </dependency>  
+    <dependency>
+        <groupId>ca.bc.gov.nrs.common</groupId>
+        <artifactId>nrs-common-model</artifactId>
+        <version>1.2.0.6</version>      
+    </dependency>
+    <dependency>
+        <groupId>ca.bc.gov.nrs.common</groupId>
+        <artifactId>nrs-common-util</artifactId>
+        <version>1.2.0.6</version>      
+    </dependency>    
+    <dependency>
+        <groupId>ca.bc.gov.nrs.common</groupId>
+        <artifactId>nrs-common-rest-common</artifactId>
+        <version>1.2.0.6</version>      
+    </dependency>
+    <dependency>
+        <groupId>ca.bc.gov.nrs.common</groupId>
+        <artifactId>nrs-common-service-api</artifactId>
+        <version>1.2.0.6</version>      
+    </dependency>      
+    <dependency>
+        <groupId>ca.bc.gov.webade</groupId>
+        <artifactId>webade-oauth2-rest-token-client</artifactId>
+        <version>1.2.0.4</version>      
+    </dependency>
+    <dependency>
+        <groupId>oracle.ucm</groupId>
+        <artifactId>ridc</artifactId>
+        <version>11.1.1</version>      
+    </dependency>
+    <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.8.0</version>
+    </dependency>
+    <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>javax</groupId>
+        <artifactId>javaee-api</artifactId>
+        <version>7.0</version>
+        <scope>provided</scope>
+    </dependency>
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider -->
-	<dependency>
-		<groupId>com.fasterxml.jackson.jaxrs</groupId>
-		<artifactId>jackson-jaxrs-json-provider</artifactId>
-		<version>[2.8.3,3)</version>
-	</dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.jaxrs</groupId>
+        <artifactId>jackson-jaxrs-json-provider</artifactId>
+        <version>[2.8.3,3)</version>
+    </dependency>
 
-	<!-- Swagger annotations -->
-	<dependency>
-		<groupId>io.swagger</groupId>
-		<artifactId>swagger-annotations</artifactId>
-		<version>[1.5.3,2)</version>
-	</dependency>
+    <!-- Swagger annotations -->
+    <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>[1.5.3,2)</version>
+    </dependency>
   </dependencies>
     
   <build>
@@ -375,108 +433,31 @@
           <mainClass>ca.bc.nrs.dm.microservice.api.ApplicationStarter</mainClass>
         </configuration>
       </plugin>	
-	
-<!--	
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.1.1</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.6</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>	  	  
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-version}</version>
-        <configuration>
-          <webApp>
-            <contextPath>/</contextPath>
-          </webApp>
-          <webAppSourceDirectory>target/${project.artifactId}-${project.version}</webAppSourceDirectory>
-          <stopPort>8079</stopPort>
-          <stopKey>stopit</stopKey>
-          <stopWait>10</stopWait>
-          <httpConnector>
-            <port>8080</port>
-            <idleTimeout>60000</idleTimeout>
-          </httpConnector>
-        </configuration>
-        <executions>
-          <execution>
-            <id>start-jetty</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>start</goal>
-            </goals>
-            <configuration>
-              <scanIntervalSeconds>0</scanIntervalSeconds>
-              <daemon>true</daemon>
-            </configuration>
-          </execution>
-          <execution>
-            <id>stop-jetty</id>
-            <phase>post-integration-test</phase>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.9.1</version>
-        <executions>
-          <execution>
-            <id>add-source</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>src/gen/java</source>
-              </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-	  
--->	  
-    </plugins>
-  </build>
+
+        </plugins>
+    </build>
   
-  <repositories>
-    <repository>
-        <id>local-maven-repo</id>
-        <url>file:///${project.basedir}/local-maven-repo</url>
-    </repository>
-    <repository>
-        <id>localopenshift</id>
-        <name>localopenshift</name>
-        <url>http://10.1.2.1:8888/repository/maven-public</url>
-    </repository>
-    <repository>
-        <id>central</id>
-        <name>central</name>
-        <url>http://central.maven.org/maven2/</url>
-    </repository>    
-    <repository>
-      <id>sonatype-snapshots</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
+    <repositories>
+        <repository>
+            <id>local-maven-repo</id>
+            <url>file:///${project.basedir}/local-maven-repo</url>
+        </repository>
+        <repository>
+            <id>localopenshift</id>
+            <name>localopenshift</name>
+            <url>http://10.1.2.1:8888/repository/maven-public</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>central</name>
+            <url>http://central.maven.org/maven2/</url>
+        </repository>    
+        <repository>
+            <id>sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

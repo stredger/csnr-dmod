@@ -152,6 +152,17 @@
             "git": {
                 "uri": "${SOURCE_REPOSITORY_URL}"
             },
+			"secrets":
+			[
+				{			  
+					"secret" : {"name": "nrs-libs",
+					"destinationDir": "/tmp/src/local-maven-repo/"}
+				},
+				{			  
+					"secret" : {"name": "oracle-libs",
+					"destinationDir": "/tmp/src/local-maven-repo/"}
+				}
+	        ],
             "contextDir": "/DocumentService"
         },
         "strategy": {
