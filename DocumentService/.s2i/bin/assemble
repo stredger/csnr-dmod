@@ -2,8 +2,10 @@
 
 # extract the archives from the secrets
 mkdir local-maven-repo
-unzip ca.zip local-maven-repo
-unzip oracle.zip local-maven-repo
+unzip ca.zip 
+unzip oracle.zip 
+mv ca local-maven-repo
+mv oracle local-maven-repo
 
 
 # run original assemble script
