@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # extract the archives from the secrets
-unzip ca.zip
-unzip oracle.zip
+unzip ca.zip local-maven-repo
+unzip oracle.zip local-maven-repo
 
 
 # run original assemble script
