@@ -6,8 +6,5 @@ unzip ca.zip
 unzip oracle.zip 
 mv ca local-maven-repo
 mv oracle local-maven-repo
-ls
-pwd
-
 # run original assemble script
 /usr/local/s2i/assemble
