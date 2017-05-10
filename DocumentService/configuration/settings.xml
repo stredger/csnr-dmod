@@ -21,7 +21,7 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
   <localRepository>/tmp/src/local-maven-repo/</localRepository>
   <mirrors>
-	<mirror><id>sti-mirror</id><url>${env.MAVEN_MIRROR_URL}</url><mirrorOf>fusesource.m2,fusesource.ea,redhat.ga,central</mirrorOf>
+	<mirror><id>sti-mirror</id><url>${env.MAVEN_MIRROR_URL}</url><mirrorOf>external:*,!local-maven-repo,!ca.bc.gov.*</mirrorOf>
   </mirror>
   </mirrors>   
   <profiles>

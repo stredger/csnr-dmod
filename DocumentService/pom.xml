@@ -327,6 +327,11 @@
         <artifactId>webade-oauth2-rest-token-client</artifactId>
         <version>1.2.0.4</version>      
     </dependency>
+	<dependency>
+        <groupId>ca.bc.gov.webade</groupId>
+        <artifactId>webade-oauth2-parent</artifactId>
+        <version>1.2.0.4</version>      
+    </dependency>
     <dependency>
         <groupId>oracle.ucm</groupId>
         <artifactId>ridc</artifactId>
@@ -440,7 +445,9 @@
     <repositories>
         <repository>
             <id>local-maven-repo</id>
-            <url>file:///${project.basedir}/local-maven-repo/</url>
+            <url>file://${project.basedir}/local-maven-repo/</url>
+			<releases><enabled>true</enabled><updatePolicy>always</updatePolicy></releases>
+            <snapshots><enabled>true</enabled><updatePolicy>always</updatePolicy></snapshots>
         </repository>        
         <repository>
             <id>central</id>
