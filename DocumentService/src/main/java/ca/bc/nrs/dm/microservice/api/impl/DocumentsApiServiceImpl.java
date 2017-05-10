@@ -4,8 +4,6 @@ import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementService;
 import ca.bc.gov.nrs.dm.rest.client.v1.impl.DocumentManagementServiceImpl;
 import ca.bc.nrs.dm.microservice.api.DocumentsApiService;
 
-//import com.google.code.gson;
-
 import ca.bc.nrs.dm.microservice.model.Document;
 import java.io.InputStream;
 
@@ -21,6 +19,7 @@ import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementService;
 import ca.bc.gov.nrs.dm.rest.client.v1.ForbiddenAccessException;
 import ca.bc.gov.nrs.dm.rest.client.v1.ValidationException;
 import ca.bc.gov.nrs.dm.rest.client.v1.impl.DocumentManagementServiceImpl;
+import ca.bc.gov.nrs.dm.rest.v1.resource.AbstractFolderResource;
 //import ca.bc.gov.nrs.dm.rest.v1.resource.AbstractFolderResource;
 //import ca.bc.gov.nrs.dm.rest.v1.resource.FolderContentResource;
 import ca.bc.gov.nrs.dm.service.v1.DMServiceResponse;
@@ -56,6 +55,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
       private static String siteMinderUserId = "NOT\\USED";
       private static String documentManagementTopLevelRestURL;
       private static String oauth2ResourceName;   
+      private static Gson gson;
       
       private OAuth2ProtectedResourceDetails oAuth2ProtectedResourceDetails = null;
       
@@ -66,7 +66,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
       public DocumentsApiServiceImpl()
       {
         // read values from the secret.
-        Gson gson = new Gson();
+        gson = new Gson();
         //secrets = gson.fromJson(yourJson, Response.class);
         
           
@@ -128,8 +128,19 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
       
       @Override
       public Response documentsGet(SecurityContext securityContext) {
-      // do some magic!
-      return Response.ok().entity("magic!").build();
+          String jsonString = "";
+          try {
+              // get available documents.
+
+              AbstractFolderResource folderContents = dmsService.getFolderByPath("/");
+              jsonString = gson.toJson(folderContents);
+              
+          } catch (DocumentManagementException ex) {
+              Logger.getLogger(DocumentsApiServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+          } catch (ForbiddenAccessException ex) {
+              Logger.getLogger(DocumentsApiServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+          }
+          return Response.ok().entity(jsonString).build();      
   }
       @Override
       public Response documentsIdExpirePost(Integer id, SecurityContext securityContext) {
