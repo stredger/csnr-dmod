@@ -29,6 +29,11 @@
       <id>fusesource.repo</id>
       <repositories>
 	  <repository>
+        <id>local-maven-repo</id>
+        <name>local-maven-repo</name>
+        <url>file:///tmp/src/local-maven-repo/</url>
+      </repository>       
+	  <repository>
           <id>central</id>
           <name>central</name>
           <url>http://central.maven.org/maven2/</url>
