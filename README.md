@@ -123,6 +123,20 @@ If no changes to the default parameters are required, the template can be proces
 `oc project csnr-dmod-tools`
 `oc process -f dmod-build-template.json | oc create -f -` 
 
+Nexus
+-----
+S2i builds such as that used for this project can be extremely slow to execute.  Build times of more than 30 minutes are normal, and sometimes a build can take more than several hours.  To speed up the build, a local nexus can be used.
+
+The following commands can be used to configure a local nexus:
+
+`oc new-app sonatype/nexus`
+`oc expose svc/nexus`
+`oc volumes dc/nexus --add --name nexus-volume-1 --type persistentVolumeClaim --mount-path /sonatype-work/ --claim-name nexus-pv --claim-size 5G --overwrite`
+
+
+You can then create a Node.js proxy repository, and put the URL for that proxy repository into the NPM_MIRROR environment variable in any Node.js applications.
+
+
 Deployment Template
 -------------------
 

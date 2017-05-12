@@ -2,6 +2,7 @@ package ca.bc.nrs.dm.microservice.api;
 
 import ca.bc.nrs.dm.microservice.model.Document;
 import ca.bc.nrs.dm.microservice.model.History;
+
 //import ca.bc.nrs.dm.microservice.api.DocumentsApiService;
 
 import javax.ws.rs.*;
@@ -19,6 +20,7 @@ import java.io.InputStream;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
 import java.util.List;
+import javax.servlet.ServletContext;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 
 @Path("/")
@@ -32,19 +34,17 @@ import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 public class DocumentsApi  {
 
   @Context SecurityContext securityContext;
+  @Context ServletContext servletContext;
 
   @Inject DocumentsApiService delegate;
 
-
-    @GET
-    
-    
+    @GET        
     @Produces({ "text/plain", "application/json", "text/json" })
     @ApiOperation(value = "", notes = "", response = Document.class, responseContainer = "List", tags={ "Document",  })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = Document.class, responseContainer = "List") })
     public Response documentsGet() {
-    	return delegate.documentsGet(securityContext);
+    	return delegate.documentsGet(securityContext, servletContext);
     }
 
     @POST
@@ -55,8 +55,8 @@ public class DocumentsApi  {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = void.class),
         @ApiResponse(code = 404, message = "Document not found", response = void.class) })
-    public Response documentsIdExpirePost(@ApiParam(value = "id of Document to expire",required=true) @PathParam("id") Integer id) {
-    	return delegate.documentsIdExpirePost(id, securityContext);
+    public Response documentsIdExpirePost(@ApiParam(value = "id of Document to expire",required=true) @PathParam("id") String id) {
+    	return delegate.documentsIdDeletePost(id, securityContext);
     }
 
     @GET
@@ -67,10 +67,23 @@ public class DocumentsApi  {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = Document.class),
         @ApiResponse(code = 404, message = "Document not found", response = Document.class) })
-    public Response documentsIdGet(@ApiParam(value = "id of Document to fetch",required=true) @PathParam("id") Integer id) {
+    public Response documentsIdGet(@ApiParam(value = "id of Document to fetch",required=true) @PathParam("id") String id) {
     	return delegate.documentsIdGet(id, securityContext);
     }
 
+    @GET
+    @Path("/{id}/download")
+    
+    @Produces({ "text/plain", "application/json", "text/json" })
+    @ApiOperation(value = "", notes = "", tags={ "Document",  })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Document not found", response = History.class, responseContainer = "List") })
+    public Response documentsIdDownloadGet(@ApiParam(value = "id of Document to download",required=true) @PathParam("id") String id) {
+    	return delegate.documentsIdDownloadGet(id, securityContext);
+    }
+
+    
     @GET
     @Path("/{id}/history")
     
@@ -79,7 +92,7 @@ public class DocumentsApi  {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = History.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "Document not found", response = History.class, responseContainer = "List") })
-    public Response documentsIdHistoryGet(@ApiParam(value = "id of Document to get history for",required=true) @PathParam("id") Integer id) {
+    public Response documentsIdHistoryGet(@ApiParam(value = "id of Document to get history for",required=true) @PathParam("id") String id) {
     	return delegate.documentsIdHistoryGet(id, securityContext);
     }
 
@@ -89,10 +102,18 @@ public class DocumentsApi  {
     @Produces({ "text/plain", "application/json", "text/json" })
     @ApiOperation(value = "", notes = "", response = Document.class, tags={ "Document",  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "OK", response = Document.class),
-        @ApiResponse(code = 404, message = "Document not found", response = Document.class) })
-    public Response documentsIdPut(@ApiParam(value = "id of Document to fetch",required=true) @PathParam("id") Integer id, @ApiParam(value = "" ,required=true) Document item) {
-    	return delegate.documentsIdPut(id, item, securityContext);
+    @ApiResponse(code = 200, message = "OK", response = Document.class),
+    @ApiResponse(code = 404, message = "Document not found", response = Document.class) })
+    
+    public Response documentsIdPut(@ApiParam(value = "id of Document to fetch",required=true) @PathParam("id") String id, MultipartBody multipart) {
+        Attachment file = multipart.getAttachment("file");
+        if (file == null) {
+            return Response.status(400).entity("Missing file data").type(MediaType.TEXT_PLAIN).build();
+        }
+        else
+        {            
+            return delegate.documentsIdPut(id, file, securityContext);
+        }
     }
 
     @POST
@@ -104,8 +125,9 @@ public class DocumentsApi  {
         if (file == null) {
             return Response.status(400).entity("Missing file data").type(MediaType.TEXT_PLAIN).build();
         }
-        
-        
-    	return delegate.documentsPost(file, securityContext);
+        else       
+        {
+            return delegate.documentsPost(file, securityContext);
+        }
     }
 }

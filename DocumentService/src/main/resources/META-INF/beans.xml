@@ -15,7 +15,7 @@
 		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 		<property name="locations">
 			<list>
-				<value>classpath:testINT.properties</value>
+				<value>/tmp/int.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -34,7 +34,7 @@
 	<oauth:resource id="documentMangementClientResource" type="authorization_code"
 		client-id="${document.management.id}" client-secret="${document.management.secret}"
 		access-token-uri="${webade-oauth2.token.url}" user-authorization-uri="${webade-oauth2.authorize.url}"
-		scope="DMS.*" ref="oAuth2ProtectedResourceDetails" />
+		scope="DMS.*" />
 	
 	<bean id="fileService" class="ca.bc.gov.nrs.dm.service.v1.impl.FileServiceImpl"
 		init-method="init">
