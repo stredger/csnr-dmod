@@ -95,8 +95,28 @@ paths:
           in: body
           required: true
           schema:
-            $ref: "#/definitions/Document"
-  /documents/{id}/expire:
+            $ref: "#/definitions/Document"           
+  /documents/{id}/download:
+    get:
+      tags:
+        - Document
+      consumes: []
+      produces:
+        - text/plain
+        - application/json
+        - text/json
+      responses:
+        200:
+          description: OK          
+        404:
+          description: Document not found
+      parameters:
+        - name: id
+          in: path
+          description: id of Document to download
+          required: true
+          type: integer            
+  /documents/{id}/delete:
     post:
       tags:
         - Document
@@ -113,7 +133,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: id of Document to expire
+          description: id of Document to delete
           required: true
           type: integer
   /documents/{id}/history:
