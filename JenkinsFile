@@ -1,0 +1,9 @@
+node('maven') {
+
+   stage('checkout csnr-dmod src onto docker slave')
+   git url: 'https://github.com/bcgov/csnr-dmod.git'
+
+   stage('list working dir')
+   sh 'ls -l -srt'
+
+}
