@@ -200,7 +200,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
         try {
             // get available documents.
-            AbstractFolderResource folderContents = dmsService.getFolderByPath(PARENT_FOLDER);
+            AbstractFolderResource folderContents = dmsService.getFolderByPath(APPLICATION_ROOT_FOLDER);
             FolderContentResource results = dmsService.browseFolder(folderContents, 1, 1000);
             jsonString = gson.toJson(results);
 
