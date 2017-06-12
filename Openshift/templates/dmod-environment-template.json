@@ -126,7 +126,7 @@
               "name": "${NAME}"
             }
           },
-          "spec": {
+          "spec": {		    
             "containers": [
               {
                 "name": "${NAME}",
@@ -443,6 +443,15 @@
                         }
                     },
                     "spec": {
+						"volumes": [
+							{
+								"name": "credentials-volume",
+								"secret": {
+									"secretName": "nrs-credentials",
+									"defaultMode": 420							
+								}
+							}
+						],
                         "containers": [
                             {
                                 "env": [
@@ -503,6 +512,12 @@
                                     "successThreshold": 1,
                                     "timeoutSeconds": 5
                                 },
+								 "volumeMounts": [
+								{
+									"name": "credentials-volume",
+									"readOnly": true,
+									"mountPath": "/tmp"
+								},                        
                                 "resources": {},
                                 "terminationMessagePath": "/dev/termination-log"
                             }

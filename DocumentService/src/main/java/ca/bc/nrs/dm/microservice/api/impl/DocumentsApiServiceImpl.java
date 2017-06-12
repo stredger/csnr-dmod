@@ -12,6 +12,8 @@ import ca.bc.gov.nrs.dm.rest.client.v1.ForbiddenAccessException;
 import ca.bc.gov.nrs.dm.rest.client.v1.impl.DocumentManagementServiceImpl;
 import ca.bc.gov.nrs.dm.rest.v1.resource.AbstractFolderResource;
 import ca.bc.gov.nrs.dm.rest.v1.resource.FileResource;
+import ca.bc.gov.nrs.dm.rest.v1.resource.FilesResource;
+import ca.bc.gov.nrs.dm.rest.v1.resource.FolderResource;
 import ca.bc.gov.nrs.dm.rest.v1.resource.RevisionsResource;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.Oauth2ClientException;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.TokenService;
@@ -270,5 +272,27 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         
         // process the fileStream.      
         return Response.ok().entity(jsonString).build();
+    }
+    
+    @Override
+    public Response documentsSearch(String id, SecurityContext securityContext) {
+        String jsonString = "";
+        // get the file.        
+        FolderResource folderResource;
+        FilesResource searchFiles = null;
+        try {
+            // change to the dmod folder.
+            folderResource = null;
+            // get the history.
+            
+	
+            searchFiles = dmsService.searchFiles(folderResource, null, null, null, "Created", null, null, null, null, null, null, null, null, null, 
+						null, null, null, true, null, null, null, null, null, null, null, 1, 20, null);
+            jsonString = gson.toJson(searchFiles);
+        } catch (DocumentManagementException ex) {
+            LOG.error(null, ex);
+        } 
+        
+        return Response.ok().entity(jsonString).build();   
     }
 }
