@@ -10,17 +10,24 @@ import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementException;
 import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementService;
 import ca.bc.gov.nrs.dm.rest.client.v1.ForbiddenAccessException;
 import ca.bc.gov.nrs.dm.rest.client.v1.impl.DocumentManagementServiceImpl;
+import ca.bc.gov.nrs.dm.rest.v1.resource.ACLResource;
 import ca.bc.gov.nrs.dm.rest.v1.resource.AbstractFolderResource;
+import ca.bc.gov.nrs.dm.rest.v1.resource.DefaultEngagementFileMetadataResource;
+import ca.bc.gov.nrs.dm.rest.v1.resource.EngagementFolderResource;
 import ca.bc.gov.nrs.dm.rest.v1.resource.FileResource;
 import ca.bc.gov.nrs.dm.rest.v1.resource.FilesResource;
-import ca.bc.gov.nrs.dm.rest.v1.resource.FolderResource;
+import ca.bc.gov.nrs.dm.rest.v1.resource.FolderContentResource;
 import ca.bc.gov.nrs.dm.rest.v1.resource.RevisionsResource;
+import ca.bc.gov.nrs.dm.rest.v1.resource.SecurityMetadataResource;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.Oauth2ClientException;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.TokenService;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.impl.TokenServiceImpl;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.resource.AccessToken;
 import com.google.gson.Gson;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletContext;
@@ -54,6 +61,14 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
       private static String serviceId;
       private static String serviceSecret;
       private static String baseRemotePath;
+      
+      
+      public static final String ROOT_FOLDER_NAME = "DMOD";
+      public static final String ROOT_FOLDER = "/NRS";
+      public static final String SOURCE_FOLDER = "DMAPI_TEST";
+      public static final String PARENT_FOLDER = ROOT_FOLDER + "/" + SOURCE_FOLDER;
+      public static final String APPLICATION_ROOT_FOLDER = PARENT_FOLDER + "/" + ROOT_FOLDER_NAME;
+      
            
       private OAuth2ProtectedResourceDetails oAuth2ProtectedResourceDetails = null;
       
@@ -80,6 +95,8 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         try {
             // create an instance of the service.
             dmsService = buildDMSClientService (serviceId, serviceSecret);
+            
+            setupFolders();
         } catch (Oauth2ClientException ex) {
             LOG.error(null, ex);
         }
@@ -87,6 +104,71 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         // create a Gson object for use by the various services.  
         gson = new Gson();
                   
+    }
+    
+    
+    /**
+     * Setup the folders used by the application.
+     * @param oAuthToken
+     * @throws URISyntaxException 
+     */
+    protected void setupFolders(){
+        
+        AbstractFolderResource rootFolder = null;
+        try
+        {
+            rootFolder = dmsService.getFolderByPath(APPLICATION_ROOT_FOLDER);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+        if (rootFolder == null)
+        { 
+            // create the root folder.
+            try {
+                AbstractFolderResource parentFolder = dmsService.getFolderByPath(PARENT_FOLDER);
+                
+                EngagementFolderResource  newFolder = new EngagementFolderResource();
+                
+                SecurityMetadataResource securityMetadata = new SecurityMetadataResource();
+		securityMetadata.setGeneralVisibility("ExternallyVisible");
+		{
+			List<ACLResource> staffVisibility = new ArrayList<ACLResource>();
+			ACLResource alc = new ACLResource();
+			alc.setPermission("RW");
+			alc.setScope("DMS.STAFF_USER_UPDATE");
+			staffVisibility.add(alc);
+			alc.setPermission("R");
+			alc.setScope("DMS.STAFF_USER_READ");
+			staffVisibility.add(alc);
+			securityMetadata.setStaffVisibility(staffVisibility );
+                }
+                
+                newFolder.setParentFolderID(parentFolder.getItemID());
+                //newFolder.setParentPath(PARENT_FOLDER);
+                //newFolder.setPath(ROOT_FOLDER_NAME);   
+                
+                newFolder.setSecurityMetadata(securityMetadata);
+		newFolder.getDefaultFileMetadata().setSecurityMetadata(securityMetadata);
+		newFolder.getDefaultFileMetadata().setOCIOSecurityClassification("CONFIDENTIAL");
+                
+                
+                DefaultEngagementFileMetadataResource efm = new DefaultEngagementFileMetadataResource();
+                efm.setEngagementID("DMOD");
+                efm.setSourceSystem(SOURCE_FOLDER);
+                
+                newFolder.setDefaultEngagementFileMetadata(efm);
+                
+                rootFolder = dmsService.createEngagementFolder(parentFolder, newFolder);                
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+             
+            }            
+        }        
     }
       
     public DocumentManagementService buildDMSClientService(String serviceId, String serviceSecret) throws Oauth2ClientException
@@ -118,8 +200,9 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
         try {
             // get available documents.
-            AbstractFolderResource folderContents = dmsService.getFolderByPath("baseRemotePath");
-            jsonString = gson.toJson(folderContents);
+            AbstractFolderResource folderContents = dmsService.getFolderByPath(PARENT_FOLDER);
+            FolderContentResource results = dmsService.browseFolder(folderContents, 1, 1000);
+            jsonString = gson.toJson(results);
 
         } catch (DocumentManagementException ex) {
             LOG.error(null, ex);
@@ -249,7 +332,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         
         try {
             // get the folder where files will be stored.
-            AbstractFolderResource uploadFolder = dmsService.getFolderByPath(baseRemotePath);            
+            AbstractFolderResource uploadFolder = dmsService.getFolderByPath(APPLICATION_ROOT_FOLDER);            
             
             InputStream fileStream = file.getObject(InputStream.class);
             java.io.File temp = java.io.File.createTempFile("temp-", ".tmp");
@@ -259,6 +342,9 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             FileResource newFile = dmsService.createFile( temp.getAbsolutePath(), uploadFolder, "NRSDocument", "Created by DMOD", 
                                               "Public","TRAN-102901",
                                               null, null, null, "ExternallyVisible", null, null, null, null);
+            
+            jsonString = gson.toJson(newFile);
+            
             // cleanup
             temp.delete();
             
@@ -278,11 +364,11 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     public Response documentsSearch(String id, SecurityContext securityContext) {
         String jsonString = "";
         // get the file.        
-        FolderResource folderResource;
+        AbstractFolderResource folderResource;
         FilesResource searchFiles = null;
         try {
             // change to the dmod folder.
-            folderResource = null;
+            folderResource = dmsService.getFolderByPath(APPLICATION_ROOT_FOLDER);
             // get the history.
             
 	
@@ -291,7 +377,9 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             jsonString = gson.toJson(searchFiles);
         } catch (DocumentManagementException ex) {
             LOG.error(null, ex);
-        } 
+        } catch (ForbiddenAccessException ex) { 
+              LOG.error(null, ex);
+          }
         
         return Response.ok().entity(jsonString).build();   
     }
