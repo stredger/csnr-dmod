@@ -18,4 +18,5 @@ public interface DocumentsApiService {
       public Response documentsIdHistoryGet(String id, SecurityContext securityContext);
       public Response documentsIdPut(String id, Attachment file, SecurityContext securityContext);
       public Response documentsPost(Attachment item, SecurityContext securityContext);
+      public Response documentsSearch(String fullTextWordsSearch, SecurityContext securityContext);
 }
