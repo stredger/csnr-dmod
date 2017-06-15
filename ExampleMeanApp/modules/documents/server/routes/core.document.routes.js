@@ -8,7 +8,8 @@
 // =========================================================================
 var DocumentClass  = require ('../controllers/core.document.controller');
 var routes = require ('../../../core/server/controllers/core.routes.controller');
-var policy = require ('../../../core/server/controllers/core.policy.controller');
+var policy = require('../../../core/server/controllers/core.policy.controller');
+var config = require('../../../../config/config');
 
 module.exports = function (app) {
 	//
@@ -85,26 +86,45 @@ module.exports = function (app) {
 	app.route ('/api/document/:document/fetch')
 		.all (policy ('guest'))
 		.get (function (req, res) {
-			if (req.Document.internalURL.match (/^(http|ftp)/)) {
-				res.redirect (req.Document.internalURL);
-			} else {
-				// ETL fixing - if the name was brought in without a filename, and we have their document
-				// file format, affix the type as an extension to the original name so they have a better
-				// chance and opening up the file on double-click.
-				String.prototype.endsWith = String.prototype.endsWith || function (str){
-					return new RegExp(str + "$").test(str);
-				};
-				console.log("fetching:",req.Document.internalOriginalName,":", req.Document.documentFileFormat);
-				var name = req.Document.internalOriginalName;
-				if (req.Document.documentFileFormat && !req.Document.internalOriginalName.endsWith(req.Document.documentFileFormat)) {
-					name = req.Document.internalOriginalName + "." + req.Document.documentFileFormat;
-				}
-				routes.streamFile (res, {
-					file : req.Document.internalURL,
-					name : name,
-					mime : req.Document.internalMime
-				});
-			}
+            if (req.Document.internalURL.match(/^(http|ftp)/)) {
+                res.redirect(req.Document.internalURL);
+            } else {
+                // ETL fixing - if the name was brought in without a filename, and we have their document
+                // file format, affix the type as an extension to the original name so they have a better
+                // chance and opening up the file on double-click.
+                String.prototype.endsWith = String.prototype.endsWith || function (str) {
+                    return new RegExp(str + "$").test(str);
+                };
+                console.log("fetching:", req.Document.internalOriginalName, ":", req.Document.documentFileFormat);
+                var name = req.Document.internalOriginalName;
+                if (req.Document.documentFileFormat && !req.Document.internalOriginalName.endsWith(req.Document.documentFileFormat)) {
+                    name = req.Document.internalOriginalName + "." + req.Document.documentFileFormat;
+                }
+
+                // get the file.
+                
+                var downloadurl = '/api/documents/' + req.Document.internalURL + '/download';
+                var options = {
+                    host: config.dmservice,
+                    port: 8080,
+                    path: downloadurl
+                };
+                var contentDisposition = 'attachment; filename=' + req.Document.documentFileName;
+                res.writeHead(200, {
+                    'Content-Type': req.Document.internalMime,
+                    'Content-Disposition': contentDisposition,
+                    'Content-Length': req.Document.internalSize
+                });
+                var http = require('http');
+                http.get(options, function (response) {
+                    response.on('data', function (data) {
+                        res.write(data);
+                    }).on('end', function () {
+                        res.end();                        
+                    });
+                });
+            }
+            
 		});
 	//
 	// upload comment document:  We do this to force the model as opposed to trusting the
@@ -114,12 +134,17 @@ module.exports = function (app) {
 	.all (policy ('guest'))
 		.post (routes.setAndRun (DocumentClass, function (model, req) {
 			return new Promise (function (resolve, reject) {
-				var file = req.files.file;
+                var file = req.files.file;
+
+
 				if (file) {
-					var opts = { oldPath: file.path, projectCode: req.Project.code};
+                    var opts = { oldPath: file.path, projectCode: req.Project.code };
+
+
+
 					routes.moveFile (opts)
 					.then (function (newFilePath) {
-						return model.create ({
+						var theModel = model.create ({
 							// Metadata related to this specific document that has been uploaded.
 							// See the document.model.js for descriptions of the parameters to supply.
 							project                 : req.Project,
@@ -149,7 +174,9 @@ module.exports = function (app) {
 							internalSize            : file.size,
 							internalEncoding        : file.encoding,
 							directoryID             : req.body.directoryid || 0
-						});
+                        });                      
+
+                        return theModel;
 					})
 					.then (resolve, reject);
 				}
@@ -163,76 +190,85 @@ module.exports = function (app) {
 	//
 	app.route ('/api/document/:project/upload').all (policy ('guest'))
 		.post (routes.setAndRun (DocumentClass, function (model, req) {
-			return new Promise (function (resolve, reject) {
-				console.log("incoming upload");
-				var file = req.files.file;
-				if (file && file.originalname === 'this-is-a-file-that-we-want-to-fail.xxx') {
-					reject('Fail uploading this file.');
-				} else if (file) {
-					var opts = { oldPath: file.path, projectCode: req.Project.code};
-					console.log("moving:", opts);
-					routes.moveFile (opts)
-					.then (function (newFilePath) {
-						console.log("moving complete");
-						var readPermissions = null;
-						if (req.headers.internaldocument) {
-							// Force read array to be this:
-							readPermissions = ['assessment-admin', 'assessment-lead', 'assessment-team', 'assistant-dm', 'assistant-dmo', 'associate-dm', 'associate-dmo', 'complaince-officer', 'complaince-lead', 'project-eao-staff', 'project-epd', 'project-intake', 'project-qa-officer', 'project-system-admin'];
-						}
-                        var datePosted = Date.now();
-                        var dateReceived = Date.now();
-						console.log("new Date(req.headers.datereceived)", new Date(req.headers.datereceived));
-						// Allow override of date posting/received
+            return new Promise(function (resolve, reject) {
+                console.log("incoming upload");
+                var file = req.files.file;
+                if (file && file.originalname === 'this-is-a-file-that-we-want-to-fail.xxx') {
+                    reject('Fail uploading this file.');
+                } else if (file) {
+                    var opts = { oldPath: file.path, projectCode: req.Project.code };
 
-                        console.log("creating model");
-						return model.create ({
-							// Metadata related to this specific document that has been uploaded.
-							// See the document.model.js for descriptions of the parameters to supply.
-							project                 : req.Project,
-							//projectID             : req.Project._id,
-							projectFolderType       : req.body.documenttype,//req.body.projectfoldertype,
-							projectFolderSubType    : req.body.documentsubtype,//req.body.projectfoldersubtype,
-							projectFolderName       : req.body.documentfoldername,
-							projectFolderURL        : newFilePath,
-							datePosted 				: datePosted,
-							dateReceived 			: dateReceived,
-							
-							// Migrated from old EPIC
-							oldData            		: req.body.olddata,
 
-							// NB                   : In EPIC, projectFolders have authors, not the actual documents.
-							projectFolderAuthor     : req.body.projectfolderauthor,
-							// These are the data as it was shown on the EPIC website.
-                            documentEPICProjectId:   req.body.documentepicprojectid,
-							documentAuthor          : req.body.documentauthor,
-							documentFileName        : req.body.documentfilename,
-							documentFileURL         : req.body.documentfileurl,
-							documentFileSize        : req.body.documentfilesize,
-							documentFileFormat      : req.body.documentfileformat,
-							documentIsInReview      : req.body.documentisinreview,
-							documentVersion         : 0,
-							// These are automatic as it actually is when it comes into our system
-							internalURL             : newFilePath,
-							internalOriginalName    : file.originalname,
-							internalName            : file.name,
-							internalMime            : file.mimetype,
-							internalExt             : file.extension,
-							internalSize            : file.size,
-							internalEncoding        : file.encoding,
-							directoryID             : req.body.directoryid || 0,
-							displayName             : req.body.displayname || req.body.documentfilename || file.originalname,
-							dateUploaded            : req.body.dateuploaded
-						}, req.headers.inheritmodelpermissionid, readPermissions);
-					})
-					.then(function (d) {
-						if (req.headers.publishafterupload === 'true') {
-							return model.publish(d);
-						} else {
-							return d;
-						}
-					})
-					.then (resolve, reject);
-				}
+                    /* upload to the document management system. */
+                    var request = require('superagent');
+                    var agent1 = request.agent();
+                    var itemid = "";
+                    agent1.post('http://' + config.dmservice +':8080/api/documents')
+                        .attach('file', file.path)
+                        .end(function (err, res) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            
+                            itemid = res.text.substring(1, res.text.length - 1);
+                            
+                            var readPermissions = null;
+                            if (req.headers.internaldocument) {
+                                // Force read array to be this:
+                                readPermissions = ['assessment-admin', 'assessment-lead', 'assessment-team', 'assistant-dm', 'assistant-dmo', 'associate-dm', 'associate-dmo', 'complaince-officer', 'complaince-lead', 'project-eao-staff', 'project-epd', 'project-intake', 'project-qa-officer', 'project-system-admin'];
+                            }
+                            var datePosted = Date.now();
+                            var dateReceived = Date.now();                            
+
+                            console.log("creating model");
+                            model.create({
+                                // Metadata related to this specific document that has been uploaded.
+                                // See the document.model.js for descriptions of the parameters to supply.
+                                project: req.Project,
+                                //projectID             : req.Project._id,
+                                projectFolderType: req.body.documenttype,//req.body.projectfoldertype,
+                                projectFolderSubType: req.body.documentsubtype,//req.body.projectfoldersubtype,
+                                projectFolderName: req.body.documentfoldername,
+                                projectFolderURL: '',
+                                datePosted: datePosted,
+                                dateReceived: dateReceived,
+
+                                // Migrated from old EPIC
+                                oldData: req.body.olddata,
+
+                                // NB                   : In EPIC, projectFolders have authors, not the actual documents.
+                                projectFolderAuthor: req.body.projectfolderauthor,
+                                // These are the data as it was shown on the EPIC website.
+                                documentEPICProjectId: req.body.documentepicprojectid,
+                                documentAuthor: req.body.documentauthor,
+                                documentFileName: req.body.documentfilename,
+                                documentFileURL: req.body.documentfileurl,
+                                documentFileSize: req.body.documentfilesize,
+                                documentFileFormat: req.body.documentfileformat,
+                                documentIsInReview: req.body.documentisinreview,
+                                documentVersion: 0,
+                                // These are automatic as it actually is when it comes into our system
+                                internalURL: itemid,
+                                internalOriginalName: file.originalname,
+                                internalName: file.name,
+                                internalMime: file.mimetype,
+                                internalExt: file.extension,
+                                internalSize: file.size,
+                                internalEncoding: file.encoding,
+                                directoryID: req.body.directoryid || 0,
+                                displayName: req.body.displayname || req.body.documentfilename || file.originalname,
+                                dateUploaded: req.body.dateuploaded
+                            }, req.headers.inheritmodelpermissionid, readPermissions)
+                                .then(function (d) {
+                                    if (req.headers.publishafterupload === 'true') {
+                                        return model.publish(d);
+                                    } else {
+                                        return d;
+                                    }
+                                })
+                                .then(resolve, reject);
+                        });
+                }
 				else {
 					reject ("no file to upload");
 				}
