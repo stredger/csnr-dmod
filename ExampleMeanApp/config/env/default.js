@@ -8,6 +8,7 @@ module.exports = {
     googleAnalyticsTrackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID || 'GOOGLE_ANALYTICS_TRACKING_ID'
   },
   port: process.env.PORT || 3000,
+  dmservice: process.env.DMSERVICE || 'localhost',
   token: {
       tokenQuery: process.env.TOKEN_QUERY || 'smgov_userguid',
       tokenParams: process.env.TOKEN_PARAMS || undefined,

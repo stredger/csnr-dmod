@@ -1,0 +1,37 @@
+
+
+INSERT INTO profile_role_link
+(AUTHORIZATION_PROFILE_ID, APPLICATION_ACRONYM, ROLE_NAME, PRIMARY_ROLE_IND)
+VALUES
+((select authorization_profile_id from authorization_profile where profile_name = 'DMODTEST'), 'DMS', 'STAFF_USER_UPDATE', 'Y')
+/
+
+INSERT INTO profile_role_link
+(AUTHORIZATION_PROFILE_ID, APPLICATION_ACRONYM, ROLE_NAME, PRIMARY_ROLE_IND)
+VALUES
+((select authorization_profile_id from authorization_profile where profile_name = 'DMODTEST'), 'DMS', 'CONTRIBUTOR', 'N')
+/
+
+INSERT INTO profile_role_link
+(AUTHORIZATION_PROFILE_ID, APPLICATION_ACRONYM, ROLE_NAME, PRIMARY_ROLE_IND)
+VALUES
+((select authorization_profile_id from authorization_profile where profile_name = 'DMODPROD'), 'DMS', 'STAFF_USER_UPDATE', 'Y')
+/
+
+INSERT INTO profile_role_link
+(AUTHORIZATION_PROFILE_ID, APPLICATION_ACRONYM, ROLE_NAME, PRIMARY_ROLE_IND)
+VALUES
+((select authorization_profile_id from authorization_profile where profile_name = 'DMODPROD'), 'DMS', 'CONTRIBUTOR', 'N')
+/
+
+INSERT INTO profile_role_link
+(AUTHORIZATION_PROFILE_ID, APPLICATION_ACRONYM, ROLE_NAME, PRIMARY_ROLE_IND)
+VALUES
+((select authorization_profile_id from authorization_profile where profile_name = 'DMODDVLR'), 'DMS', 'STAFF_USER_UPDATE', 'Y')
+/
+
+INSERT INTO profile_role_link
+(AUTHORIZATION_PROFILE_ID, APPLICATION_ACRONYM, ROLE_NAME, PRIMARY_ROLE_IND)
+VALUES
+((select authorization_profile_id from authorization_profile where profile_name = 'DMODDVLR'), 'DMS', 'CONTRIBUTOR', 'N')
+/
