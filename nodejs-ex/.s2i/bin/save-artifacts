@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd ${HOME}
+pushd ${HOME}>/dev/null
 
 if [ -d node_modules ]; then
     # all deps contents to tar stream
