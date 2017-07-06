@@ -19,6 +19,12 @@ set -e
 #npm link $module_list
 
 shopt -s dotglob
+
+echo "---> Restore build artifacts ..."
+if [ "$(ls /tmp/s2i/artifacts/ 2>/dev/null)" ]; then
+    mv /tmp/s2i/artifacts/* ./
+fi
+
 echo "---> Installing application source ..."
 mv /tmp/src/* ./
 
