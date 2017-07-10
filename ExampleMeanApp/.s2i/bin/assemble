@@ -59,17 +59,7 @@ fi
 
 echo "---> Building your Node application from source"
 
-npm install
-
-git config --global url.'https://'.insteadOf git://
-
-if [ ! -d "bower-cache" ]; then
-  mkdir bower-cache
-fi
-
-bower install --config.interactive=false --allow-root --config.storage.cache=$(readlink -f bower-cache)
-
-grunt buildprod
+npm install -d
 
 # Fix source directory permissions
 fix-permissions ./
