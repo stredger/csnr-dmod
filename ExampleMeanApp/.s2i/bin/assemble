@@ -27,7 +27,7 @@ if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
 fi
 
 echo "---> Installing application source ..."
-mv /tmp/src/* ./
+cp -rl /tmp/src/* ./ && rm -r /tmp/src/*
 
 echo "---> Checking for artifacts and other goodies..."
 ls -la /tmp
