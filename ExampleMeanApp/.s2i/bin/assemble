@@ -21,7 +21,7 @@ set -e
 shopt -s dotglob
 
 echo "---> Restore build artifacts ..."
-if [ "$(ls /tmp/s2i/artifacts/ 2>/dev/null)" ]; then
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
 	echo "---> Found build artifacts ..."
     mv /tmp/artifacts/* ./
 fi
