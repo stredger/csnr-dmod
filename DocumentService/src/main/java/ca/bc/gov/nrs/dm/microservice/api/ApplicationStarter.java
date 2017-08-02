@@ -1,4 +1,4 @@
-package ca.bc.nrs.dm.microservice.api;
+package ca.bc.gov.nrs.dm.microservice.api;
 
 import io.fabric8.utils.Strings;
 import io.fabric8.utils.Systems;

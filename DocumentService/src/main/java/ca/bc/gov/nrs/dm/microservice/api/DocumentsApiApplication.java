@@ -1,5 +1,9 @@
-package ca.bc.nrs.dm.microservice.api;
+package ca.bc.gov.nrs.dm.microservice.api;
 
+
+
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,22 +15,50 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import io.fabric8.utils.Manifests;
+import java.util.HashMap;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.swagger.SwaggerFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.cxf.jaxrs.provider.*;
+import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
+
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 @javax.annotation.Generated(value = "class com.quartech.codegen.FuseGenerator", date = "2017-04-24T09:07:23.579-07:00")
+
+
 @ApplicationPath("/api/documents")
 
 public class DocumentsApiApplication extends Application{
+    
+    
+    
 	@Inject
 	private DocumentsApi _DocumentsApi; 
 	
 	private static final Logger LOG = LoggerFactory.getLogger(DocumentsApiApplication.class);
     private static SwaggerFeature swaggerFeature;    
-	
-	@Override
+/*
+    @Override
+public Map<String, Object> getProperties() {
+    Map<String, Object> props = new HashMap<>();
+    props.put("jersey.config.server.provider.classnames", 
+            "org.glassfish.jersey.media.multipart.MultiPartFeature");
+    return props;
+}
+*/
+    
+ @Override
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> resources = new java.util.HashSet<Class<?>>();
+        resources.add(MultiPartFeature.class);
+        return resources;
+    }
+
+    
+    @Override
     public Set<Object> getSingletons() {
     	
     	if (swaggerFeature == null) {
@@ -43,12 +75,13 @@ public class DocumentsApiApplication extends Application{
 			} catch (IOException e) {
 				LOG.info("Could not read the project attributes from the Manifest due to " + e.getMessage());
 			}
-    	}
+    	}            
+        
         return new HashSet<Object>(
                     Arrays.asList(
 						_DocumentsApi,
-						swaggerFeature,
-						new LoggingFeature()
+						swaggerFeature,                                                
+         					new LoggingFeature()
                 )
         );
     }
