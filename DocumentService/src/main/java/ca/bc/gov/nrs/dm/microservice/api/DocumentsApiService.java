@@ -1,9 +1,9 @@
-package ca.bc.nrs.dm.microservice.api;
+package ca.bc.gov.nrs.dm.microservice.api;
 
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
-import ca.bc.nrs.dm.microservice.model.Document;
-import ca.bc.nrs.dm.microservice.model.History;
+import ca.bc.gov.nrs.dm.microservice.model.Document;
+import ca.bc.gov.nrs.dm.microservice.model.History;
 import javax.servlet.ServletContext;
 
 import javax.ws.rs.core.Response;
@@ -13,10 +13,10 @@ import javax.ws.rs.core.SecurityContext;
 public interface DocumentsApiService {
       public Response documentsGet(SecurityContext securityContext, ServletContext servletContext);
       public Response documentsIdDownloadGet(String id, SecurityContext securityContext);    
-      public Response documentsIdDeletePost(String id, SecurityContext securityContext);
+      public Response documentsIdExpirePost(String id, SecurityContext securityContext);
       public Response documentsIdGet(String id, SecurityContext securityContext);
       public Response documentsIdHistoryGet(String id, SecurityContext securityContext);
       public Response documentsIdPut(String id, Attachment file, SecurityContext securityContext);
       public Response documentsPost(Attachment item, SecurityContext securityContext);
-      public Response documentsSearch(String fullTextWordsSearch, SecurityContext securityContext);
+      public Response documentsSearchGet(String fullTextWordsSearch, SecurityContext securityContext);
 }

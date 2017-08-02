@@ -1,4 +1,4 @@
-package ca.bc.nrs.dm.microservice.model;
+package ca.bc.gov.nrs.dm.microservice.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
