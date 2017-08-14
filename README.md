@@ -41,58 +41,47 @@ Install the following:
 - Maven
 - A Java IDE such as Netbeans or Eclipse
 
-Copy the following files to the local-maven-repo folder, from the NRS Artifactory: 
-
+Create an archive of the following artifacts, which will be added to an OpenShift secret.  The files must be in the same directory structure as used for a Maven repository.  For example, for nrs-common-model 1.2.0.6, the directory would be:
+    
 ca\bc\gov\nrs\common\nrs-common-model\1.2.0.6\nrs-common-model-1.2.0.6.jar
-ca\bc\gov\nrs\common\nrs-common-model\1.2.0.6\nrs-common-model-1.2.0.6.pom
-ca\bc\gov\nrs\common\nrs-common-parent\1.2.0.6\nrs-common-parent-1.2.0.6.pom
-ca\bc\gov\nrs\common\nrs-common-rest-client\1.2.0.6\nrs-common-rest-client-1.2.0.6.jar
-ca\bc\gov\nrs\common\nrs-common-rest-client\1.2.0.6\nrs-common-rest-client-1.2.0.6.pom
-ca\bc\gov\nrs\common\nrs-common-rest-common\1.2.0.6\nrs-common-rest-common-1.2.0.6.jar
-ca\bc\gov\nrs\common\nrs-common-rest-common\1.2.0.6\nrs-common-rest-common-1.2.0.6.pom
-ca\bc\gov\nrs\common\nrs-common-service-api\1.2.0.6\nrs-common-service-api-1.2.0.6.jar
-ca\bc\gov\nrs\common\nrs-common-service-api\1.2.0.6\nrs-common-service-api-1.2.0.6.pom
-ca\bc\gov\nrs\common\nrs-common-util\1.2.0.6\nrs-common-util-1.2.0.6.jar
-ca\bc\gov\nrs\common\nrs-common-util\1.2.0.6\nrs-common-util-1.2.0.6.pom
-ca\bc\gov\nrs\dm\nrs-dm-model\1.2.0.4\nrs-dm-model-1.2.0.4.jar
-ca\bc\gov\nrs\dm\nrs-dm-model\1.2.0.4\nrs-dm-model-1.2.0.4.pom
-ca\bc\gov\nrs\dm\nrs-dm-parent\1.2.0.4\nrs-dm-parent-1.2.0.4.pom
-ca\bc\gov\nrs\dm\nrs-dm-rest-client\1.2.0.4\nrs-dm-rest-client-1.2.0.4.jar
-ca\bc\gov\nrs\dm\nrs-dm-rest-client\1.2.0.4\nrs-dm-rest-client-1.2.0.4.pom
-ca\bc\gov\nrs\dm\nrs-dm-rest-common\1.2.0.4\nrs-dm-rest-common-1.2.0.4.jar
-ca\bc\gov\nrs\dm\nrs-dm-rest-common\1.2.0.4\nrs-dm-rest-common-1.2.0.4.pom
-ca\bc\gov\nrs\dm\nrs-dm-service\1.2.0.4\nrs-dm-service-1.2.0.4-javadoc.jar
-ca\bc\gov\nrs\dm\nrs-dm-service\1.2.0.4\nrs-dm-service-1.2.0.4.jar
-ca\bc\gov\nrs\dm\nrs-dm-service\1.2.0.4\nrs-dm-service-1.2.0.4.pom
-ca\bc\gov\webade\webade-oath2-assembly-distribution\webade-oauth2-assembly-distribution-1.2.0.4.pom
-ca\bc\gov\webade\webade-oath2-ear\1.2.0.4\webade-oauth2-ear-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-assembly-database\1.2.0.4\webade-oauth2-assembly-database-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-common\1.2.0.4\webade-oauth2-common-1.2.0.4-javadoc.jar
-ca\bc\gov\webade\webade-oauth2-common\1.2.0.4\webade-oauth2-common-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-integration-test\1.2.0.4\webade-oauth2-integration-test-1.2.0.4.jar
-ca\bc\gov\webade\webade-oauth2-integration-test\1.2.0.4\webade-oauth2-integration-test-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-parent\webade-oauth2-parent-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-persistence\webade-oauth2-persistence-1.2.0.4.jar
-ca\bc\gov\webade\webade-oauth2-persistence\webade-oauth2-persistence-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-principal\webade-oauth2-principal-1.2.0.4.jar
-ca\bc\gov\webade\webade-oauth2-principal\webade-oauth2-principal-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-rest-admin-client\1.2.0.4\webade-oauth2-rest-admin-client-1.2.0.4.jar
-ca\bc\gov\webade\webade-oauth2-rest-admin-client\1.2.0.4\webade-oauth2-rest-admin-client-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-rest-token-client\1.2.0.4\webade-oauth2-rest-token-client-1.2.0.4.jar
-ca\bc\gov\webade\webade-oauth2-rest-token-client\1.2.0.4\webade-oauth2-rest-token-client-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-services\1.2.0.4\webade-oauth2-services-1.2.0.4-sources.jar
-ca\bc\gov\webade\webade-oauth2-services\1.2.0.4\webade-oauth2-services-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-test-support\webade-oauth2-test-support-1.2.0.4.jar
-ca\bc\gov\webade\webade-oauth2-test-support\webade-oauth2-test-support-1.2.0.4.pom
-ca\bc\gov\webade\webade-oauth2-user-service\webade-oauth2-user-service-1.2.0.4.jar
-ca\bc\gov\webade\webade-oauth2-user-service\webade-oauth2-user-service-1.2.0.4.pom
-oracle\ucm\ridc\11.1.1\ridc-11.1.1.jar 
-oracle\ucm\ridc\11.1.1\ridc-11.1.1.pom
 
+An easy way to obtain this directory structure is to copy from your local Maven repository.
+
+Complete set of artifacts required:
+
+| Artifact | version |
+| -------- | ------- |
+| nrs-common-model | 1.2.0.6 |
+| nrs-common-parent | 1.2.0.6 |
+| nrs-common-rest-client | 1.2.0.6 |
+| nrs-common-rest-common | 1.2.0.6 |
+| nrs-common-service-api | 1.2.0.6 |
+| nrs-common-service-api | 1.2.0.6 |
+| nrs-common-util        | 1.2.0.6 |
+| nrs-dm-model           | 1.2.0.4 |
+| nrs-dm-parent          | 1.2.0.4 |
+| nrs-dm-rest-client     | 1.2.0.4 |
+| nrs-dm-rest-common     | 1.2.0.4 |
+| nrs-dm-rest-common     | 1.2.0.4 |
+| nrs-dm-service         | 1.2.0.4 |
+| webade-oauth2-assembly-distribution | 1.2.0.4 |
+| webade-oauth2-ear | 1.2.0.4 |
+| webade-oauth2-assembly-database | 1.2.0.4 |
+| webade-oauth2-common | 1.2.0.4 |
+| webade-oauth2-integration-test | 1.2.0.4 |
+| webade-oauth2-parent | 1.2.0.4 |
+| webade-oauth2-persistence | 1.2.0.4 | 
+| webade-oauth2-principal | 1.2.0.4 |
+| webade-oauth2-principal | 1.2.0.4 | 
+| webade-oauth2-rest-admin-client | 1.2.0.4 |
+| webade-oauth2-rest-token-client | 1.2.0.4 |
+| webade-oauth2-services | 1.2.0.4 |
+| webade-oauth2-test-support | 1.2.0.4 |
+| webade-oauth2-user-service | 1.2.0.4 | 
+| oracle ridc | 11.1.1 | 
 
 OpenShift Configuration
 -----------------------
-
 
 Secrets
 -------
@@ -125,12 +114,14 @@ If no changes to the default parameters are required, the template can be proces
 
 Nexus
 -----
-S2i builds such as that used for this project can be extremely slow to execute.  Build times of more than 30 minutes are normal, and sometimes a build can take more than several hours.  To speed up the build, a local nexus can be used.
+Complex Java projects can be slow to execute.  Build times of more than 30 minutes are normal, and sometimes a build can take more than several hours.  To speed up the build, a local nexus can be used.
 
 The following commands can be used to configure a local nexus:
 
 `oc new-app sonatype/nexus`
+
 `oc expose svc/nexus`
+
 `oc volumes dc/nexus --add --name nexus-volume-1 --type persistentVolumeClaim --mount-path /sonatype-work/ --claim-name nexus-pv --claim-size 5G --overwrite`
 
 
