@@ -30,8 +30,11 @@ Run Locally
 ----------
 `git clone https://github.com/bcgov/csnr-dmod.git`
 `cd cnsr-dmod`
-`npm install`
-`grunt build && node server.js`
+`npm install -g kerberos -python=\Python27` 
+`npm install -python=<Python Location>`  (Since the application uses gyp, you will need to specify a location where a version of Python > 2.5 and < 3.0 is installed; 2.7 is recommended)
+`bower install --config.interactive=false --allow-root`
+`grunt buildProd`
+`node server.js`
 
 Development Environment: Java
 ----------------------------
