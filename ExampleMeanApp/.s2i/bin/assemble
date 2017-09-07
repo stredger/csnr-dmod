@@ -61,5 +61,14 @@ echo "---> Building your Node application from source"
 
 npm install -d
 
+
+if [ ! -d "bower-cache" ]; then
+  mkdir bower-cache
+fi
+
+bower install --config.interactive=false --allow-root --config.storage.cache=$(readlink -f bower-cache)
+
+grunt buildprod
+
 # Fix source directory permissions
 fix-permissions ./
