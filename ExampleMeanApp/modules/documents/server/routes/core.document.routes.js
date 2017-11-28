@@ -200,10 +200,13 @@ module.exports = function (app) {
 
 
                     /* upload to the document management system. */
-                    var request = require('superagent');
-                    var agent1 = request.agent();
+                    var superagent = require('superagent');
+                    var agent1 = superagent.agent();
                     var itemid = "";
-                    agent1.post('http://' + config.dmservice +':8080/api/documents')
+                    var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
+                    console.log("DMS URL is " + dmsurl);
+                    console.log("File.path is " + file.path);
+                    agent1.post(dmsurl)
                         .attach('file', file.path)
                         .end(function (err, res) {
                             if (err) {
