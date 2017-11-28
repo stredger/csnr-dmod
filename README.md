@@ -39,6 +39,9 @@ Run Locally
 Development Environment: Java
 ----------------------------
 
+Activity Diagram:
+![](http://https://raw.githubusercontent.com/bcgov/csnr-dmod/master/images/MicroserviceActivity.png)
+
 Install the following:
 - Java JDK 1.7 or newer  (JDK 1.8 is known to work well.)
 - Maven
