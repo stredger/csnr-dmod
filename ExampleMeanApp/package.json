@@ -95,7 +95,7 @@
     "grunt-nodemon": "~0.4.0",
     "grunt-protractor-coverage": "~0.2.15",
     "grunt-protractor-runner": "^2.1.0",
-    "grunt-sass": "^1.2.0",
+    "grunt-sass": "^1.1.0",
     "karma": "~0.12.37",
     "karma-chrome-launcher": "~0.2.0",
     "karma-coverage": "~0.4.2",
