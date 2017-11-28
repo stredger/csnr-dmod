@@ -76,9 +76,6 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     private static final String OAUTH_BEARER = "Bearer ";
     private static String serviceId;
     private static String serviceSecret;
-    private static String serviceAccountUsername;
-    private static String serviceAccountPassword;
-    private static String serviceAccountGuid;
     private static String baseRemotePath;
 
 
@@ -101,12 +98,8 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         serviceId = (String) applicationContext.getBean("serviceId");
         serviceSecret = (String) applicationContext.getBean("serviceSecret");
 
-        // serviceAccountUsername is SM_UNIVERSALID
-        serviceAccountUsername = (String) applicationContext.getBean("serviceAccountUsername");
-        serviceAccountPassword = (String) applicationContext.getBean("serviceAccountPassword");
-
         // serviceAccountGuid is the SMGOV_USERGUID header.
-        serviceAccountGuid = (String) applicationContext.getBean("serviceAccountGuid");
+        //serviceAccountGuid = (String) applicationContext.getBean("serviceAccountGuid");
 
         oAuth2ProtectedResourceDetails = (OAuth2ProtectedResourceDetails) applicationContext.getBean("documentManagementUserResource");
 
@@ -120,8 +113,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
         try {
             // create an instance of the service.
-            dmsService = buildDMSClientService(serviceId, serviceSecret, serviceAccountUsername, serviceAccountPassword, serviceAccountGuid);
-
+            dmsService = buildDMSClientService(serviceId, serviceSecret, null, null, null);
             setupFolders();
         } catch (Oauth2ClientException ex) {
             LOG.error(null, ex);
@@ -368,7 +360,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             EngagementFolderResource engagementFolder = dmsService.getEngagementFolderByID(destinationFolder.getItemID());
 
             InputStream fileStream = file.getObject(InputStream.class);
-            java.io.File temp = java.io.File.createTempFile("temp-", ".tmp");
+            java.io.File temp = java.io.File.createTempFile("/tmp/temp-", ".tmp");
 
             // write the bytes to the temporary file.
             java.nio.file.Files.copy(fileStream, temp.toPath(), REPLACE_EXISTING);
