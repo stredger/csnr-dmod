@@ -76,6 +76,9 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     private static final String OAUTH_BEARER = "Bearer ";
     private static String serviceId;
     private static String serviceSecret;
+    private static String serviceAccountUsername;
+    private static String serviceAccountPassword;
+    private static String serviceAccountGuid;
     private static String baseRemotePath;
 
 
@@ -98,8 +101,12 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         serviceId = (String) applicationContext.getBean("serviceId");
         serviceSecret = (String) applicationContext.getBean("serviceSecret");
 
+        // serviceAccountUsername is SM_UNIVERSALID
+        serviceAccountUsername = (String) applicationContext.getBean("serviceAccountUsername");
+        serviceAccountPassword = (String) applicationContext.getBean("serviceAccountPassword");
+
         // serviceAccountGuid is the SMGOV_USERGUID header.
-        //serviceAccountGuid = (String) applicationContext.getBean("serviceAccountGuid");
+        serviceAccountGuid = (String) applicationContext.getBean("serviceAccountGuid");
 
         oAuth2ProtectedResourceDetails = (OAuth2ProtectedResourceDetails) applicationContext.getBean("documentManagementUserResource");
 
@@ -113,7 +120,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
         try {
             // create an instance of the service.
-            dmsService = buildDMSClientService(serviceId, serviceSecret, null, null, null);
+            dmsService = buildDMSClientService(serviceId, serviceSecret, serviceAccountUsername, serviceAccountPassword, serviceAccountGuid);
             setupFolders();
         } catch (Oauth2ClientException ex) {
             LOG.error(null, ex);
