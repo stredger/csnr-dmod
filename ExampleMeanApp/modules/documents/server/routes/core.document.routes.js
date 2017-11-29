@@ -104,6 +104,9 @@ module.exports = function (app) {
                 // get the file.
                 
                 var downloadurl = '/api/documents/' + req.Document.internalURL + '/download';
+
+                console.log("downloadurl:", downloadurl);
+
                 var options = {
                     host: config.dmservice,
                     port: 8080,
@@ -212,9 +215,12 @@ module.exports = function (app) {
                             if (err) {
                                 console.log(err);
                             }
-                            
+                            console.log("response is " + res.text);
+
                             itemid = res.text.substring(1, res.text.length - 1);
-                            
+
+                            console.log("itemid is " + itemid);
+
                             var readPermissions = null;
                             if (req.headers.internaldocument) {
                                 // Force read array to be this:
