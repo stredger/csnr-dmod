@@ -441,7 +441,7 @@
 <goal>build</goal>
 </goals>
             <configuration>
-              <javaMainClass>ca.bc.nrs.dm.microservice.api.ApplicationStarter</javaMainClass>
+              <javaMainClass>ca.bc.gov.nrs.dm.microservice.api.ApplicationStarter</javaMainClass>
             </configuration>
           </execution>
         </executions>
