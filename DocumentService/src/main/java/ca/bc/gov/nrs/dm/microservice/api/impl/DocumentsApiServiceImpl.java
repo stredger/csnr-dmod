@@ -51,9 +51,9 @@ import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 
-import ca.bc.gov.webade.oauth2.rest.test.client.AuthorizationCodeService;
-import ca.bc.gov.webade.oauth2.rest.test.client.impl.AuthorizationCodeServiceImpl;
-import ca.bc.gov.webade.oauth2.rest.test.resource.AuthorizationCode;
+// import ca.bc.gov.webade.oauth2.rest.test.client.AuthorizationCodeService;
+//import ca.bc.gov.webade.oauth2.rest.test.client.impl.AuthorizationCodeServiceImpl;
+//import ca.bc.gov.webade.oauth2.rest.test.resource.AuthorizationCode;
 
 
 @RequestScoped
@@ -193,7 +193,9 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
         Long ownerOrganizationId = null;
         TokenService tokenService = new TokenServiceImpl(serviceId, serviceSecret, null, tokenUrl);
-        //AccessToken token = tokenService.getToken(SCOPES);
+        AccessToken token = tokenService.getToken(SCOPES);
+
+        /*
 
         AuthorizationCodeService authorizationCodeService = new AuthorizationCodeServiceImpl(serviceId, authorizeUrl);
 
@@ -202,7 +204,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         System.out.println("Authorization code is " + authorizationCode.getCode());
 
         AccessToken token = tokenService.getToken(SCOPES, authorizationCode.getCode(), null);
-
+*/
         DocumentManagementService clientService = createDMSClientService(token);
         dmsServiceOAuthToken = OAUTH_BEARER + token.getAccessToken();
         return clientService;
