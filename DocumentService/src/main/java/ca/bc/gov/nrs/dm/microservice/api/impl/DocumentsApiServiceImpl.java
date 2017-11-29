@@ -247,7 +247,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         try {
             FileResource fileResource;
             fileResource = dmsService.getFileByID(id);
-            java.io.File temp = java.io.File.createTempFile("temp-", ".tmp");
+            java.io.File temp = java.io.File.createTempFile("/tmp/temp-", ".tmp");
             byte[] data = dmsService.getFileContent(id);
             // write the bytes to the temporary file.
             java.nio.file.Files.write(temp.toPath(), data);
@@ -335,7 +335,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             fileResource = dmsService.getFileByID(id);
 
             InputStream fileStream = file.getObject(InputStream.class);
-            java.io.File temp = java.io.File.createTempFile("temp-", ".tmp");
+            java.io.File temp = java.io.File.createTempFile("/tmp/temp-", ".tmp");
             // write the bytes to the temporary file.
             java.nio.file.Files.copy(fileStream, temp.toPath());
 
