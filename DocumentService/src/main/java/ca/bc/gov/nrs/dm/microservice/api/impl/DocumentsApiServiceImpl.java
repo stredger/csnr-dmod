@@ -121,7 +121,6 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         try {
             // create an instance of the service.
             dmsService = buildDMSClientService(serviceId, serviceSecret, serviceAccountUsername, serviceAccountPassword, serviceAccountGuid);
-
             setupFolders();
         } catch (Oauth2ClientException ex) {
             LOG.error(null, ex);
@@ -368,7 +367,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             EngagementFolderResource engagementFolder = dmsService.getEngagementFolderByID(destinationFolder.getItemID());
 
             InputStream fileStream = file.getObject(InputStream.class);
-            java.io.File temp = java.io.File.createTempFile("temp-", ".tmp");
+            java.io.File temp = java.io.File.createTempFile("/tmp/temp-", ".tmp");
 
             // write the bytes to the temporary file.
             java.nio.file.Files.copy(fileStream, temp.toPath(), REPLACE_EXISTING);
