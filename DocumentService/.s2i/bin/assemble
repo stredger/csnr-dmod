@@ -3,9 +3,7 @@ ls
 pwd
 # extract the archives from the secrets
 mkdir local-maven-repo
-unzip /home/jboss/ca.zip
-unzip /home/jboss/ca.zip
-unzip /home/jboss/oracle.zip
+unzip '*.zip'
 mv ca local-maven-repo
 mv oracle local-maven-repo
 mv local-maven-repo /tmp/src
