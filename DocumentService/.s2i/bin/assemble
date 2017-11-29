@@ -1,5 +1,5 @@
 #!/bin/bash
-
+ls
 # extract the archives from the secrets
 mkdir local-maven-repo
 unzip ca.zip 
