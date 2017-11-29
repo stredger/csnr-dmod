@@ -317,66 +317,60 @@
     <dependency>
         <groupId>ca.bc.gov.nrs.dm</groupId>
         <artifactId>nrs-dm-rest-client</artifactId>
-        <version>1.3.0.2</version>		
+        <version>1.2.0.4</version>              
     </dependency>
-    
     <dependency>
         <groupId>ca.bc.gov.nrs.dm</groupId>
         <artifactId>nrs-dm-service</artifactId>
-        <version>1.3.0.2</version>              
+        <version>1.2.0.4</version>              
     </dependency>
     <dependency>
         <groupId>ca.bc.gov.nrs.dm</groupId>
         <artifactId>nrs-dm-parent</artifactId>
-        <version>1.3.0.2</version>      
+        <version>1.2.0.4</version>      
         <type>pom</type>        
     </dependency>
     <dependency>
         <groupId>ca.bc.gov.nrs.dm</groupId>
         <artifactId>nrs-dm-model</artifactId>
-        <version>1.3.0.2</version>              
+        <version>1.2.0.4</version>              
     </dependency>
     <dependency>
         <groupId>ca.bc.gov.nrs.dm</groupId>
         <artifactId>nrs-dm-rest-common</artifactId>
-        <version>1.3.0.2</version>              
+        <version>1.2.0.4</version>              
     </dependency>
     <dependency>
         <groupId>ca.bc.gov.nrs.common</groupId>
         <artifactId>nrs-common-rest-client</artifactId>
-        <version>1.3.0.2</version>              
+        <version>1.2.0.6</version>              
     </dependency>  
     <dependency>
         <groupId>ca.bc.gov.nrs.common</groupId>
         <artifactId>nrs-common-model</artifactId>
-        <version>1.3.0.2</version>              
+        <version>1.2.0.6</version>              
     </dependency>
     <dependency>
         <groupId>ca.bc.gov.nrs.common</groupId>
         <artifactId>nrs-common-util</artifactId>
-        <version>1.3.0.2</version>              
+        <version>1.2.0.6</version>              
     </dependency>    
     <dependency>
         <groupId>ca.bc.gov.nrs.common</groupId>
         <artifactId>nrs-common-rest-common</artifactId>
-        <version>1.3.0.2</version>              
+        <version>1.2.0.6</version>              
     </dependency>
     <dependency>
         <groupId>ca.bc.gov.nrs.common</groupId>
         <artifactId>nrs-common-service-api</artifactId>
-        <version>1.3.0.2</version>              
+        <version>1.2.0.6</version>              
     </dependency>
      
     <dependency>
         <groupId>ca.bc.gov.webade</groupId>
         <artifactId>webade-oauth2-rest-token-client</artifactId>
-        <version>1.3.0.0</version>              
+        <version>1.2.0.4</version>              
     </dependency>
-    <dependency>
-			<groupId>ca.bc.gov.webade</groupId>
-			<artifactId>webade-oauth2-test-support</artifactId>
-			<version>1.3.0.0</version>  
-		</dependency>
 	
     <dependency>
         <groupId>oracle.ucm</groupId>
