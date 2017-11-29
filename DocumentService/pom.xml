@@ -75,6 +75,12 @@
     </dependencies>
   </dependencyManagement>
 
+  <repositories>
+      <repository>
+         <id>localrepository</id>
+         <url>file:///tmp/local-maven-repo</url>
+      </repository>
+   </repositories>
 
   <dependencies>
       
