@@ -1,10 +1,11 @@
 #!/bin/bash
 # extract the archives from the secrets
 cd /tmp
+cp 1/*.zip .
+cp 2/*.zip .
 mkdir local-maven-repo
 unzip oracle.zip
-unzip ca1.zip
-unzip ca2.zip
+unzip ca.zip
 mv ca local-maven-repo
 mv oracle local-maven-repo
 ls -l
