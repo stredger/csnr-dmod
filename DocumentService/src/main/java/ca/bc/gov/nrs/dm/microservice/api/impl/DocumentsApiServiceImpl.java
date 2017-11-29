@@ -101,13 +101,6 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         serviceId = (String) applicationContext.getBean("serviceId");
         serviceSecret = (String) applicationContext.getBean("serviceSecret");
 
-        // serviceAccountUsername is SM_UNIVERSALID
-        serviceAccountUsername = (String) applicationContext.getBean("serviceAccountUsername");
-        serviceAccountPassword = (String) applicationContext.getBean("serviceAccountPassword");
-
-        // serviceAccountGuid is the SMGOV_USERGUID header.
-        serviceAccountGuid = (String) applicationContext.getBean("serviceAccountGuid");
-
         oAuth2ProtectedResourceDetails = (OAuth2ProtectedResourceDetails) applicationContext.getBean("documentManagementUserResource");
 
         // URLS
@@ -120,7 +113,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
         try {
             // create an instance of the service.
-            dmsService = buildDMSClientService(serviceId, serviceSecret, serviceAccountUsername, serviceAccountPassword, serviceAccountGuid);
+            dmsService = buildDMSClientService(serviceId, serviceSecret, "", "", "");
             setupFolders();
         } catch (Oauth2ClientException ex) {
             LOG.error(null, ex);
