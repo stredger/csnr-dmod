@@ -240,12 +240,12 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         try {
             FileResource fileResource;
             fileResource = dmsService.getFileByID(id);
-            java.io.File temp = java.io.File.createTempFile("/uploads/temp-", ".tmp");
+            java.io.File temp = java.io.File.createTempFile("temp-", ".tmp",new File("/uploads"));
             byte[] data = dmsService.getFileContent(id);
             // write the bytes to the temporary file.
-            java.nio.file.Files.write(temp.toPath(), data);
+            ByteArrayInputStream bis = new ByteArrayInputStream(data);
 
-            return Response.ok(temp, MediaType.APPLICATION_OCTET_STREAM)
+            return Response.ok(bis, MediaType.APPLICATION_OCTET_STREAM)
                     .header("Content-Disposition", "attachment; filename=\"" + fileResource.getFilename() + "\"")
                     .build();
         } catch (DocumentManagementException ex) {
@@ -328,7 +328,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             fileResource = dmsService.getFileByID(id);
 
             InputStream fileStream = file.getObject(InputStream.class);
-            java.io.File temp = java.io.File.createTempFile("/uploads/temp-", ".tmp");
+            java.io.File temp = java.io.File.createTempFile("temp-", ".tmp",new File("/uploads"));
             // write the bytes to the temporary file.
             java.nio.file.Files.copy(fileStream, temp.toPath());
 
@@ -362,7 +362,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             EngagementFolderResource engagementFolder = dmsService.getEngagementFolderByID(destinationFolder.getItemID());
 
             InputStream fileStream = file.getObject(InputStream.class);
-            java.io.File temp = java.io.File.createTempFile("/uploads/temp-", ".tmp");
+            java.io.File temp = java.io.File.createTempFile("temp-", ".tmp",new File("/uploads"));
 
             // write the bytes to the temporary file.
             java.nio.file.Files.copy(fileStream, temp.toPath(), REPLACE_EXISTING);
