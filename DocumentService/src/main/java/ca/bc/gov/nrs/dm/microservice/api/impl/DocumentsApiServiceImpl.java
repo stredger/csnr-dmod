@@ -29,7 +29,9 @@ import ca.bc.gov.webade.oauth2.rest.v1.token.client.impl.TokenServiceImpl;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.resource.AccessToken;
 import com.google.gson.Gson;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.File;
 import java.net.URISyntaxException;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
