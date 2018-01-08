@@ -11,6 +11,8 @@
 
     <!-- the version of the BOM, defining all the dependency versions -->
     <fuse.version>6.2.1.redhat-084</fuse.version>
+	<!-- old fabric8.version - 2.2.0.redhat-079 !-->
+	
     <fabric8.version>2.2.0.redhat-079</fabric8.version>
     <docker.maven.plugin.version>0.13.6</docker.maven.plugin.version>
 
@@ -80,8 +82,27 @@
          <id>localrepository</id>
          <url>file:///tmp/local-maven-repo</url>
       </repository>
-   </repositories>
-
+    <repository>
+      <id>my-javanet</id>
+      <name>javanet</name>
+      <url>https://maven.java.net/content/repositories/releases/</url>
+    </repository>
+    <repository>
+      <id>redhat-fs</id>
+      <name>redhat-fs</name>
+      <url>https://maven.repository.redhat.com/nexus/content/repositories/fs-public</url>
+    </repository>
+	<repository>
+      <id>redhat-ga</id>
+      <name>redhat-ga</name>
+      <url>https://maven.repository.redhat.com/ga/</url>
+    </repository>
+	<repository>
+      <id>maven-central</id>
+      <name>maven-central</name>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+     </repositories> 
   <dependencies>
       
 
@@ -434,7 +455,7 @@ Testing removal of resteasy
       <plugin>
         <groupId>io.fabric8</groupId>
         <artifactId>hawt-app-maven-plugin</artifactId>
-        <version>${fabric8.version}</version>
+        <version>3.0.8</version>
         <executions>
           <execution>
             <id>hawt-app</id>
@@ -488,4 +509,7 @@ Testing removal of resteasy
 
         </plugins>
     </build>
+	
+
+	
 </project>

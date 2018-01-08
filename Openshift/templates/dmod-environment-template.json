@@ -34,7 +34,7 @@
       "kind": "PersistentVolumeClaim",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-docs-pvc"
+        "name": "uploads"
       },
       "spec": {
         "accessModes": [
@@ -172,7 +172,12 @@
                   {
                     "name": "ADMINPW",
                     "value": "${ESM_ADMINPW}"
+                  },
+				  {
+					"name": "DMSERVICE",
+					"value": "document-microservice"
                   }
+				  
                 ],
                 "readinessProbe": {
                   "timeoutSeconds": 3000,
@@ -199,8 +204,8 @@
                 },
                 "volumeMounts": [
                   {
-                    "name": "${NAME}-docs",
-                    "mountPath": "${DOCUMENT_MOUNT_PATH}"
+                                "name": "dmod-app",
+                                "mountPath": "/opt/app-root/src/uploads"
                   }
                 ]
               }
@@ -445,12 +450,18 @@
                     "spec": {
 						"volumes": [
 							{
-								"name": "credentials-volume",
-								"secret": {
-									"secretName": "nrs-credentials",
-									"defaultMode": 420							
-								}
-							}
+                                "name": "credentials-volume",
+                                "secret": {
+                                    "secretName": "nrs-credentials",
+                                    "defaultMode": 420
+                                }
+                            },
+                            {
+                                "name": "volume-kbck9",
+                                "persistentVolumeClaim": {
+                                    "claimName": "uploads"
+                                }
+                            }
 						],
                         "containers": [
                             {
@@ -513,11 +524,16 @@
                                     "timeoutSeconds": 5
                                 },
 								 "volumeMounts": [
-								{
-									"name": "credentials-volume",
-									"readOnly": true,
-									"mountPath": "/tmp"
-								},                        
+                                    {
+                                        "name": "credentials-volume",
+                                        "readOnly": true,
+                                        "mountPath": "/tmp"
+                                    },
+                                    {
+                                        "name": "volume-kbck9",
+                                        "mountPath": "/uploads"
+                                    }
+                                ],                        
                                 "resources": {},
                                 "terminationMessagePath": "/dev/termination-log"
                             }

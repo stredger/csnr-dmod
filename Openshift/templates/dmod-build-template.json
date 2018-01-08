@@ -147,7 +147,7 @@
         "source": {
             "type": "Git",
             "git": {
-                "uri": "https://github.com/GeorgeWalker/csnr-dmod.git"
+                "uri": "${SOURCE_REPOSITORY_URL}"
             },
             "contextDir": "nodejs-ex"
         },
@@ -157,15 +157,9 @@
                 "from": {
                     "kind": "ImageStreamTag",
                     "namespace": "openshift",
-                    "name": "nodejs:4"
+                    "name": "nodejs:6"
                 },
-                "env": [
-                    {
-                        "name": "NPM_MIRROR",
-                        "value": "http://nexus-csnr-dmod-tools.pathfinder.gov.bc.ca/nexus/content/repositories/Node/"
-                    }
-                ],
-                "incremental": true
+                "incremental": false
             }
         },
         "output": {
@@ -246,17 +240,17 @@
             },
 			"secrets":
 			[
-			    {			  
-					"secret" : {"name": "nrs-credentials",
-					"destinationDir": "/tmp/"}
+				{
+					"secret": {
+						"name": "nrs-libs"
+					},
+					"destinationDir": "/tmp/1"
 				},
-				{			  
-					"secret" : {"name": "nrs-libs",
-					"destinationDir": "/tmp/src/"}
-				},
-				{			  
-					"secret" : {"name": "oracle-libs",
-					"destinationDir": "/tmp/src/"}
+				{
+					"secret": {
+						"name": "oracle-libs"
+					},
+					"destinationDir": "/tmp/2"
 				}
 	        ],
             "contextDir": "/DocumentService"
@@ -266,7 +260,7 @@
             "sourceStrategy": {
                 "from": {
                     "kind": "ImageStreamTag",
-                    "name": "fis-java-openshift:latest"
+                    "name": "fis-java-openshift:2.0"
                 },
                 "forcePull": true
             }
