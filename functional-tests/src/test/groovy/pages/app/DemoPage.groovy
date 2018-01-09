@@ -3,13 +3,11 @@ import geb.Page
 
 import extensions.AngularJSAware
 
-class HomePage extends Page implements AngularJSAware {
+class DemoPage extends Page implements AngularJSAware {
  
 	static at = { angularReady && title == "CSNR DMOD - Development Environment" }
-    static url = "" 
+    static url = "p/d-1/docs" 
     static content = {
         HomeLink { $("a", "ui-sref":"projects",1) }
-        BackToDemoLink { $("a", href:"/p/d-1/docs", text:"Back to the demo") }
-        
     }
 }
