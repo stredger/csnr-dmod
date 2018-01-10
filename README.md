@@ -27,14 +27,18 @@ Install the following:
 	- Execute `gem install sass` to install
 
 Run Locally
-----------
-`git clone https://github.com/bcgov/csnr-dmod.git`
-`cd cnsr-dmod`
-`npm install -g kerberos -python=\Python27` 
-`npm install -python=<Python Location>`  (Since the application uses gyp, you will need to specify a location where a version of Python > 2.5 and < 3.0 is installed; 2.7 is recommended)
-`bower install --config.interactive=false --allow-root`
-`grunt buildProd`
-`node server.js`
+
+    nvm install v6.11.3 32
+
+    nvm use v6.11.3 32
+
+    git clone https://github.com/bcgov/csnr-dmod.git
+    cd cnsr-dmod`
+    npm install -g kerberos -python=\Python27` 
+    npm install -python=<Python Location>`  (Since the application uses gyp, you will need to specify a location where a version of Python > 2.5 and < 3.0 is installed; 2.7 is recommended)
+    bower install --config.interactive=false --allow-root
+    grunt buildprod
+    node server.js
 
 Development Environment: Java
 ----------------------------
@@ -55,7 +59,7 @@ An easy way to obtain this directory structure is to copy from your local Maven 
 
 Complete set of artifacts required:
 
-| Artifact | version |
+| Artifact | Version |
 | -------- | ------- |
 | nrs-common-model | 1.2.0.6 |
 | nrs-common-parent | 1.2.0.6 |
@@ -103,9 +107,9 @@ The second secret contains the WebADE libraries, NRS common files and NRS Docume
 
 Once the .zip files are available, execute the following commands, as a user with admin access to the OpenShift project:
 
-`oc project csnr-dmod-tools`
-`oc secrets new oracle-libs oracle.zip`
-`oc secrets new nrs-libs ca.zip`
+    oc project csnr-dmod-tools
+    oc secrets new oracle-libs oracle.zip
+    oc secrets new nrs-libs ca.zip
 
 If you are developing locally, simply store the contents of the two zip folders within the local-maven-repo directory.  Note that the jar files in that directory should not be checked into the Git repository.
 
@@ -142,6 +146,16 @@ Deployment Template
 `oc policy add-role-to-user system:image-puller system:serviceaccount:csnr-dmod-dev:default -n csnr-dmod-tools`
 - Process and create the Deployment Template
 - `oc process -f dmod-deployment-template.json | oc create -f -`
+
+Deployment Secret
+-----------------
+The Document Microservice Deployment references a volume which is populated by a secret.  The secret is called `nrs-credentials` and contains one file, oauth.xml, which has several Java Beans that are used for security purposes.
+
+To create this file (given a file called oauth.xml in the correct format):
+
+`oc secrets new nrs-credentials oauth.xml`
+
+To update this file, first delete the secret (with `oc delete secret nrs-credentials`) and then create it again.
 
 
 ### Getting Help or Reporting an Issue
