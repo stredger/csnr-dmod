@@ -26,18 +26,21 @@ node('maven') {
     }
 }
 
-stage ('Compile microservice')
-{
+node('master') {
+
+    stage ('Compile microservice')
+    {
 	openshiftBuild(buildConfig: 'document-microservice', showBuildLogs: 'true')
 	openshiftTag destStream: 'document-microservice', verbose: 'true', destTag: '$BUILD_ID', srcStream: 'document-microservice', srcTag: 'latest'
 	openshiftTag destStream: 'document-microservice', verbose: 'true', destTag: 'dev', srcStream: 'document-microservice', srcTag: 'latest'
-}
+    }
 	
-stage ('Compile front end')
-{
+    stage ('Compile front end')
+    {
 	openshiftBuild(buildConfig: 'dmod', showBuildLogs: 'true')
 	openshiftTag destStream: 'dmod', verbose: 'true', destTag: '$BUILD_ID', srcStream: 'dmod', srcTag: 'latest'
 	openshiftTag destStream: 'dmod', verbose: 'true', destTag: 'dev', srcStream: 'dmod', srcTag: 'latest'
+    }
 }
 
 node('maven'){
@@ -48,14 +51,16 @@ node('maven'){
    }
 }
 
-stage('deploy-test') {
-  input "Deploy to test?"
-  openshiftTag destStream: 'gwells', verbose: 'true', destTag: 'test', srcStream: 'gwells', srcTag: '$BUILD_ID'
-}
+node('master') {
+    stage('deploy-test') {
+      input "Deploy to test?"
+      openshiftTag destStream: 'gwells', verbose: 'true', destTag: 'test', srcStream: 'gwells', srcTag: '$BUILD_ID'
+    }
 
-stage('deploy-prod') {
-  input "Deploy to prod?"
-  openshiftTag destStream: 'gwells', verbose: 'true', destTag: 'prod', srcStream: 'gwells', srcTag: '$BUILD_ID'
+    stage('deploy-prod') {
+      input "Deploy to prod?"
+      openshiftTag destStream: 'gwells', verbose: 'true', destTag: 'prod', srcStream: 'gwells', srcTag: '$BUILD_ID'
+    }
 }
 
 
