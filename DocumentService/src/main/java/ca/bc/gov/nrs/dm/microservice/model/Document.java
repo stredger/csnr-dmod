@@ -1,16 +1,14 @@
 package ca.bc.gov.nrs.dm.microservice.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
+import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Primary object type
  **/
-
-import io.swagger.annotations.*;
-import java.util.Objects;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "Primary object type")
 
 public class Document   {
