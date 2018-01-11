@@ -20,6 +20,7 @@ node('maven') {
            echo "SONARQUBE_URL: ${SONARQUBE_URL}"
 
            dir('sonar-runner') {
+            sh 'chmod +x ./gradlew'
             sh returnStdout: true, script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.verbose=true --stacktrace --info  -Dsonar.sources=.."
         }
     }
