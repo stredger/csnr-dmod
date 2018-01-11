@@ -28,25 +28,25 @@ node('maven') {
 
 node('master') {
 
-    stage ('Build microservice')
+    stage ('build microservice')
     {
 	openshiftBuild(buildConfig: 'document-microservice', showBuildLogs: 'true')
 	openshiftTag destStream: 'document-microservice', verbose: 'true', destTag: '$BUILD_ID', srcStream: 'document-microservice', srcTag: 'latest'
     }
 
-    stage ('Dev Deploy microservice')
+    stage ('dev deploy microservice')
     {
 	openshiftTag destStream: 'document-microservice', verbose: 'true', destTag: 'dev', srcStream: 'document-microservice', srcTag: 'latest'
         openshiftVerifyDeployment depCfg: 'document-microservice', namespace: 'csnr-dmod-dev ', replicaCount: 1, verbose: 'false'
     }
 	
-    stage ('Build front end')
+    stage ('build front end')
     {
 	openshiftBuild(buildConfig: 'dmod', showBuildLogs: 'true')
 	openshiftTag destStream: 'dmod', verbose: 'true', destTag: '$BUILD_ID', srcStream: 'dmod', srcTag: 'latest'
     }
     
-    stage ('Dev Deploy front end')
+    stage ('dev deploy front end')
     {
 	openshiftTag destStream: 'dmod', verbose: 'true', destTag: 'dev', srcStream: 'dmod', srcTag: 'latest'
 	openshiftVerifyDeployment depCfg: 'dmod', namespace: 'csnr-dmod-dev ', replicaCount: 1, verbose: 'false'
@@ -58,15 +58,7 @@ node('master') {
 		sh 'sleep 3s'
       }
    }
-
-   stage('deploy-test') {
-      input "Deploy to test?"
-   }
-
-   stage('deploy-prod') {
-      input "Deploy to prod?"
-   }
-
+	
 }
 
 
