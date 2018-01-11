@@ -20,41 +20,45 @@ node('maven') {
            echo "SONARQUBE_URL: ${SONARQUBE_URL}"
 
            dir('sonar-runner') {
-            sh returnStdout: true, script: './gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.verbose=true --stacktrace --info  -Dsonar.sources=..'
+            sh 'chmod +x ./gradlew'
+            sh returnStdout: true, script: "./gradlew sonarqube -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.verbose=true --stacktrace --info  -Dsonar.sources=.."
         }
     }
 }
 
-stage ('Compile microservice')
-{
+node('master') {
+
+    stage ('build microservice')
+    {
 	openshiftBuild(buildConfig: 'document-microservice', showBuildLogs: 'true')
 	openshiftTag destStream: 'document-microservice', verbose: 'true', destTag: '$BUILD_ID', srcStream: 'document-microservice', srcTag: 'latest'
+    }
+
+    stage ('dev deploy microservice')
+    {
 	openshiftTag destStream: 'document-microservice', verbose: 'true', destTag: 'dev', srcStream: 'document-microservice', srcTag: 'latest'
-}
+        openshiftVerifyDeployment depCfg: 'document-microservice', namespace: 'csnr-dmod-dev ', replicaCount: 1, verbose: 'false'
+    }
 	
-stage ('Compile front end')
-{
+    stage ('build front end')
+    {
 	openshiftBuild(buildConfig: 'dmod', showBuildLogs: 'true')
 	openshiftTag destStream: 'dmod', verbose: 'true', destTag: '$BUILD_ID', srcStream: 'dmod', srcTag: 'latest'
+    }
+    
+    stage ('dev deploy front end')
+    {
 	openshiftTag destStream: 'dmod', verbose: 'true', destTag: 'dev', srcStream: 'dmod', srcTag: 'latest'
-}
+	openshiftVerifyDeployment depCfg: 'dmod', namespace: 'csnr-dmod-dev ', replicaCount: 1, verbose: 'false'
+    }
 
-node('maven'){
    stage('validation') {
           dir('functional-tests'){
                 // sh './gradlew --debug --stacktrace phantomJsTest'
+		sh 'sleep 3s'
       }
    }
-}
-
-stage('deploy-test') {
-  input "Deploy to test?"
-  openshiftTag destStream: 'gwells', verbose: 'true', destTag: 'test', srcStream: 'gwells', srcTag: '$BUILD_ID'
-}
-
-stage('deploy-prod') {
-  input "Deploy to prod?"
-  openshiftTag destStream: 'gwells', verbose: 'true', destTag: 'prod', srcStream: 'gwells', srcTag: '$BUILD_ID'
+	
 }
 
 
