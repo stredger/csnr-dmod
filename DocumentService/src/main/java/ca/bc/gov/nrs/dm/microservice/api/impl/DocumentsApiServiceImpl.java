@@ -63,7 +63,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     private static DocumentManagementService dmsAnonymousAccessService = null;
 
     private String tokenUrl = "";
-    private static final String SCOPES = "DMS.*";
+    private static final String SCOPES = "DMOD.*,DMS.*";
     private static String documentManagementTopLevelRestURL;
     private static Gson gson;
     private static String serviceId;
@@ -72,9 +72,9 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
     public static final String ROOT_FOLDER_NAME = "DMOD";
     public static final String ROOT_FOLDER = "/NRS";
-    public static final String SOURCE_FOLDER = "DMAPI_TEST";
+    public static final String SOURCE_FOLDER = "DMOD";
     public static final String PARENT_FOLDER = ROOT_FOLDER + "/" + SOURCE_FOLDER;
-    public static final String APPLICATION_ROOT_FOLDER = PARENT_FOLDER + "/" + ROOT_FOLDER_NAME;
+    public static final String APPLICATION_ROOT_FOLDER = PARENT_FOLDER;
 
 
     private OAuth2ProtectedResourceDetails oAuth2ProtectedResourceDetails = null;
@@ -134,10 +134,10 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
                     List<ACLResource> staffVisibility = new ArrayList<ACLResource>();
                     ACLResource alc = new ACLResource();
                     alc.setPermission("RW");
-                    alc.setScope("DMS.STAFF_USER_UPDATE");
+                    alc.setScope("DMOD.UPDATE_FILES");
                     staffVisibility.add(alc);
                     alc.setPermission("R");
-                    alc.setScope("DMS.STAFF_USER_READ");
+                    alc.setScope("DMOD.READ_FILES");
                     staffVisibility.add(alc);
                     securityMetadata.setStaffVisibility(staffVisibility);
                 }
