@@ -1,14 +1,35 @@
 package ca.bc.gov.nrs.dm.microservice.api.impl;
 
-import ca.bc.gov.nrs.dm.model.v1.DefaultFileMetadata.DocType;
-import ca.bc.gov.nrs.dm.microservice.api.DocumentsApiService;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.enterprise.context.RequestScoped;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+
+import com.google.gson.Gson;
+
+import ca.bc.gov.nrs.dm.microservice.api.DocumentsApiService;
+import ca.bc.gov.nrs.dm.model.v1.DefaultFileMetadata.DocType;
 import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementException;
 import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementService;
 import ca.bc.gov.nrs.dm.rest.client.v1.ForbiddenAccessException;
@@ -27,31 +48,6 @@ import ca.bc.gov.webade.oauth2.rest.v1.token.client.Oauth2ClientException;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.TokenService;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.impl.TokenServiceImpl;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.resource.AccessToken;
-import com.google.gson.Gson;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.File;
-import java.net.URISyntaxException;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.ServletContext;
-import javax.ws.rs.core.MediaType;
-
-import org.slf4j.LoggerFactory;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.security.oauth2.client.OAuth2ClientContext;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
-import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 
 // import ca.bc.gov.webade.oauth2.rest.test.client.AuthorizationCodeService;
 //import ca.bc.gov.webade.oauth2.rest.test.client.impl.AuthorizationCodeServiceImpl;
@@ -64,24 +60,14 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(DocumentsApiServiceImpl.class);
 
-    private static DocumentManagementService dmsService = null;
+    private static DocumentManagementService dmsAnonymousAccessService = null;
 
-    private String authorizeUrl = "";
     private String tokenUrl = "";
     private static final String SCOPES = "DMS.*";
-    private static String redirectUri = "http://www.redirecturi.com";
-    private static final String USER_SCOPES = "DMS.CLIENT_USER";
-    private static String siteMinderUserId = "NOT\\USED";
     private static String documentManagementTopLevelRestURL;
-    private static String oauth2ResourceName;
     private static Gson gson;
-    private static final String OAUTH_BEARER = "Bearer ";
     private static String serviceId;
     private static String serviceSecret;
-    private static String serviceAccountUsername;
-    private static String serviceAccountPassword;
-    private static String serviceAccountGuid;
-    private static String baseRemotePath;
 
 
     public static final String ROOT_FOLDER_NAME = "DMOD";
@@ -93,7 +79,6 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
     private OAuth2ProtectedResourceDetails oAuth2ProtectedResourceDetails = null;
 
-    protected String dmsServiceOAuthToken = "";
 
     public DocumentsApiServiceImpl() {
         // read values from the secret.
@@ -107,15 +92,12 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
         // URLS
         documentManagementTopLevelRestURL = (String) applicationContext.getBean("documentManagementTopLevelRestUrl");
-        authorizeUrl = (String) applicationContext.getBean("authorizeUrl");
         tokenUrl = (String) applicationContext.getBean("tokenUrl");
 
-        // Remote info
-        baseRemotePath = (String) applicationContext.getBean("baseRemotePath");
 
         try {
             // create an instance of the service.
-            dmsService = buildDMSClientService(serviceId, serviceSecret, "", "", "");
+        	dmsAnonymousAccessService = buildDMSClientService(serviceId, serviceSecret, "", "", "");
             setupFolders();
         } catch (Oauth2ClientException ex) {
             LOG.error(null, ex);
@@ -123,7 +105,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
         // create a Gson object for use by the various services.  
         gson = new Gson();
-
+        applicationContext.close();
     }
 
 
@@ -134,7 +116,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
         AbstractFolderResource rootFolder = null;
         try {
-            rootFolder = dmsService.getFolderByPath(APPLICATION_ROOT_FOLDER);
+            rootFolder = dmsAnonymousAccessService.getFolderByPath(APPLICATION_ROOT_FOLDER);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -142,7 +124,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         if (rootFolder == null) {
             // create the root folder.
             try {
-                AbstractFolderResource parentFolder = dmsService.getFolderByPath(PARENT_FOLDER);
+                AbstractFolderResource parentFolder = dmsAnonymousAccessService.getFolderByPath(PARENT_FOLDER);
 
                 EngagementFolderResource newFolder = new EngagementFolderResource();
 
@@ -171,7 +153,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
                 newFolder.setDefaultEngagementFileMetadata(efm);
 
-                rootFolder = dmsService.createEngagementFolder(parentFolder, newFolder);
+                rootFolder = dmsAnonymousAccessService.createEngagementFolder(parentFolder, newFolder);
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -180,28 +162,11 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     }
 
     public DocumentManagementService buildDMSClientService(String serviceId, String serviceSecret, String serviceAccountUsername, String serviceAccountPassword, String serviceAccountGuid) throws Oauth2ClientException {
-        System.out.println(serviceId);
-        System.out.println(serviceSecret);
-        System.out.println(serviceAccountUsername);
-        System.out.println(serviceAccountPassword);
-        System.out.println(serviceAccountGuid);
 
-        Long ownerOrganizationId = null;
         TokenService tokenService = new TokenServiceImpl(serviceId, serviceSecret, null, tokenUrl);
         AccessToken token = tokenService.getToken(SCOPES);
 
-        /*
-
-        AuthorizationCodeService authorizationCodeService = new AuthorizationCodeServiceImpl(serviceId, authorizeUrl);
-
-        AuthorizationCode authorizationCode = authorizationCodeService.getAuthorizationCode(SCOPES, null, redirectUri, AuthorizationCodeService.SITEMINDER_USER_TYPE_INTERNAL, serviceAccountUsername, serviceAccountGuid, serviceId, serviceSecret, "code");
-
-        System.out.println("Authorization code is " + authorizationCode.getCode());
-
-        AccessToken token = tokenService.getToken(SCOPES, authorizationCode.getCode(), null);
-*/
         DocumentManagementService clientService = createDMSClientService(token);
-        dmsServiceOAuthToken = OAUTH_BEARER + token.getAccessToken();
         return clientService;
     }
 
@@ -218,11 +183,14 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     }
 
     @Override
-    public Response documentsGet(SecurityContext securityContext, ServletContext servletContext) {
+    public Response documentsGet(String accessToken) {
         // setup dms
         String jsonString = "";
 
         try {
+        	
+        	 DocumentManagementService dmsService = getService(accessToken);
+        	
             // get available documents.
             AbstractFolderResource folderContents = dmsService.getFolderByPath(APPLICATION_ROOT_FOLDER);
             FolderContentResource results = dmsService.browseFolder(folderContents, 1, 1000);
@@ -237,12 +205,13 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     }
 
     @Override
-    public Response documentsIdDownloadGet(String id, SecurityContext securityContext) {
+    public Response documentsIdDownloadGet(String id, String accessToken) {
         // first get the meta data for the file.                
         try {
             FileResource fileResource;
+            DocumentManagementService dmsService = getService(accessToken);
             fileResource = dmsService.getFileByID(id);
-            java.io.File temp = java.io.File.createTempFile("temp-", ".tmp",new File("/uploads"));
+            File.createTempFile("temp-", ".tmp",new File("/uploads"));
             byte[] data = dmsService.getFileContent(id);
             // write the bytes to the temporary file.
             ByteArrayInputStream bis = new ByteArrayInputStream(data);
@@ -262,17 +231,17 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     }
 
     @Override
-    public Response documentsIdExpirePost(String id, SecurityContext securityContext) {
-        // delete a document
-        String jsonString = "";
-        // get the file.        
-        FileResource fileResource;
+    public Response documentsIdExpirePost(String id, String accessToken) {
+        
         try {
+        	
+        	DocumentManagementService dmsService = getService(accessToken);
+        	
             FileResource fr = dmsService.getFileByID(id);
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
             fr.setExpireyDate(dateFormat.format(date));
-            dmsService.updateFileMetadata(fr);
+            dmsAnonymousAccessService.updateFileMetadata(fr);
         } catch (DocumentManagementException ex) {
             LOG.error(null, ex);
         } catch (ForbiddenAccessException ex) {
@@ -284,12 +253,13 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     }
 
     @Override
-    public Response documentsIdGet(String id, SecurityContext securityContext) {
+    public Response documentsIdGet(String id, String accessToken) {
         // get the meta data
         String jsonString = "";
         // get the file.        
         FileResource fileResource;
         try {
+        	DocumentManagementService dmsService = getService(accessToken);
             fileResource = dmsService.getFileByID(id);
             jsonString = gson.toJson(fileResource);
         } catch (DocumentManagementException ex) {
@@ -301,11 +271,13 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     }
 
     @Override
-    public Response documentsIdHistoryGet(String id, SecurityContext securityContext) {
+    public Response documentsIdHistoryGet(String id, String accessToken) {
         String jsonString = "";
         // get the file.        
         FileResource fileResource;
         try {
+        	DocumentManagementService dmsService = getService(accessToken);
+        	
             fileResource = dmsService.getFileByID(id);
             // get the history.
             RevisionsResource revisions = dmsService.getRevisions(fileResource, 1, 1000);
@@ -321,12 +293,13 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
     // update the meta data.    
     @Override
-    public Response documentsIdPut(String id, Attachment file, SecurityContext securityContext) {
+    public Response documentsIdPut(String id, Attachment file, String accessToken) {
         // replace a file        
         String jsonString = "";
         // get the file.        
         FileResource fileResource;
         try {
+        	DocumentManagementService dmsService = getService(accessToken);
             fileResource = dmsService.getFileByID(id);
 
             InputStream fileStream = file.getObject(InputStream.class);
@@ -334,7 +307,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             // write the bytes to the temporary file.
             java.nio.file.Files.copy(fileStream, temp.toPath());
 
-            FileResource updateFile = dmsService.checkinFile(id, temp.getAbsolutePath(),
+            dmsService.checkinFile(id, temp.getAbsolutePath(),
                     "NRSDocument", "Created by DMOD",
                     "Public", "TRAN-102901",
                     null, null, null, "ExternallyVisible", null, null, null, null);
@@ -354,11 +327,13 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     }
 
     @Override
-    public Response documentsPost(Attachment file, SecurityContext securityContext) {
+    public Response documentsPost(Attachment file, String accessToken) {
         String jsonString = "";
         // accept the file upload.
 
         try {
+        	DocumentManagementService dmsService = getService(accessToken);
+        	
             // get the folder where files will be stored.
             AbstractFolderResource destinationFolder = dmsService.getFolderByPath(APPLICATION_ROOT_FOLDER);
             EngagementFolderResource engagementFolder = dmsService.getEngagementFolderByID(destinationFolder.getItemID());
@@ -390,12 +365,13 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     }
 
     @Override
-    public Response documentsSearchGet(String fullTextWordsSearch, SecurityContext securityContext) {
+    public Response documentsSearchGet(String fullTextWordsSearch, String accessToken) {
         String jsonString = "";
         // get the file.        
         AbstractFolderResource folderResource;
         FilesResource searchFiles = null;
         try {
+        	DocumentManagementService dmsService = getService(accessToken);
             // change to the dmod folder.
             folderResource = dmsService.getFolderByPath(APPLICATION_ROOT_FOLDER);
             // do the search
@@ -410,5 +386,19 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         }
 
         return Response.ok().entity(jsonString).build();
+    }
+    
+    private DocumentManagementService getService(String accessToken) {
+    	DocumentManagementService result = null;
+    	if(accessToken == null) {
+    		result = dmsAnonymousAccessService;
+    	} else {
+    		//create a service using the token
+    		AccessToken token = new AccessToken();
+    		token.setAccessToken(accessToken);
+    		result = createDMSClientService(token);
+    	}
+    	
+    	return result;
     }
 }

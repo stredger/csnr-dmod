@@ -2,29 +2,24 @@ package ca.bc.gov.nrs.dm.microservice.api;
 
 
 
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.Manifest;
+
 import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import io.fabric8.utils.Manifests;
-import java.util.HashMap;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.swagger.SwaggerFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.cxf.jaxrs.provider.*;
-import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import io.fabric8.utils.Manifests;
 
 @javax.annotation.Generated(value = "class com.quartech.codegen.FuseGenerator", date = "2017-04-24T09:07:23.579-07:00")
 

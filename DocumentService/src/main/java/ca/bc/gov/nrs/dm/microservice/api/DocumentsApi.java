@@ -1,25 +1,34 @@
 package ca.bc.gov.nrs.dm.microservice.api;
 
-import ca.bc.gov.nrs.dm.microservice.model.Document;
-import ca.bc.gov.nrs.dm.microservice.model.History;
+import java.util.List;
 
-//import ca.bc.gov.nrs.dm.microservice.api.DocumentsApiService;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.MediaType; 
-import javax.ws.rs.core.SecurityContext;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+//import ca.bc.gov.nrs.dm.microservice.api.DocumentsApiService;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-
-import io.swagger.annotations.*;
-import javax.servlet.ServletContext;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
-import org.apache.cxf.jaxrs.ext.multipart.*; 
+
+import ca.bc.gov.nrs.dm.microservice.model.Document;
+import ca.bc.gov.nrs.dm.microservice.model.History;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses; 
 
 
 @Path("/")
@@ -32,18 +41,32 @@ import org.apache.cxf.jaxrs.ext.multipart.*;
 
 public class DocumentsApi  {
 
-  @Context SecurityContext securityContext;
-  @Context ServletContext servletContext;
-
-  @Inject DocumentsApiService delegate;
-
+ 
+   @Inject DocumentsApiService delegate;
+   
+    private static final String OAUTH_BEARER = "Bearer";
+    
+    private String getAccessToken(HttpHeaders headers) {
+    	String token = null;
+    	List<String> authList = headers.getRequestHeader("Authorization");
+    	
+    	if(authList != null && authList.size() > 0) {
+    		String bearerToken = authList.get(0).trim();
+    		if(bearerToken.startsWith(OAUTH_BEARER)) {
+    			token = bearerToken.substring(OAUTH_BEARER.length() + 1, bearerToken.length());
+    		}
+    	}
+    	
+    	return token;
+    }
     @GET        
     @Produces({ "text/plain", "application/json", "text/json" })
     @ApiOperation(value = "", notes = "", response = Document.class, responseContainer = "List", tags={ "Document",  })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = Document.class, responseContainer = "List") })
-    public Response documentsGet() {
-    	return delegate.documentsGet(securityContext, servletContext);
+    public Response documentsGet(@Context HttpHeaders headers) {
+    	String token = getAccessToken(headers);
+    	return delegate.documentsGet(token);
     }
 
     @POST
@@ -54,8 +77,11 @@ public class DocumentsApi  {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = void.class),
         @ApiResponse(code = 404, message = "Document not found", response = void.class) })
-    public Response documentsIdExpirePost(@ApiParam(value = "id of Document to expire",required=true) @PathParam("id") String id) {
-    	return delegate.documentsIdExpirePost(id, securityContext);
+    public Response documentsIdExpirePost(@ApiParam(value = "id of Document to expire",required=true) 
+    	@PathParam("id") String id,
+    	@Context HttpHeaders headers) {
+    	String token = getAccessToken(headers);
+    	return delegate.documentsIdExpirePost(id, token);
     }
 
     @GET
@@ -66,8 +92,11 @@ public class DocumentsApi  {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = Document.class),
         @ApiResponse(code = 404, message = "Document not found", response = Document.class) })
-    public Response documentsIdGet(@ApiParam(value = "id of Document to fetch",required=true) @PathParam("id") String id) {
-    	return delegate.documentsIdGet(id, securityContext);
+    public Response documentsIdGet(@ApiParam(value = "id of Document to fetch",required=true) 
+    	@PathParam("id") String id, 
+    	@Context HttpHeaders headers) {
+    	String token = getAccessToken(headers);
+    	return delegate.documentsIdGet(id, token);
     }
 
     @GET
@@ -78,8 +107,11 @@ public class DocumentsApi  {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Document not found", response = History.class, responseContainer = "List") })
-    public Response documentsIdDownloadGet(@ApiParam(value = "id of Document to download",required=true) @PathParam("id") String id) {
-    	return delegate.documentsIdDownloadGet(id, securityContext);
+    public Response documentsIdDownloadGet(@ApiParam(value = "id of Document to download",required=true) 
+    	@PathParam("id") String id,
+    	@Context HttpHeaders headers) {
+    	String token = getAccessToken(headers);
+    	return delegate.documentsIdDownloadGet(id, token);
     }
 
     
@@ -91,8 +123,10 @@ public class DocumentsApi  {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = History.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "Document not found", response = History.class, responseContainer = "List") })
-    public Response documentsIdHistoryGet(@ApiParam(value = "id of Document to get history for",required=true) @PathParam("id") String id) {
-    	return delegate.documentsIdHistoryGet(id, securityContext);
+    public Response documentsIdHistoryGet(@ApiParam(value = "id of Document to get history for",required=true) 
+    	@PathParam("id") String id, @Context HttpHeaders headers) {
+    	String token = getAccessToken(headers);
+    	return delegate.documentsIdHistoryGet(id, token);
     }
     
     @GET
@@ -103,8 +137,10 @@ public class DocumentsApi  {
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = History.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "Document not found", response = History.class, responseContainer = "List") })
-    public Response documentsSearchGet(@ApiParam(value = "search query",required=true) @QueryParam("fullTextWordsSearch") String fullTextWordsSearch) {
-    	return delegate.documentsSearchGet(fullTextWordsSearch, securityContext);
+    public Response documentsSearchGet(@ApiParam(value = "search query",required=true) 
+    	@QueryParam("fullTextWordsSearch") String fullTextWordsSearch, @Context HttpHeaders headers) {
+    	String token = getAccessToken(headers);
+    	return delegate.documentsSearchGet(fullTextWordsSearch, token);
     }
 
     @PUT
@@ -116,21 +152,23 @@ public class DocumentsApi  {
     @ApiResponse(code = 200, message = "OK", response = Document.class),
     @ApiResponse(code = 404, message = "Document not found", response = Document.class) })
     
-    public Response documentsIdPut(@ApiParam(value = "id of Document to fetch",required=true) @PathParam("id") String id, MultipartBody multipart) {
+    public Response documentsIdPut(@ApiParam(value = "id of Document to fetch",required=true)
+    	@PathParam("id") String id, MultipartBody multipart, @Context HttpHeaders headers) {
         Attachment file = multipart.getAttachment("file");
         if (file == null) {
             return Response.status(400).entity("Missing file data").type(MediaType.TEXT_PLAIN).build();
         }
         else
-        {            
-            return delegate.documentsIdPut(id, file, securityContext);
+        {   
+        	String token = getAccessToken(headers);
+            return delegate.documentsIdPut(id, file, token);
         }
     }
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces({ "text/plain", "application/json", "text/json" })
-    public Response upload(@Multipart("file") Attachment file){            
+    public Response upload(@Multipart("file") Attachment file, @Context HttpHeaders headers ){            
         //Attachment file = multipart.getAttachment("file");
         
         if (file == null) {
@@ -138,7 +176,8 @@ public class DocumentsApi  {
         }
         else       
         {
-            return delegate.documentsPost(file, securityContext);
+        	String token = getAccessToken(headers);
+            return delegate.documentsPost(file, token);
         }
     }
 }
