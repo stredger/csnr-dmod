@@ -12,16 +12,12 @@
 		</ul>
 		<div class="file-batch-actions">
 			<button class="btn icon-btn" title="Add New Folder"
-					ng-if="project.userCan.manageFolders"
-					ng-disabled="!documentMgr.selectedNode"
 					x-document-mgr-add-folder
 					x-project="project"
 					x-root="documentMgr.rootNode"
 					x-node="documentMgr.selectedNode"><span class="glyphicon glyphicon-folder-close"></span></button>
 
 			<button class="btn icon-btn" title="Upload Files"
-					ng-if="project.userCan.createDocument"
-					ng-disabled="!documentMgr.selectedNode"
 					x-document-mgr-upload-modal
 					x-project="project"
 					x-root="documentMgr.rootNode"

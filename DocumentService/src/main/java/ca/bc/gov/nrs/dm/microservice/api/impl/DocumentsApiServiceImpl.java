@@ -336,14 +336,17 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         	
             // get the folder where files will be stored.
             AbstractFolderResource destinationFolder = dmsService.getFolderByPath(APPLICATION_ROOT_FOLDER);
-            EngagementFolderResource engagementFolder = dmsService.getEngagementFolderByID(destinationFolder.getItemID());
+            System.out.println("Destination folder: " + destinationFolder.getItemID());
+
+            //EngagementFolderResource engagementFolder = dmsService.getEngagementFolderByID(destinationFolder.getItemID());
+            
 
             InputStream fileStream = file.getObject(InputStream.class);
             java.io.File temp = java.io.File.createTempFile("temp-", ".tmp",new File("/uploads"));
 
             // write the bytes to the temporary file.
             java.nio.file.Files.copy(fileStream, temp.toPath(), REPLACE_EXISTING);
-            FileResource newFile = dmsService.createFile(temp.getAbsolutePath(), engagementFolder, DocType.NRSDocument.name(), "Created by DMOD",
+            FileResource newFile = dmsService.createFile(temp.getAbsolutePath(), destinationFolder, DocType.NRSDocument.name(), "Created by DMOD",
                     "Public", "TRAN-102901",
                     null, null, null, "ExternallyVisible", null, null, null, null);
 

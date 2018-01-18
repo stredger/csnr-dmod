@@ -23,13 +23,21 @@ module.exports = function (app) {
 		.all (policy ('guest'))
 		.get (routes.setAndRun (DocumentClass, function (model, req) {
 			return model.list ();
+
+	//		var superagent = require('superagent');
+        //    var agent1 = superagent.agent();
+        //    var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
+        //    console.log("DMS URL is " + dmsurl);
+        //    return agent1.get(dmsurl);
 		}));
 	//
 	// getProjectDocuments             : '/api/documents/' + projectId
 	//
+         
 	app.route ('/api/documents/:projectid')
 		.all (policy ('guest'))
 		.get (routes.setAndRun (DocumentClass, function (model, req) {
+                        console.log('api/documents' + JSON.stringify(req.headers)); 
 			return model.getDocumentsForProject (req.params.projectid, req.headers.reviewdocsonly);
 		}));
 	//
@@ -192,7 +200,7 @@ module.exports = function (app) {
 	// upload document
 	//
 	app.route ('/api/document/:project/upload').all (policy ('guest'))
-		.post (routes.setAndRun (DocumentClass, function (model, req) {
+		.post (routes.setAndRun (DocumentClass, function (model, req) {      
             return new Promise(function (resolve, reject) {
                 console.log("incoming upload");
                 var file = req.files.file;
@@ -206,11 +214,14 @@ module.exports = function (app) {
                     var superagent = require('superagent');
                     var agent1 = superagent.agent();
                     var itemid = "";
+                    var bearer_token = req.headers.authorization; 
+		    console.log('*********Bearer Token*******' + req.headers.authorization);
                     var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
                     console.log("DMS URL is " + dmsurl);
                     console.log("File.path is " + file.path);
                     agent1.post(dmsurl)
                         .attach('file', file.path)
+                        .set('Authorization', 'Bearer ' + bearer_token)
                         .end(function (err, res) {
                             if (err) {
                                 console.log(err);

@@ -186,7 +186,10 @@ angular.module('documents')
 					file.upload = Upload.upload({
 						url: targetUrl,
 						file: file,
-						data: data
+						data: data,
+						headers: {
+							"Authorization": window.localStorage.getItem('access_token')
+						}
 					});
 
 					$log.debug('Add to inProgressFiles: ', file.$$hashKey.toString());

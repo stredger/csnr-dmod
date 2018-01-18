@@ -235,6 +235,15 @@ angular.module('core').factory ('ModelBase', ['$http', '_', function ($http, _) 
 		talk : function (method, url, data, headers, timeout) {
 			// console.log (method, url, data, headers);
 			return new Promise (function (resolve, reject) {
+
+				// Grab the bearer token stored.  Attach for all calls.
+				var bearer_token = window.localStorage.getItem('access_token');
+				if (headers) {
+					headers.Authorization = "Bearer " + bearer_token;
+				} else if (bearer_token) {
+					headers = { "Authorization": "Bearer " + bearer_token };
+				}
+
 				$http ({method:method, url:url, data:data, headers: headers, timeout: timeout })
 				.then (function (res) {
 					resolve (res.data);
