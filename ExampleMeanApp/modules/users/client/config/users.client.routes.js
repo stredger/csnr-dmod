@@ -89,6 +89,23 @@ angular.module('users').config(['$stateProvider',
 					window.location.href = window.location.origin + '/authentication/signin';
 				}
 			})
+			.state('webade-oauth2', {
+				url: '/webade-oauth2',
+				controller: function($state, $scope) {
+					// Receive the token from the oauth callback, split up the query params
+					// so that we can grab the token and store it in cookies to be re-used
+					// when we call our services.
+					var theHash = window.location.hash.substring(1);
+					var access_token = theHash.split('&')[0].split('=')[1];
+					window.localStorage.setItem("access_token", access_token);
+					// Hardcoded - go to the only project that exists in this environment.
+					//$state.go("p.docs", { projectid: 'd-1'});
+                                     
+                    			//this is a hack for now, a lot of permissions are built into the local login
+					$state.go("authentication.local");  
+                                        
+				}
+			})
 			.state('password', {
 				abstract: true,
 				url: '/password',
