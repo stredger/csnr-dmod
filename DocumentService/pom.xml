@@ -53,7 +53,8 @@
     <jersey2-version>2.16</jersey2-version>
     <junit-version>4.12</junit-version>
     <logback-version>1.1.7</logback-version>
-    <servlet-api-version>2.5</servlet-api-version>    
+    <servlet-api-version>2.5</servlet-api-version>
+    <mockito-version>1.10.19</mockito-version>     
   </properties>
 
   
@@ -439,9 +440,10 @@
       <artifactId>log4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.arquillian.junit</groupId>
-      <artifactId>arquillian-junit-container</artifactId>
-      <scope>test</scope>
+       <groupId>org.mockito</groupId>
+       <artifactId>mockito-all</artifactId>
+       <version>${mockito-version}</version>
+       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.fabric8</groupId>

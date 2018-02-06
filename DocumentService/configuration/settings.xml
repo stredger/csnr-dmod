@@ -31,7 +31,7 @@
 	  <repository>
         <id>local-maven-repo</id>
         <name>local-maven-repo</name>
-        <url>file:///tmp/src/local-maven-repo/</url>
+        <url>file:///tmp/local-maven-repo/</url>
       </repository>       
 	  <repository>
           <id>central</id>

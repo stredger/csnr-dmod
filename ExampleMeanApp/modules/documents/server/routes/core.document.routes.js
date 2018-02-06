@@ -111,7 +111,7 @@ module.exports = function (app) {
 
                 // get the file.
                 
-                var downloadurl = '/api/documents/' + req.Document.internalURL + '/download';
+                var downloadurl = '/api/documents/files/' + req.Document.internalURL + '/download';
 
                 console.log("downloadurl:", downloadurl);
 
@@ -215,8 +215,7 @@ module.exports = function (app) {
                     var agent1 = superagent.agent();
                     var itemid = "";
                     var bearer_token = req.headers.authorization; 
-		    console.log('*********Bearer Token*******' + req.headers.authorization);
-                    var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
+                    var dmsurl = 'http://' + config.dmservice + ':8080/api/documents/files/content';
                     console.log("DMS URL is " + dmsurl);
                     console.log("File.path is " + file.path);
                     agent1.post(dmsurl)
@@ -226,10 +225,11 @@ module.exports = function (app) {
                             if (err) {
                                 console.log(err);
                             }
+                            var jsonResponse = JSON.parse(res.text);
                             console.log("response is " + res.text);
 
-                            itemid = res.text.substring(1, res.text.length - 1);
-
+                           // itemid = res.text.substring(1, res.text.length - 1);
+                            itemid = jsonResponse.itemID;    
                             console.log("itemid is " + itemid);
 
                             var readPermissions = null;

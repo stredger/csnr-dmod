@@ -9,24 +9,25 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener;
 import org.jboss.weld.environment.servlet.Listener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @javax.annotation.Generated(value = "class com.quartech.codegen.FuseGenerator", date = "2017-04-24T09:07:23.579-07:00")
 public class ApplicationStarter {
-
+	private static final Logger LOG = LoggerFactory.getLogger(ApplicationStarter.class);
+	
     public static void main(final String[] args) throws Exception {
         startServer().join();
     }
 
     public static Server startServer() throws Exception {
 
-        // use system property first
         String port = System.getProperty("HTTP_PORT");
+        
         if (port == null) {
-            // and fallback to use environment variable
             port = System.getenv("HTTP_PORT");
         }
         if (port == null) {
-            // and use port 8080 by default
             port = "8080";
         }
         Integer num = Integer.parseInt(port);
@@ -35,12 +36,11 @@ public class ApplicationStarter {
 
         String servletContextPath = "/" + service;
 
-        System.out.println("Starting REST server at:         http://localhost:" + port + servletContextPath);
-        System.out.println("View the services at:            http://localhost:" + port + servletContextPath + servicesPath);
-        System.out.println("View an example REST service at: http://localhost:" + port + servletContextPath + "cxfcdi/customerservice/customers/123");
-        System.out.println();
+        LOG.info("***************************************");
+        LOG.info("Starting REST server at:         http://localhost:" + port + servletContextPath);
+        LOG.info("View the services at:            http://localhost:" + port + servletContextPath + servicesPath);
+        LOG.info("***************************************");
 
-		
         InetSocketAddress inetaddr = new InetSocketAddress("0.0.0.0", num);
         final Server server = new Server(inetaddr);
 

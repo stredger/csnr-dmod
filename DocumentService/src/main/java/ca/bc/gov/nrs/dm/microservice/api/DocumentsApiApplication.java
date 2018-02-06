@@ -28,24 +28,14 @@ import io.fabric8.utils.Manifests;
 
 public class DocumentsApiApplication extends Application{
     
-    
-    
 	@Inject
 	private DocumentsApi _DocumentsApi; 
 	
 	private static final Logger LOG = LoggerFactory.getLogger(DocumentsApiApplication.class);
     private static SwaggerFeature swaggerFeature;    
-/*
-    @Override
-public Map<String, Object> getProperties() {
-    Map<String, Object> props = new HashMap<>();
-    props.put("jersey.config.server.provider.classnames", 
-            "org.glassfish.jersey.media.multipart.MultiPartFeature");
-    return props;
-}
-*/
+
     
- @Override
+    @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> resources = new java.util.HashSet<Class<?>>();
         resources.add(MultiPartFeature.class);
@@ -68,7 +58,7 @@ public Map<String, Object> getProperties() {
 				swaggerFeature.setVersion(    projectInfo.get(Manifests.PROJECT_ATTRIBUTES.Version));
 				swaggerFeature.setContact(    projectInfo.get(Manifests.PROJECT_ATTRIBUTES.Contact));
 			} catch (IOException e) {
-				LOG.info("Could not read the project attributes from the Manifest due to " + e.getMessage());
+				LOG.error("Could not read the project attributes from the Manifest due to " + e.getMessage());
 			}
     	}            
         
