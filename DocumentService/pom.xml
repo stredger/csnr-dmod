@@ -48,8 +48,7 @@
     <java.version>1.7</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <swagger-core-version>1.5.9</swagger-core-version>
-    <!-- <jetty-version>9.2.9.v20150224</jetty-version> -->
+    <swagger-core-version>1.5.9</swagger-core-version>    
     <jersey2-version>2.16</jersey2-version>
     <junit-version>4.12</junit-version>
     <logback-version>1.1.7</logback-version>
@@ -190,60 +189,20 @@
       	<artifactId>nrs-dm-rest-client</artifactId>
       	<version>1.2.0.4</version>
       </dependency>
-      <dependency>
+       <dependency>
       	<groupId>ca.bc.gov.nrs.dm</groupId>
       	<artifactId>nrs-dm-service</artifactId>
       	<version>1.2.0.4</version>
       </dependency>
       <dependency>
       	<groupId>ca.bc.gov.nrs.dm</groupId>
-      	<artifactId>nrs-dm-parent</artifactId>
-      	<version>1.2.0.4</version>
-      </dependency>
-      <dependency>
-      	<groupId>ca.bc.gov.nrs.dm</groupId>
       	<artifactId>nrs-dm-model</artifactId>
       	<version>1.2.0.4</version>
-      </dependency>
-      <dependency>
-      	<groupId>ca.bc.gov.nrs.dm</groupId>
-      	<artifactId>nrs-dm-rest-common</artifactId>
-      	<version>1.2.0.4</version>
-      </dependency>
-      <dependency>
-      	<groupId>ca.bc.gov.nrs.common</groupId>
-      	<artifactId>nrs-common-rest-client</artifactId>
-      	<version>1.2.0.6</version>
-      </dependency>
-      <dependency>
-      	<groupId>ca.bc.gov.nrs.common</groupId>
-      	<artifactId>nrs-common-model</artifactId>
-      	<version>1.2.0.6</version>
-      </dependency>
-      <dependency>
-      	<groupId>ca.bc.gov.nrs.common</groupId>
-      	<artifactId>nrs-common-util</artifactId>
-      	<version>1.2.0.6</version>
-      </dependency>
-      <dependency>
-      	<groupId>ca.bc.gov.nrs.common</groupId>
-      	<artifactId>nrs-common-rest-common</artifactId>
-      	<version>1.2.0.6</version>
-      </dependency>
-      <dependency>
-      	<groupId>ca.bc.gov.nrs.common</groupId>
-      	<artifactId>nrs-common-service-api</artifactId>
-      	<version>1.2.0.6</version>
-      </dependency>
+      </dependency> 
       <dependency>
       	<groupId>ca.bc.gov.webade</groupId>
       	<artifactId>webade-oauth2-rest-token-client</artifactId>
       	<version>1.2.0.4</version>
-      </dependency>
-      <dependency>
-      	<groupId>oracle.ucm</groupId>
-      	<artifactId>ridc</artifactId>
-      	<version>11.1.1</version>
       </dependency>
       <dependency>
       	<groupId>com.google.code.gson</groupId>
@@ -265,6 +224,12 @@
       	<artifactId>swagger-annotations</artifactId>
       	<version>1.5.3</version>
       </dependency>
+      <dependency>
+       <groupId>org.mockito</groupId>
+       <artifactId>mockito-all</artifactId>
+       <version>${mockito-version}</version>
+       <scope>test</scope>
+    </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -329,12 +294,6 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-addr</artifactId>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-    </dependency>
-    -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-policy</artifactId>
@@ -431,24 +390,12 @@
     </dependency>
     <!-- testing -->
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
     <dependency>
        <groupId>org.mockito</groupId>
        <artifactId>mockito-all</artifactId>
-       <version>${mockito-version}</version>
-       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.fabric8</groupId>
-      <artifactId>fabric8-arquillian</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.swagger</groupId>
@@ -479,22 +426,21 @@
         <artifactId>jersey-container-servlet-core</artifactId>
     </dependency>
 	<dependency>
-			    <groupId>org.glassfish.jersey.containers</groupId>
-			    <artifactId>jersey-container-servlet</artifactId>
-			</dependency>
+	    <groupId>org.glassfish.jersey.containers</groupId>
+	    <artifactId>jersey-container-servlet</artifactId>
+	</dependency>
     <dependency>
         <groupId>org.glassfish.jersey.media</groupId>
         <artifactId>jersey-media-multipart</artifactId>
     </dependency>
 	<dependency>
-				<groupId>org.glassfish.jersey.media</groupId>
-				<artifactId>jersey-media-json-jackson</artifactId>
-			</dependency>
-			<dependency>
-			    <groupId>org.glassfish.jersey.ext</groupId>
-			    <artifactId>jersey-spring3</artifactId>
-			</dependency>	
-	
+		<groupId>org.glassfish.jersey.media</groupId>
+		<artifactId>jersey-media-json-jackson</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.glassfish.jersey.ext</groupId>
+	    <artifactId>jersey-spring3</artifactId>
+	</dependency>	
 	<dependency>
 			    <groupId>org.glassfish.jersey.connectors</groupId>
 			    <artifactId>jersey-apache-connector</artifactId>
@@ -509,53 +455,17 @@
         <groupId>ca.bc.gov.nrs.dm</groupId>
         <artifactId>nrs-dm-rest-client</artifactId>              
     </dependency>
-    <dependency>
+   <dependency>
         <groupId>ca.bc.gov.nrs.dm</groupId>
         <artifactId>nrs-dm-service</artifactId>              
-    </dependency>
-    <dependency>
-        <groupId>ca.bc.gov.nrs.dm</groupId>
-        <artifactId>nrs-dm-parent</artifactId>      
-        <version>1.2.0.4</version>
-        <type>pom</type>        
-    </dependency>
-    <dependency>
+    </dependency> 
+   <dependency>
         <groupId>ca.bc.gov.nrs.dm</groupId>
         <artifactId>nrs-dm-model</artifactId>              
-    </dependency>
-    <dependency>
-        <groupId>ca.bc.gov.nrs.dm</groupId>
-        <artifactId>nrs-dm-rest-common</artifactId>              
-    </dependency>
-    <dependency>
-        <groupId>ca.bc.gov.nrs.common</groupId>
-        <artifactId>nrs-common-rest-client</artifactId>              
-    </dependency>  
-    <dependency>
-        <groupId>ca.bc.gov.nrs.common</groupId>
-        <artifactId>nrs-common-model</artifactId>              
-    </dependency>
-    <dependency>
-        <groupId>ca.bc.gov.nrs.common</groupId>
-        <artifactId>nrs-common-util</artifactId>              
-    </dependency>    
-    <dependency>
-        <groupId>ca.bc.gov.nrs.common</groupId>
-        <artifactId>nrs-common-rest-common</artifactId>              
-    </dependency>
-    <dependency>
-        <groupId>ca.bc.gov.nrs.common</groupId>
-        <artifactId>nrs-common-service-api</artifactId>              
-    </dependency>
-     
+    </dependency> 
     <dependency>
         <groupId>ca.bc.gov.webade</groupId>
         <artifactId>webade-oauth2-rest-token-client</artifactId>              
-    </dependency>
-	
-    <dependency>
-        <groupId>oracle.ucm</groupId>
-        <artifactId>ridc</artifactId>      
     </dependency>
     <dependency>
         <groupId>com.google.code.gson</groupId>
@@ -575,14 +485,6 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-jaxrs</artifactId>
 		</dependency>
-<!--
-Testing removal of resteasy
-<dependency>
-	<groupId>org.jboss.resteasy</groupId>
-	<artifactId>resteasy-multipart-provider</artifactId>
-        <version>2.3.10.Final</version>	
-</dependency>
--->
     <!-- Swagger annotations -->
     <dependency>
         <groupId>io.swagger</groupId>

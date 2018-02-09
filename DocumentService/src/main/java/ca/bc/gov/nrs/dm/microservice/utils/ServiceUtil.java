@@ -1,5 +1,6 @@
 package ca.bc.gov.nrs.dm.microservice.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,10 +9,9 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
+import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeResourceDetails;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 
 import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementService;
@@ -21,8 +21,21 @@ import ca.bc.gov.webade.oauth2.rest.v1.token.client.impl.TokenServiceImpl;
 import ca.bc.gov.webade.oauth2.rest.v1.token.client.resource.AccessToken;
 
 public class ServiceUtil {
+	
+	static final String SERVICE_CLIENT_ID = "SERVICE_CLIENT_ID";
+	static final String SERVICE_CLIENT_SECRET = "SERVICE_CLIENT_SECRET";
+	static final String APPLICATION_ROOT_DIRECTORY = "APPLICATION_ROOT_DIRECTORY";
+	static final String APPLICATION_ACRONYM = "APPLICATION_ACRONYM";
+	static final String ISSS_SERVER = "ISSS_SERVER";
+	static final String OAUTH_ACCESS_TOKEN_URI_PATH = "OAUTH_ACCESS_TOKEN_URI_PATH";
+	static final String OAUTH_AUTHORIZATION_URI_PATH = "OAUTH_AUTHORIZATION_URI_PATH";
+	static final String DMS_SERVICE_URI_PATH = "DMS_SERVICE_URI_PATH";
+	static final String DMS_DEFAULT_DOCUMENT_VISIBILITY = "DMS_DEFAULT_DOCUMENT_VISIBILITY";
+	static final String DMS_DEFAULT_OCIO_CLASSIFICATION = "DMS_DEFAULT_OCIO_CLASSIFICATION";
+
+	
 	private static ServiceUtil INSTANCE = new ServiceUtil();
-	private static final Logger LOG = LoggerFactory.getLogger(ServiceUtil.class);
+	private Logger LOG = LoggerFactory.getLogger(ServiceUtil.class);
 	
 	public static final String OAUTH_BEARER = "Bearer";
 	public static final String DMS_SCOPES = "DMS.*"; 
@@ -42,51 +55,80 @@ public class ServiceUtil {
     private String serviceSecret = null;
     private String defaultDocumentVisibility = null;
     private String defaultOCIOClassification = null;
-    private String documentManagementTopLevelRestURL = null;
-    private String tokenUrl = null;
-    private OAuth2ProtectedResourceDetails oAuth2ProtectedResourceDetails = null;
+    private String dmsServiceBaseUri = null;
+    private String isssServer = null;
+    private String tokenUri = null;
+    private String userAuthorizationUri = null;
+    private AuthorizationCodeResourceDetails oauthResourceDetails = null;
     
     private Map<String, String> securityScopes = null;
 
     private ServiceUtil() {
  
-    	FileSystemXmlApplicationContext applicationContext = new FileSystemXmlApplicationContext(new String[]{"//tmp/oauth.xml"});
-    	serviceId = (String) applicationContext.getBean("serviceId");
-	    serviceSecret = (String) applicationContext.getBean("serviceSecret");
-	    
-	    defaultDocumentVisibility = (String) applicationContext.getBean("defaultDocumentVisibility");
-	    defaultOCIOClassification = (String)applicationContext.getBean("defaultOCIOClassification");
-	    
-	    applicationAcronym = (String) applicationContext.getBean("applicationAcronym");
-	    applicationRootDir = (String) applicationContext.getBean("applicationRootDir");
-	    
-	    oAuth2ProtectedResourceDetails = (OAuth2ProtectedResourceDetails) applicationContext.getBean("documentManagementUserResource");
-
-	    // URLS
-	    documentManagementTopLevelRestURL = (String) applicationContext.getBean("documentManagementTopLevelRestUrl");
-	    tokenUrl = (String) applicationContext.getBean("tokenUrl");
-	    
+    	serviceId = System.getenv(SERVICE_CLIENT_ID);
+    	serviceSecret = System.getenv(SERVICE_CLIENT_SECRET);
+    	applicationRootDir = System.getenv(APPLICATION_ROOT_DIRECTORY);
+    	applicationAcronym = System.getenv(APPLICATION_ACRONYM);
+    	isssServer = System.getenv(ISSS_SERVER);
+    	tokenUri = isssServer + System.getenv(OAUTH_ACCESS_TOKEN_URI_PATH);
+    	userAuthorizationUri =  isssServer + System.getenv(OAUTH_AUTHORIZATION_URI_PATH);
+    	dmsServiceBaseUri = isssServer + System.getenv(DMS_SERVICE_URI_PATH);
+    	defaultDocumentVisibility = System.getenv(DMS_DEFAULT_DOCUMENT_VISIBILITY);
+    	defaultOCIOClassification = System.getenv(DMS_DEFAULT_OCIO_CLASSIFICATION);
+    	
+    	
 	    securityScopes = new HashMap<String, String>();
 	    String readWriteSecurity = applicationAcronym + "." + ServiceUtil.READ_WRITE_SCOPES;
 	    String readSecurity = applicationAcronym + "." + ServiceUtil.READ_SCOPES;
 	    securityScopes.put(READ_WRITE, readWriteSecurity);
 	    securityScopes.put(READ, readSecurity);
-    	
-	    applicationContext.close();
+    		    
+        oauthResourceDetails = new AuthorizationCodeResourceDetails();
+        List<String> scopeList = new ArrayList<String>();
+        scopeList.add(DMS_SCOPES);
+        scopeList.add(applicationAcronym + ".*");
+        
+        oauthResourceDetails.setClientId(serviceId);
+        oauthResourceDetails.setClientSecret(serviceSecret);
+        oauthResourceDetails.setScope(scopeList);
+        oauthResourceDetails.setUserAuthorizationUri(userAuthorizationUri);
+        oauthResourceDetails.setAccessTokenUri(tokenUri);
+        
+        LOG.info("SERVICE_CLIENT_ID: " +  serviceId);
+        LOG.info("APPLICATION_ROOT_DIRECTORY: " + applicationRootDir);
+        LOG.info("APPLICATION_ACRONYM: " + applicationAcronym);
+        LOG.info("ISSS_SERVER: " + isssServer);
+        LOG.info("OAUTH_ACCESS_TOKEN_URI_PATH: " + tokenUri);
+        LOG.info("OAUTH_AUTHORIZATION_URI_PATH: " + userAuthorizationUri);
+        LOG.info("DMS_SERVICE_URI_PATH: " + dmsServiceBaseUri);
+        LOG.info("DMS_DEFAULT_DOCUMENT_VISIBILITY: " + defaultDocumentVisibility);
+        LOG.info("DMS_DEFAULT_OCIO_CLASSIFICATION: " + defaultOCIOClassification);
     }
     
-    public  ServiceUtil(FileSystemXmlApplicationContext applicationContext) {
-    	serviceId = (String) applicationContext.getBean("serviceId");
-	    serviceSecret = (String) applicationContext.getBean("serviceSecret");
+    
+	ServiceUtil(Map<String, String> environmentVariables) {
+		
+    	serviceId = environmentVariables.get(SERVICE_CLIENT_ID);
+	    serviceSecret = environmentVariables.get(SERVICE_CLIENT_SECRET);
 	    
-	    applicationAcronym = (String) applicationContext.getBean("applicationAcronym");
-	    applicationRootDir = (String) applicationContext.getBean("applicationRootDir");
+	    applicationAcronym =  environmentVariables.get(APPLICATION_ACRONYM);
+	    applicationRootDir =  environmentVariables.get(APPLICATION_ROOT_DIRECTORY); 
 	    
-	    oAuth2ProtectedResourceDetails = (OAuth2ProtectedResourceDetails) applicationContext.getBean("documentManagementUserResource");
-
-	    // URLS
-	    documentManagementTopLevelRestURL = (String) applicationContext.getBean("documentManagementTopLevelRestUrl");
-	    tokenUrl = (String) applicationContext.getBean("tokenUrl");
+	    isssServer = environmentVariables.get(ISSS_SERVER);
+	    dmsServiceBaseUri = isssServer + environmentVariables.get(DMS_SERVICE_URI_PATH);
+	    tokenUri = isssServer + environmentVariables.get(OAUTH_ACCESS_TOKEN_URI_PATH);
+	    
+        oauthResourceDetails = new AuthorizationCodeResourceDetails();
+        List<String> scopeList = new ArrayList<String>();
+        scopeList.add(DMS_SCOPES);
+        scopeList.add(applicationAcronym + ".*");
+        
+        oauthResourceDetails.setClientId(serviceId);
+        oauthResourceDetails.setClientSecret(serviceSecret);
+        oauthResourceDetails.setScope(scopeList);
+        oauthResourceDetails.setUserAuthorizationUri(userAuthorizationUri);
+        oauthResourceDetails.setAccessTokenUri(tokenUri);
+        	    
     }
     
     public static ServiceUtil getInstance() {
@@ -162,16 +204,16 @@ public class ServiceUtil {
 		if(dmsServiceClient == null) {
 	        try {
 	        	
-	        	TokenService tokenService = new TokenServiceImpl(serviceId, serviceSecret, null, tokenUrl);
+	        	TokenService tokenService = new TokenServiceImpl(serviceId, serviceSecret, null, tokenUri);
 		        AccessToken token = tokenService.getToken(getScopes());
 		        
-		        OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(oAuth2ProtectedResourceDetails);
+		        OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(oauthResourceDetails);
 		        OAuth2ClientContext context = restTemplate.getOAuth2ClientContext();
 		        context.setAccessToken(new DefaultOAuth2AccessToken(token.getAccessToken()));
 
 		        dmsServiceClient = new DocumentManagementServiceImpl(false);
 		        ((DocumentManagementServiceImpl) dmsServiceClient).setRestTemplate(restTemplate);
-		        ((DocumentManagementServiceImpl) dmsServiceClient).setTopLevelRestURL(documentManagementTopLevelRestURL);
+		        ((DocumentManagementServiceImpl) dmsServiceClient).setTopLevelRestURL(dmsServiceBaseUri);
 		        
 	        } catch (Exception ex) {
 	            LOG.error("getServiceClient", ex);
@@ -180,6 +222,12 @@ public class ServiceUtil {
 		
 		return dmsServiceClient;
 	}
+    
+    
+    public void setDmsServiceClient(DocumentManagementService dmsServiceClient) {
+    	this.dmsServiceClient = dmsServiceClient;
+    }
+    
 
 	private String getAccessToken(HttpHeaders headers) {
     	String token = null;
@@ -197,13 +245,13 @@ public class ServiceUtil {
     }
 	
 	private DocumentManagementService createDMSClientService(AccessToken token) {
-		  OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(oAuth2ProtectedResourceDetails);
+		  OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(oauthResourceDetails);
 		  OAuth2ClientContext context = restTemplate.getOAuth2ClientContext();
 		  context.setAccessToken(new DefaultOAuth2AccessToken(token.getAccessToken()));
 		
 		  DocumentManagementService clientService = new DocumentManagementServiceImpl(false);
 		  ((DocumentManagementServiceImpl) clientService).setRestTemplate(restTemplate);
-		  ((DocumentManagementServiceImpl) clientService).setTopLevelRestURL(documentManagementTopLevelRestURL);
+		  ((DocumentManagementServiceImpl) clientService).setTopLevelRestURL(dmsServiceBaseUri);
 	
 	  return clientService;
 	}
