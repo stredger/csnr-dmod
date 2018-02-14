@@ -3,115 +3,95 @@
 -------------
 
 # Introduction #
-The CSNR-DMOD project explores integration of the NRS Document Service with OpenShift.
-
-The prototype consists of a micro-service and an example client using the MEAN stack.
-
-# Microservice #
-
-The Document Microservice acts as a bridge between OpenShift and the NRS Document Service
+The CSNR-DMOD project demonstrates the integration of the NRS Document Service with OpenShift.
 
 
-# Example Client #
+The prototype consists of the following:
+- **DocumentServices** - a microservice that acts as a bridge between OpenShift and NRS Document Service. An OpenShift template has been created for this microservice in order to be usable by other applications that need to access document management system in the OpenShift environment.
+- **ExampleMeanApp** - an example client that uses the Document Services in OpenShift. Among its features are the following:
+	- Login using OAuth2
+	- Display and Download of documents for public users
+	- Display, Download, Upload of documents for logged in users
+	- Management of Folders and Documents for logged in users
 
-The example client was based off of work from the EPIC project.  
+## Development Environment ##
 
-Development Environment: Node.js
+### ExampleMeanApp: Node.js ###
 --------------------------------
-The Node.js development is used to make changes to the Example Client.
-
 Install the following:
-- Visual Studio 2017 Preview with Node.js extensions
-- Ruby
+- Ruby (https://www.ruby-lang.org/en/downloads/)
 - sass (a Ruby package)
 	- Execute `gem install sass` to install
+- Python (version > 2.5 and < 3.0, 2.7 is recommended https://www.python.org/downloads/)
+- Node Version Manager (https://github.com/coreybutler/nvm-windows/releases)
+	- Execute `nvm install v6.11.3 32` 
+	- Execute `nvm use v6.11.3 32`
 
-Run Locally
-
-    nvm install v6.11.3 32
-
-    nvm use v6.11.3 32
-
+Run Locally Through Command Line 
+```
     git clone https://github.com/bcgov/csnr-dmod.git
-    cd cnsr-dmod`
-    npm install -g kerberos -python=\Python27` 
-    npm install -python=<Python Location>`  (Since the application uses gyp, you will need to specify a location where a version of Python > 2.5 and < 3.0 is installed; 2.7 is recommended)
+    cd cnsr-dmod
+    cd ExampleMeanApp
+    npm install -g kerberos -python=<Python Location> (e.g \Python27) 
+    npm install -python=<Python Location>  
     bower install --config.interactive=false --allow-root
     grunt buildprod
     node server.js
+```
 
-Development Environment: Java
+Run Locally Using Eclipse IDE
+```
+    Install Eclipse (http://www.eclipse.org/downloads/)
+    Install Node.js plugin for Eclipse (http://www.nodeclipse.org/)
+    Create a new Node.js project in eclipse and browse the ExampleMeanApp as the location of the project
+    Right click on the server.js file and execute Run As Node.js Application 
+```
+
+### DocumentServices: Java ###
 ----------------------------
 
-Activity Diagram:
-![](http://https://raw.githubusercontent.com/bcgov/csnr-dmod/master/images/MicroserviceActivity.png)
-
-Install the following:
-- Java JDK 1.7 or newer  (JDK 1.8 is known to work well.)
-- Maven
-- A Java IDE such as Netbeans or Eclipse
-
-Create an archive of the following artifacts, which will be added to an OpenShift secret.  The files must be in the same directory structure as used for a Maven repository.  For example, for nrs-common-model 1.2.0.6, the directory would be:
-    
-ca\bc\gov\nrs\common\nrs-common-model\1.2.0.6\nrs-common-model-1.2.0.6.jar
-
-An easy way to obtain this directory structure is to copy from your local Maven repository.
-
-Complete set of artifacts required:
-
+#### Prerequisites: #### 
+1. The following must be installed:
+	- Java JDK 1.7 or newer (http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)
+	- Maven (https://maven.apache.org/download.cgi)
+	- Java IDE (e.g. Eclipse IDE)
+2. The following must be installed:
+	- Download the following libraries from the NRS Artifactory
 | Artifact | Version |
 | -------- | ------- |
-| nrs-common-model | 1.2.0.6 |
-| nrs-common-parent | 1.2.0.6 |
-| nrs-common-rest-client | 1.2.0.6 |
-| nrs-common-rest-common | 1.2.0.6 |
-| nrs-common-service-api | 1.2.0.6 |
-| nrs-common-service-api | 1.2.0.6 |
-| nrs-common-util        | 1.2.0.6 |
 | nrs-dm-model           | 1.2.0.4 |
-| nrs-dm-parent          | 1.2.0.4 |
 | nrs-dm-rest-client     | 1.2.0.4 |
 | nrs-dm-rest-common     | 1.2.0.4 |
-| nrs-dm-rest-common     | 1.2.0.4 |
 | nrs-dm-service         | 1.2.0.4 |
-| webade-oauth2-assembly-distribution | 1.2.0.4 |
-| webade-oauth2-ear | 1.2.0.4 |
-| webade-oauth2-assembly-database | 1.2.0.4 |
-| webade-oauth2-common | 1.2.0.4 |
-| webade-oauth2-integration-test | 1.2.0.4 |
-| webade-oauth2-parent | 1.2.0.4 |
-| webade-oauth2-persistence | 1.2.0.4 | 
-| webade-oauth2-principal | 1.2.0.4 |
-| webade-oauth2-principal | 1.2.0.4 | 
-| webade-oauth2-rest-admin-client | 1.2.0.4 |
 | webade-oauth2-rest-token-client | 1.2.0.4 |
-| webade-oauth2-services | 1.2.0.4 |
-| webade-oauth2-test-support | 1.2.0.4 |
-| webade-oauth2-user-service | 1.2.0.4 | 
-| oracle ridc | 11.1.1 | 
+	- For each of the required artifacts, create a directory in /tmp folder following the package structure. E.g. nrs-dm-model 1.2.0.4 should have a folder ca\bc\gov\nrs\common\dm\nsrs-dm-model\1.2.0.4 and place the nrs-dm-model inside this folder
+	- Create an archive of all the artifacts that have been created in its appropriate folder. Name this archive ca.zip. (The ca.zip is not needed to run locally but required in further steps to setup the DocumentServices in Openshift environment)
 
-OpenShift Configuration
+Run Locally Using Eclipse IDE
+```
+    In eclipse, Import As Maven project the DocumentServices
+    Right click on the class ApplicationStarter.java and Run As Java Application. 
+    Verify if the service successfully runs by checking in the browser http://localhost:8080, the list of services will be displayed
+```
+
+
+
+### OpenShift Environment : Build ###
 -----------------------
 
-Secrets
+Secret
 -------
 The Document Microservice has a dependency on certain libraries which are not stored in the Open Source repository.  These files are stored in the NRS Artifactory.
+	- ca.zip contains the WebADE libraries and NRS Document Management libraries and needs to be added as a secret into the Openshift platform
 
-Two secrets will need to be created containing these files.
-
-The first secret is for the Oracle RIDC library.  
-
-The secret should contain a file called "oracle.zip" containing all of the files within the "oracle" folder in the local-maven-repo.  Be sure to follow the instructions above to provision this directory if it is empty.
-
-The second secret contains the WebADE libraries, NRS common files and NRS Document Management libraries.  It will be a file called "ca.zip", containing all of the files within the "ca" folder in the local-maven-repo.
-
-Once the .zip files are available, execute the following commands, as a user with admin access to the OpenShift project:
+Using an account with Admin access to the Openshift Platform execute the following commands:
 
     oc project csnr-dmod-tools
-    oc secrets new oracle-libs oracle.zip
     oc secrets new nrs-libs ca.zip
 
-If you are developing locally, simply store the contents of the two zip folders within the local-maven-repo directory.  Note that the jar files in that directory should not be checked into the Git repository.
+**Note that the jar files in that directory should not be checked into the Git repository.**
+
+
 
 Build Template
 --------------
@@ -128,34 +108,59 @@ Complex Java projects can be slow to execute.  Build times of more than 30 minut
 
 The following commands can be used to configure a local nexus:
 
-`oc new-app sonatype/nexus`
-
-`oc expose svc/nexus`
-
-`oc volumes dc/nexus --add --name nexus-volume-1 --type persistentVolumeClaim --mount-path /sonatype-work/ --claim-name nexus-pv --claim-size 5G --overwrite`
-
+```
+oc new-app sonatype/nexus
+oc expose svc/nexus
+oc volumes dc/nexus --add --name nexus-volume-1 --type persistentVolumeClaim --mount-path /sonatype-work/ --claim-name nexus-pv --claim-size 5G --overwrite
+```
 
 You can then create a Node.js proxy repository, and put the URL for that proxy repository into the NPM_MIRROR environment variable in any Node.js applications.
 
 
+### OpenShift Environment : Deployment ###
+
+
+
+Secret
+-------
+The Document Microservice requires WebADE credentials as a runtime configuration.
+
+Create a template file of the secret in JSON format:
+
+```
+{
+    "kind": "Secret",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "webade-service-credentials",
+        "creationTimestamp": null
+    },
+    "data": {
+        "username": <replace with WebADE SERVICE CLIENT ID that is used to access documents for public user>,
+        "password": <replace with password of the SERVICE CLIENT ID used> 
+    }
+}
+```
+
+**Note the secret template should not be checked into the Git repository.**
+
+Using an account with Admin access to the Openshift Platform execute the following commands:
+
+```
+    oc project csnr-dmod-dev
+    oc create -f <file name of the secret file>
+```
+
+
+
 Deployment Template
 -------------------
-
 - `oc project csnr-dmod-dev`
 - Allow the dev project to access the tools project
 `oc policy add-role-to-user system:image-puller system:serviceaccount:csnr-dmod-dev:default -n csnr-dmod-tools`
 - Process and create the Deployment Template
 - `oc process -f dmod-deployment-template.json | oc create -f -`
 
-Deployment Secret
------------------
-The Document Microservice Deployment references a volume which is populated by a secret.  The secret is called `nrs-credentials` and contains one file, oauth.xml, which has several Java Beans that are used for security purposes.
-
-To create this file (given a file called oauth.xml in the correct format):
-
-`oc secrets new nrs-credentials oauth.xml`
-
-To update this file, first delete the secret (with `oc delete secret nrs-credentials`) and then create it again.
 
 
 ### Getting Help or Reporting an Issue
@@ -182,8 +187,3 @@ Please note that this project is released with a [Contributor Code of Conduct](c
     limitations under the License.
 
 This repository is maintained by (http://www2.gov.bc.ca/gov/content/governments/organizational-structure/ministries-organizations/ministries/forest-and-natural-resource-operations). 
-
-
-
-
-
