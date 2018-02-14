@@ -155,12 +155,17 @@ Using an account with Admin access to the Openshift Platform execute the followi
 
 Deployment Template
 -------------------
-- `oc project csnr-dmod-dev`
-- Allow the dev project to access the tools project
-`oc policy add-role-to-user system:image-puller system:serviceaccount:csnr-dmod-dev:default -n csnr-dmod-tools`
-- Process and create the Deployment Template
-- `oc process -f dmod-deployment-template.json | oc create -f -`
+1. Go to csnr-dmod-dev project
+`oc project csnr-dmod-dev`
 
+2. Allow the dev project to access the tools project
+`oc policy add-role-to-user system:image-puller system:serviceaccount:csnr-dmod-dev:default -n csnr-dmod-tools`
+
+3. There are 2 templates available(choose one that is applicable):
+	- dmod-deployment-template.json (this templates creates both the deployment of ExampleMeanApp and the DocumentServices)
+		- To execute `oc process -f dmod-deployment-template.json | oc create -f -`
+	- document-microservice-template.json (this templates creates the deployment of the DocumentServices, this is useful for other projects that may reuse document service)
+		- To execute `oc process -f document-microservice-template.json | oc create -f -`
 
 
 ### Getting Help or Reporting an Issue
