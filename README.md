@@ -7,7 +7,7 @@ The CSNR-DMOD project demonstrates the integration of the NRS Document Service w
 
 
 The prototype consists of the following:
-- **DocumentServices** - a microservice that acts as a bridge between OpenShift and NRS Document Service. An OpenShift template has been created for this microservice in order to be usable by other applications that need to access document management system in the OpenShift environment.
+- **DocumentServices** - a microservice that acts as a bridge between OpenShift and NRS Document Service. An OpenShift template has been created for this microservice in order to be usable by other applications that need to access document management system in the OpenShift environment. Refer to [Document Services](https://github.com/bcgov/csnr-dmod/wiki/Document-Microservices) for detailed documentation.
 - **ExampleMeanApp** - an example client that uses the Document Services in OpenShift. Among its features are the following:
 	- Login using OAuth2
 	- Display and Download of documents for public users
