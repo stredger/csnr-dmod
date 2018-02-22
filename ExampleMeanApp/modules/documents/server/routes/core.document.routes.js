@@ -26,9 +26,13 @@ module.exports = function (app) {
 			var superagent = require('superagent');
 			var agent1 = superagent.agent();
 			var bearer_token = req.headers.authorization; 
-			console.log("**************************************************************** ");
+			console.log("===========================================");
+			console.log("parms:", req.query.directoryID);
 			// console.log("bearer_token ", bearer_token);
 			var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
+			if (req.query.directoryID !== '1') {
+				dmsurl += '/folders/' + req.query.directoryID;
+			}
 			console.log("DMS URL is " + dmsurl);
 			agent1.get(dmsurl)
 			.set('Authorization', bearer_token)
@@ -40,7 +44,7 @@ module.exports = function (app) {
 				var files = [];
 				var obj = JSON.parse(res.text);
 				// console.log("response is ",obj.files);
-				console.log("**************************************************************** ");
+				// console.log("**************************************************************** ");
 				if (obj.files && obj.files.fileList) {
 					return response.json(obj.files.fileList);
 				} else {

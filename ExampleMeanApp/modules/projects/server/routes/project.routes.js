@@ -230,7 +230,12 @@ module.exports = function (app) {
 					var root = tree.parse({id: 1, name: 'ROOT', lastId: 1, published: true});
 					_.each(obj.folders.folderList, function (folder) {
 						// console.log("folder:", folder);
-						var node123 = tree.parse({id: folder.itemID, _id: folder.itemID, name: folder.name, published: true});
+						var node123 = tree.parse({id: folder.itemID,
+												_id: folder.itemID,
+												name: folder.name,
+												displayName: folder.name,
+												documentDate: folder.lastModifiedDate,
+												published: true});
 						// Add it to the parent
 						root.addChild(node123);
 					});

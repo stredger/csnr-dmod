@@ -19,12 +19,16 @@ module.exports = function (app) {
 		.all (policy ('guest'))
 		.get (function (req, response) {
 			// return model.getFoldersForProject (req.params.projectid, req.params.parentid);
+			console.log("PARENT:", req.params.parentid);
 			var superagent = require('superagent');
 			var agent1 = superagent.agent();
 			var bearer_token = req.headers.authorization; 
 			console.log("**************************************************************** ");
 			// console.log("bearer_token ", bearer_token);
 			var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
+			if (req.params.parentid !== '1') {
+				dmsurl += '/folders/' + req.params.parentid;
+			}
 			console.log("DMS URL is " + dmsurl);
 			agent1.get(dmsurl)
 			.set('Authorization', bearer_token)
@@ -35,13 +39,15 @@ module.exports = function (app) {
 				}
 				var files = [];
 				var obj = JSON.parse(res.text);
-				console.log("response is ",obj.folders.folderList);
+				// console.log("response is ",obj.folders.folderList);
 				console.log("**************************************************************** ");
 				if (obj.folders && obj.folders.folderList) {
 					var fs = [];
+					console.log("folder count:", obj.folders.folderList.length);
 					_.each(obj.folders.folderList, function (folder) {
-						console.log("folder:", folder);
+						// console.log("folder:", folder);
 						folder.displayName = folder.name;
+						folder.documentDate = folder.lastModifiedDate;
 						fs.push(folder);
 					});
 					return response.json(fs);

@@ -97,7 +97,10 @@ angular.module('documents')
 						if (self.lastChecked) {
 							if (self.lastChecked.fileId) {
 								self.infoPanel.type = 'File';
-								var file = _.find(self.currentFiles, function(o) { return o._id.toString() === self.lastChecked.fileId; });
+								
+								var file = _.find(self.currentFiles, function(o) {
+									return o.itemID === self.lastChecked.fileId;
+								});
 								self.infoPanel.data = file ? file : undefined;
 							} else if (self.lastChecked.directoryID) {
 								self.infoPanel.type = 'Directory';
@@ -305,7 +308,7 @@ angular.module('documents')
 							//$log.debug('...currentNode (' + self.currentNode.model.name + ') got '+ _.size(result.data ) + '.');
 							// console.log("RES:", result.data);
 							self.unsortedFiles = _.map(result.data, function(f) {
-								// console.log("FFFF:", f);
+								console.log("File:", f);
 								// making sure that the displayName is set...
 								if (_.isEmpty(f.displayName)) {
 									f.displayName = f.name;
@@ -359,10 +362,11 @@ angular.module('documents')
 					// any kind of contexts that depend on what is selected needs to be done here too...
 					self.lastChecked = undefined;
 					if (doc && doc.selected && (_.size(self.checkedDirs) + _.size(self.checkedFiles) === 1)){
+						// console.log("DOC:", doc);
 						if (doc.model) {
 							self.lastChecked = { directoryID: doc.model.id, fileId: undefined };
 						} else {
-							self.lastChecked = { directoryID: undefined, fileId: doc._id.toString() };
+							self.lastChecked = { directoryID: undefined, fileId: doc.itemID };
 						}
 					}
 					if (!doc && (_.size(self.checkedDirs) + _.size(self.checkedFiles) === 1)){
@@ -534,11 +538,12 @@ angular.module('documents')
 							}
 						});
 						_.each(self.checkedFiles, function(o) {
-							if (o.userCan.delete) {
-								var name = o.displayName || o.documentFileName || o.internalOriginalName;
-								self.deleteSelected.confirmItems.push(name);
-								self.deleteSelected.deleteableFiles.push(o);
-							}
+							// TODO-DMOD: MBL
+							// if (o.userCan.delete) {
+							// 	var name = o.displayName || o.documentFileName || o.internalOriginalName;
+							// 	self.deleteSelected.confirmItems.push(name);
+							// 	self.deleteSelected.deleteableFiles.push(o);
+							// }
 						});
 
 					}
@@ -648,18 +653,18 @@ angular.module('documents')
 						// only documents/files....
 						_.each(self.checkedFiles, function(o) {
 							var canDoSomething = false;
-							if (o.userCan.publish) {
+							// if (o.userCan.publish) {
 								canDoSomething = true;
 								self.publishSelected.publishableFiles.push(o);
-							}
-							if (o.userCan.unPublish) {
+							// }
+							// if (o.userCan.unPublish) {
 								canDoSomething = true;
 								self.publishSelected.unpublishableFiles.push(o);
-							}
-							if (canDoSomething) {
+							// }
+							// if (canDoSomething) {
 								var name = o.displayName || o.documentFileName || o.internalOriginalName;
 								self.publishSelected.confirmItems.push(name);
-							}
+							// }
 						});
 
 					}
@@ -750,11 +755,11 @@ angular.module('documents')
 							}
 						});
 						_.each(self.checkedFiles, function(o) {
-							if (o.userCan.write) {
+							// if (o.userCan.write) {
 								var name = o.displayName || o.documentFileName || o.internalOriginalName;
 								self.moveSelected.confirmItems.push(name);
 								self.moveSelected.moveableFiles.push(o);
-							}
+							// }
 						});
 
 					}

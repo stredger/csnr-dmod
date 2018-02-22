@@ -441,7 +441,7 @@
 				<div class="scroll-container">
 					<section class="fb-details-section">
 						<h2>File Details</h2>
-						<section ng-if="documentMgr.infoPanel.data.description">
+						<section ng-if="documentMgr.infoPanel.data.name">
 							<h3>Description</h3>
 							<div class="value">{{ documentMgr.infoPanel.data.description }}</div>
 						</section>
@@ -531,11 +531,11 @@
 							</li>
 							<li>
 								<span class="name">Description:</span>
-								<span class="value">{{documentMgr.infoPanel.data.folderObj.description}}</span>
+								<span class="value">{{documentMgr.infoPanel.data.name}}</span>
 							</li>
 							<li>
 								<span class="name">Date Created:</span>
-								<span class="value">{{documentMgr.infoPanel.data.folderObj.documentDate | date : format : timezone}}</span>
+								<span class="value">{{documentMgr.infoPanel.data.documentDate | date : format : timezone}}</span>
 							</li>
 						</ul>
 					</section>
