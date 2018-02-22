@@ -10,6 +10,7 @@ var DocumentClass  = require ('../controllers/core.document.controller');
 var routes = require ('../../../core/server/controllers/core.routes.controller');
 var policy = require('../../../core/server/controllers/core.policy.controller');
 var config = require('../../../../config/config');
+var _ = require('lodash');
 
 module.exports = function (app) {
 	//
@@ -21,15 +22,32 @@ module.exports = function (app) {
 	//
 	app.route ('/api/documents')
 		.all (policy ('guest'))
-		.get (routes.setAndRun (DocumentClass, function (model, req) {
-			return model.list ();
-
-	//		var superagent = require('superagent');
-        //    var agent1 = superagent.agent();
-        //    var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
-        //    console.log("DMS URL is " + dmsurl);
-        //    return agent1.get(dmsurl);
-		}));
+		.get (function (req, response) {
+			var superagent = require('superagent');
+			var agent1 = superagent.agent();
+			var bearer_token = req.headers.authorization; 
+			console.log("**************************************************************** ");
+			// console.log("bearer_token ", bearer_token);
+			var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
+			console.log("DMS URL is " + dmsurl);
+			agent1.get(dmsurl)
+			.set('Authorization', bearer_token)
+			.end(function (err, res) {
+				if (err) {
+					console.log(err);
+					return response.json({});
+				}
+				var files = [];
+				var obj = JSON.parse(res.text);
+				// console.log("response is ",obj.files);
+				console.log("**************************************************************** ");
+				if (obj.files && obj.files.fileList) {
+					return response.json(obj.files.fileList);
+				} else {
+					return response.json({});
+				}
+			});
+		});
 	//
 	// getProjectDocuments             : '/api/documents/' + projectId
 	//
@@ -231,62 +249,7 @@ module.exports = function (app) {
                            // itemid = res.text.substring(1, res.text.length - 1);
                             itemid = jsonResponse.itemID;    
                             console.log("itemid is " + itemid);
-
-                            var readPermissions = null;
-                            if (req.headers.internaldocument) {
-                                // Force read array to be this:
-                                readPermissions = ['assessment-admin', 'assessment-lead', 'assessment-team', 'assistant-dm', 'assistant-dmo', 'associate-dm', 'associate-dmo', 'complaince-officer', 'complaince-lead', 'project-eao-staff', 'project-epd', 'project-intake', 'project-qa-officer', 'project-system-admin'];
-                            }
-                            var datePosted = Date.now();
-                            var dateReceived = Date.now();                            
-
-                            console.log("creating model");
-                            model.create({
-                                // Metadata related to this specific document that has been uploaded.
-                                // See the document.model.js for descriptions of the parameters to supply.
-                                project: req.Project,
-                                //projectID             : req.Project._id,
-                                projectFolderType: req.body.documenttype,//req.body.projectfoldertype,
-                                projectFolderSubType: req.body.documentsubtype,//req.body.projectfoldersubtype,
-                                projectFolderName: req.body.documentfoldername,
-                                projectFolderURL: '',
-                                datePosted: datePosted,
-                                dateReceived: dateReceived,
-
-                                // Migrated from old EPIC
-                                oldData: req.body.olddata,
-
-                                // NB                   : In EPIC, projectFolders have authors, not the actual documents.
-                                projectFolderAuthor: req.body.projectfolderauthor,
-                                // These are the data as it was shown on the EPIC website.
-                                documentEPICProjectId: req.body.documentepicprojectid,
-                                documentAuthor: req.body.documentauthor,
-                                documentFileName: req.body.documentfilename,
-                                documentFileURL: req.body.documentfileurl,
-                                documentFileSize: req.body.documentfilesize,
-                                documentFileFormat: req.body.documentfileformat,
-                                documentIsInReview: req.body.documentisinreview,
-                                documentVersion: 0,
-                                // These are automatic as it actually is when it comes into our system
-                                internalURL: itemid,
-                                internalOriginalName: file.originalname,
-                                internalName: file.name,
-                                internalMime: file.mimetype,
-                                internalExt: file.extension,
-                                internalSize: file.size,
-                                internalEncoding: file.encoding,
-                                directoryID: req.body.directoryid || 0,
-                                displayName: req.body.displayname || req.body.documentfilename || file.originalname,
-                                dateUploaded: req.body.dateuploaded
-                            }, req.headers.inheritmodelpermissionid, readPermissions)
-                                .then(function (d) {
-                                    if (req.headers.publishafterupload === 'true') {
-                                        return model.publish(d);
-                                    } else {
-                                        return d;
-                                    }
-                                })
-                                .then(resolve, reject);
+							resolve();
                         });
                 }
 				else {

@@ -38,7 +38,8 @@ function documentMgrService($http) {
 
 
 	var getDirectoryDocuments = function (project, directoryID) {
-		return $http({method: 'GET', url: '/api/query/document?project=' + project._id.toString() + '&directoryID=' + directoryID.toString(), headers: headers});
+		// return $http({method: 'GET', url: '/api/query/document?project=' + project._id.toString() + '&directoryID=' + directoryID.toString(), headers: headers});
+		return $http({method: 'GET', url: '/api/documents', headers: headers});
 	};
 
 	return {

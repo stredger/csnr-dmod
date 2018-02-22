@@ -200,8 +200,45 @@ module.exports = function (app) {
 		}));
 	app.route ('/api/project/:project/directory/list')
 		.all (policy ('guest'))
-		.get (routes.setAndRun (Project, function (model, req) {
-			return model.getDirectoryStructure (req.Project);
-		}));
+		.get (function (req, response) {
+			// return model.getDirectoryStructure (req.Project);
+			// Get the list of folders
+			// return model.getFoldersForProject (req.params.projectid, req.params.parentid);
+			var config = require('../../../../config/config');
+			var TreeModel = require ('tree-model');
+			var superagent = require('superagent');
+			var agent1 = superagent.agent();
+			var bearer_token = req.headers.authorization; 
+			console.log("**************************************************************** ");
+			// console.log("bearer_token ", bearer_token);
+			var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
+			console.log("DMS URL is " + dmsurl);
+			agent1.get(dmsurl)
+			.set('Authorization', bearer_token)
+			.end(function (err, res) {
+				if (err) {
+					console.log(err);
+					return response.json({});
+				}
+				var files = [];
+				var obj = JSON.parse(res.text);
+				// console.log("response is ",obj.folders.folderList);
+				// console.log("**************************************************************** ");
+				if (obj.folders && obj.folders.folderList) {
+					var fs = [];
+					var tree = new TreeModel();
+					var root = tree.parse({id: 1, name: 'ROOT', lastId: 1, published: true});
+					_.each(obj.folders.folderList, function (folder) {
+						// console.log("folder:", folder);
+						var node123 = tree.parse({id: folder.itemID, _id: folder.itemID, name: folder.name, published: true});
+						// Add it to the parent
+						root.addChild(node123);
+					});
+					return response.json(root.model);
+				} else {
+					return response.json({});
+				}
+			});
+		});
 };
 

@@ -30,6 +30,7 @@ angular.module('documents')
 
 				ProjectModel.getProjectDirectory($scope.project)
 				.then( function (dir) {
+					console.log("FFFFFFFFF:", dir);
 					$scope.project.directoryStructure = dir || {
 						id: 1,
 						lastId: 1,
@@ -302,21 +303,15 @@ angular.module('documents')
 					.then(
 						function (result) {
 							//$log.debug('...currentNode (' + self.currentNode.model.name + ') got '+ _.size(result.data ) + '.');
-
+							// console.log("RES:", result.data);
 							self.unsortedFiles = _.map(result.data, function(f) {
+								// console.log("FFFF:", f);
 								// making sure that the displayName is set...
 								if (_.isEmpty(f.displayName)) {
-									f.displayName = f.documentFileName || f.internalOriginalName;
+									f.displayName = f.name;
 								}
-								if (_.isEmpty(f.dateUploaded) && !_.isEmpty(f.oldData)) {
-									var od = JSON.parse(f.oldData);
-									//console.log(od);
-									try {
-										f.dateUploaded = moment(od.WHEN_CREATED, "MM/DD/YYYY HH:mm").toDate();
-									} catch(ex) {
-										console.log('Error parsing WHEN_CREATED from oldData', JSON.stringify(f.oldData));
-									}
-								}
+								f.dateUploaded = f.releaseDate;
+								// console.log("f:", f.dateUploaded);
 								return _.extend(f,{selected:  (_.find(self.checkedFiles, function(d) { return d._id.toString() === f._id.toString(); }) !== undefined), type: 'File'});
 							});
 
@@ -342,6 +337,7 @@ angular.module('documents')
 						// correct x-object=folderObject instead of a doc.
 						FolderModel.lookupForProjectIn($scope.project._id, self.currentNode.model.id)
 						.then(function (folder) {
+							console.log("FOLDER:", folder);
 							_.each(folder, function (fs) {
 								// We do breadth-first because we like to talk to our neighbours before moving
 								// onto the next level (where we bail for performance reasons).
