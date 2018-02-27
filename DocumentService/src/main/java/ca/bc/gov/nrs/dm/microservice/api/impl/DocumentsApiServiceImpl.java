@@ -12,6 +12,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -100,10 +101,15 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
 
             byte[] data = dmsService.getFileContent(id);
             ByteArrayInputStream bis = new ByteArrayInputStream(data);
-
-            response = Response.ok(bis, MediaType.APPLICATION_OCTET_STREAM)
-                    .header("Content-Disposition", "attachment; filename=\"" + fileResource.getFilename() + "\"")
-                    .build();
+            
+            ResponseBuilder responseBuilder = Response.status(Status.OK);
+            responseBuilder.type( MediaType.APPLICATION_OCTET_STREAM);
+    		responseBuilder.header("Content-Disposition", "attachment; filename=\"" + fileResource.getFilename() + "\"");
+    		responseBuilder.header("Content-Length", fileResource.getFileSize());
+    		responseBuilder.entity(bis);
+    		
+    		
+            response = responseBuilder.build();
             
         } catch (ForbiddenAccessException ex) {
             LOG.error("documentsDownloadFile", ex);
@@ -152,8 +158,14 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             }
             
             if(!validationFailure) {
-            	dmsService.checkoutFile(id);
+            	if(!fr.getIsCheckedOut()) {
+            		dmsService.checkoutFile(id);
+            	}
+            	
             	FileResource fileResource = dmsService.updateFileMetadata(fr);
+            	
+            	//undo checkout after update, checkin requires file to be updated
+            	dmsService.checkoutFile(id);
                 String jsonString = gson.toJson(fileResource);
                 response =  Response.ok().entity(jsonString).build();
             } else {
@@ -174,6 +186,54 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
         return response;
     }
 
+    
+    @Override
+    public Response documentsPutFolderMetadata(String id, String data, HttpHeaders headers) {
+       Response response = null;
+       boolean validationFailure = false;
+       try {
+        	DocumentManagementService dmsService = serviceUtil.getServiceClient(headers);
+        	Gson gson = new GsonBuilder().create();
+        	
+        	@SuppressWarnings("unchecked")
+    		Map<String, String> dataMap = gson.fromJson(data, Map.class);
+    		
+    		String generalVisibility = dataMap.get("generalVisibility");
+    		String ocioSecurityClassification = dataMap.get("ocioSecurityClassification");
+    		AbstractFolderResource fr = dmsService.getFolderByID(id);
+            
+            if(generalVisibility != null && !generalVisibility.trim().isEmpty()) {
+            	fr.getSecurityMetadata().setGeneralVisibility(generalVisibility);
+            	fr.getDefaultFileMetadata().getSecurityMetadata().setGeneralVisibility(generalVisibility);
+            }
+            
+            if(ocioSecurityClassification != null && !ocioSecurityClassification.trim().isEmpty()) {
+            	fr.getDefaultFileMetadata().setOCIOSecurityClassification(ocioSecurityClassification);
+            }
+            
+            if(!validationFailure) {
+            	
+            	AbstractFolderResource folderResource = dmsService.updateFolderMetadata(fr);
+                String jsonString = gson.toJson(folderResource);
+                response =  Response.ok().entity(jsonString).build();
+            } else {
+            	response = MessageHelper.generateMessage(Status.INTERNAL_SERVER_ERROR, "Validation Error", "Invalid Date Format");
+            }
+            
+        } catch (ForbiddenAccessException ex) {
+            LOG.error("documentsPutFolderMetadata", ex);
+            response = MessageHelper.generateMessage(Status.INTERNAL_SERVER_ERROR, "Access Denied", ex.getMessage());
+        } catch(DocumentManagementException ex) {
+        	LOG.error("documentsPutFolderMetadata", ex);
+        	response = MessageHelper.generateMessage(Status.INTERNAL_SERVER_ERROR, "Document Management Error", ex.getMessage());
+        } catch(ValidationException ex) {
+        	LOG.error("documentsPutFolderMetadata", ex);
+        	response = MessageHelper.generateMessage(Status.INTERNAL_SERVER_ERROR, "Validation Error", ex.getMessage());
+        }
+        
+        return response;
+    }
+    
     @Override
     public Response documentsGetFile(String id, HttpHeaders headers) {
         
@@ -269,7 +329,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             fileResource = dmsService.checkinFile(id, 
             		localFile.getAbsolutePath(),
             		fileResource.getDGDocType(), 
-            		"Created by " + serviceUtil.getApplicationAcronym(),
+            		filename,
                     fileResource.getFileMetadata().getOCIOSecurityClassification(), 
                     null, 
                     fileResource.getFileMetadata().getSecurityMetadata().getGeneralVisibility(), 
@@ -322,7 +382,7 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             FileResource newFile = dmsService.createFile(
             		localFile.getAbsolutePath(), destinationFolder, 
             		DocType.NRSDocument.name(), 
-            		"Created by " + serviceUtil.getApplicationAcronym(),
+            		filename,
             		serviceUtil.getDefaultOCIOClassification(), null, null, null, null, null, null, null, null, null);
 
             String jsonString = gson.toJson(newFile);

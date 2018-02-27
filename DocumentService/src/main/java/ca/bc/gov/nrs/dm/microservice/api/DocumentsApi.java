@@ -263,7 +263,23 @@ public class DocumentsApi  {
         return delegate.documentsPostFolder(null, data, headers);
     }
     
+    
 
+    @PUT
+    @Path("/folders/{id}")
+    @Consumes({"application/json"})
+    @Produces({"application/json"})
+    @ApiOperation(value = "Update the metadata information of the folder", 
+    	notes = "Folder Data", response = AbstractFolderResource.class)
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "OK", response = AbstractFolderResource.class),
+        @ApiResponse(code = 500, message = "Internal Server Error", response = Message.class) })
+    public Response documentsPutFolderMetadata(@ApiParam(value = "id of Document to update",required=true) 
+    	@PathParam("id") String id,
+    	@ApiParam(value = "the data information in json format",required=true) String data,
+    	@Context HttpHeaders headers) {
+    	return delegate.documentsPutFolderMetadata(id, data, headers);
+    }
     
     
 }

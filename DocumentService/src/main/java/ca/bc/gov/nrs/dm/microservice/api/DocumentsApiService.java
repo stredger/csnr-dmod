@@ -18,4 +18,5 @@ public interface DocumentsApiService {
       public Response documentsPostFile(String id, String filename, Attachment item, HttpHeaders headers);
       public Response documentsSearchGet(String fullTextWordsSearch, HttpHeaders headers);
       public Response documentsPostFolder(String id, String data, HttpHeaders headers);
+      public Response documentsPutFolderMetadata(String id, String data, HttpHeaders headers);
 }
