@@ -209,12 +209,19 @@ module.exports = function (app) {
 			var superagent = require('superagent');
 			var agent1 = superagent.agent();
 			var bearer_token = req.headers.authorization; 
+			
 			console.log("**************************************************************** ");
 			// console.log("bearer_token ", bearer_token);
 			var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
 			console.log("DMS URL is " + dmsurl);
+			console.log("Bearer: " + bearer_token);
+			//set the authorization if there is a bearer token
+			if(bearer_token && bearer_token !== undefined) {
+				console.log("Setting the authorization header");
+				agent1.set('Authorization', bearer_token);
+			}
+			
 			agent1.get(dmsurl)
-			.set('Authorization', bearer_token)
 			.end(function (err, res) {
 				if (err) {
 					console.log(err);
@@ -229,13 +236,13 @@ module.exports = function (app) {
 					var tree = new TreeModel();
 					var root = tree.parse({id: 1, name: 'ROOT', lastId: 1, published: true});
 					_.each(obj.folders.folderList, function (folder) {
-						// console.log("folder:", folder);
+						console.log("folder:", folder);
 						var node123 = tree.parse({id: folder.itemID,
 												_id: folder.itemID,
 												name: folder.name,
 												displayName: folder.name,
 												documentDate: folder.lastModifiedDate,
-												published: true});
+												published: folder.securityMetadata.generalVisibility === "ExternallyVisible"});
 						// Add it to the parent
 						root.addChild(node123);
 					});

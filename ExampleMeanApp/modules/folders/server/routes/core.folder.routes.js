@@ -30,8 +30,12 @@ module.exports = function (app) {
 				dmsurl += '/folders/' + req.params.parentid;
 			}
 			console.log("DMS URL is " + dmsurl);
+			
+			if(bearer_token) {
+				agent1.set('Authorization', bearer_token);
+			}
+			
 			agent1.get(dmsurl)
-			.set('Authorization', bearer_token)
 			.end(function (err, res) {
 				if (err) {
 					console.log(err);
