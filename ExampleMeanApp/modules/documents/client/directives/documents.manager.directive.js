@@ -220,7 +220,7 @@ angular.module('documents')
 							If user selects yes then download the file.
 							Else no op
 					 */
-					if(!doc.userCan.read) {
+					if(!$scope.authentication.token) {
 						AlertService.success('You can not have access to read this document.');
 						return;
 					}
@@ -229,7 +229,7 @@ angular.module('documents')
 						return;
 					}
 					// $filter bytes is filterBytes in documents.client.controllers.js
-					var size = $filter('bytes')(doc.internalSize, 2);
+					var size = doc.internalSize;
 					var msg = 'Confirm download of: ' + doc.displayName + ' (' + size + ')';
 
 					var scope = {
@@ -310,10 +310,15 @@ angular.module('documents')
 								// console.log("File:", f);
 								// making sure that the displayName is set...
 								if (_.isEmpty(f.displayName)) {
-									f.displayName = f.name;
+									f.displayName = f.filename;
 								}
-								f.dateUploaded = f.releaseDate;
-								// console.log("f:", f.dateUploaded);
+								f._id = f.itemID;
+								
+								var extIndex = f.filename.lastIndexOf(".");
+								var ext = f.filename.substring(extIndex+1, f.filename.length);
+								f.internalExt = ext;
+								
+								f.isPublished= (f.fileMetadata.securityMetadata.generalVisibility === "ExternallyVisible" && f.fileMetadata.ocioSecurityClassification === "PUBLIC");
 								return _.extend(f,{selected:  (_.find(self.checkedFiles, function(d) { return d._id.toString() === f._id.toString(); }) !== undefined), type: 'File'});
 							});
 
@@ -551,7 +556,7 @@ angular.module('documents')
 				self.publishFiles = function(files) {
 					self.busy = true;
 					var filePromises = _.map(files, function(f) {
-						return Document.publish(f);
+						return DocumentMgrService.publish(f);
 					});
 					return Promise.all(filePromises)
 						.then(function(result) {
@@ -570,7 +575,7 @@ angular.module('documents')
 				self.unpublishFiles = function(files) {
 					self.busy = true;
 					var filePromises = _.map(files, function(f) {
-						return Document.unpublish(f);
+						return DocumentMgrService.unpublish(f);
 					});
 					return Promise.all(filePromises)
 						.then(function(result) {
@@ -588,39 +593,55 @@ angular.module('documents')
 
 				self.publishFolder = function(folder) {
 					self.busy = true;
-					return ProjectModel.publishDirectory($scope.project, folder.model.id)
-						.then(function (directoryStructure) {
-							$scope.project.directoryStructure = directoryStructure;
-							$scope.$broadcast('documentMgrRefreshNode', { directoryStructure: directoryStructure });
+					return DocumentMgrService.publish(folder.model)
+						.then(function(result) {
+							
+							//update folder status
+							var childFolders =  _.map($scope.project.directoryStructure.children, function(o) {
+								if(o.id === folder.model.id) {
+									o.published = true;
+								}
+								
+								return o;
+							});
+							
+							$scope.project.directoryStructure.children = childFolders;
+							
+							$scope.$broadcast('documentMgrRefreshNode', { directoryStructure: $scope.project.directoryStructure });
+							self.selectNode(self.currentNode.model.id);
 							AlertService.success(folder.model.name + ' folder successfully published.');
-						}, function () {
+						}, function(err) {
 							self.busy = false;
-							AlertService.error('The selected folder could not be published.');
+							AlertService.error('The selected files could not be published.');
+						});
+				};
+				
+				
+				self.unpublishFolder = function(folder) {
+					self.busy = true;
+					return  DocumentMgrService.unpublish(folder.model)
+						.then(function(result) {
+							
+							//update folder status
+							var childFolders =  _.map($scope.project.directoryStructure.children, function(o) {
+								if(o.id === folder.model.id) {
+									o.published = false;
+								}
+								
+								return o;
+							});
+							
+							$scope.project.directoryStructure.children = childFolders;
+							
+							$scope.$broadcast('documentMgrRefreshNode', { directoryStructure: $scope.project.directoryStructure });
+							self.selectNode(self.currentNode.model.id);
+							AlertService.success(folder.model.name + ' folder successfully un-published.');
+						}, function(err) {
+							self.busy = false;
+							AlertService.error('The selected folder could not be unpublished.');
 						});
 				};
 
-				self.unpublishFolder = function(folder) {
-					self.busy = true;
-					return ProjectModel.unpublishDirectory($scope.project, folder.model.id)
-						.then(function (directoryStructure) {
-							$scope.project.directoryStructure = directoryStructure;
-							$scope.$broadcast('documentMgrRefreshNode', { directoryStructure: directoryStructure });
-							AlertService.success(folder.model.name + ' folder successfully un-published.');
-						}, function (docs) {
-							var theDocs = [];
-							var msg = "";
-							if (docs.message && docs.message[0] && docs.message[0].documentFileName) {
-								_.each(docs.message, function (d) {
-									theDocs.push(d.documentFileName);
-								});
-								msg = 'This action cannot be completed as the following documents are published: ' + theDocs + '.  Please unpublish each document and attempt your action again.';
-							} else {
-								msg = "Could complete operation.";
-							}
-							self.busy = false;
-							AlertService.error(msg);
-						});
-				};
 
 				self.publishFile = function(file) {
 					return self.publishFiles([file]);
@@ -652,18 +673,18 @@ angular.module('documents')
 						// only documents/files....
 						_.each(self.checkedFiles, function(o) {
 							var canDoSomething = false;
-							// if (o.userCan.publish) {
+							 if ($scope.authorization.token) {
 								canDoSomething = true;
 								self.publishSelected.publishableFiles.push(o);
-							// }
-							// if (o.userCan.unPublish) {
+							 }
+							 if ($scope.authorization.token) {
 								canDoSomething = true;
 								self.publishSelected.unpublishableFiles.push(o);
-							// }
-							// if (canDoSomething) {
+							 }
+							 if (canDoSomething) {
 								var name = o.displayName || o.documentFileName || o.internalOriginalName;
 								self.publishSelected.confirmItems.push(name);
-							// }
+							 }
 						});
 
 					}

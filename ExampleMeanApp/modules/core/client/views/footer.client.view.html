@@ -10,9 +10,8 @@
 				<a target="_new" href="http://www.gov.bc.ca/com/privacy.html" title="BC Government Privacy Information">Privacy</a> |
 				<a target="_new" href="http://www.gov.bc.ca/com/accessibility.html" title="BC Government Accessibility Information">Accessibility</a> |
 				<a href ui-sref="contact" title="Contact Us">Contact Us</a> 
-				<!-- <a ng-show="!footer.authentication.user" ui-sref="authentication.signin">Log In (Siteminder)</a> -->
-                 		| <a ng-show="!footer.authentication.token" href="{{footer.loginLink}}">Log In</a>
-        			<a ng-show="footer.authentication.token" ng-click="footer.signout()" target="_self">Logout</a>
+                | <a ng-show="!footer.authentication.token" href="{{footer.loginLink}}">Log In</a>
+        		<a ng-show="footer.authentication.token" ng-click="footer.signout()" target="_self">Logout</a>
     			</div>
 </div>
 </div>
