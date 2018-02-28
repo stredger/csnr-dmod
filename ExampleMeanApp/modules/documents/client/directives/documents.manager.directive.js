@@ -30,7 +30,6 @@ angular.module('documents')
 
 				ProjectModel.getProjectDirectory($scope.project)
 				.then( function (dir) {
-					console.log("FFFFFFFFF:", dir);
 					$scope.project.directoryStructure = dir || {
 						id: 1,
 						lastId: 1,
@@ -308,7 +307,7 @@ angular.module('documents')
 							//$log.debug('...currentNode (' + self.currentNode.model.name + ') got '+ _.size(result.data ) + '.');
 							// console.log("RES:", result.data);
 							self.unsortedFiles = _.map(result.data, function(f) {
-								console.log("File:", f);
+								// console.log("File:", f);
 								// making sure that the displayName is set...
 								if (_.isEmpty(f.displayName)) {
 									f.displayName = f.name;

@@ -134,9 +134,8 @@ exports.signin = function (req, res, next) {
  * Signout
  */
 exports.signout = function (req, res) {
-  // console.log('logout');
   req.logout();
-  res.redirect('/');
+  res.redirect('https://logontest.gov.bc.ca/clp-cgi/logoff.cgi?returl=' + req.headers.referer);
 };
 
 /**

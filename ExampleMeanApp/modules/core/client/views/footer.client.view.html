@@ -12,7 +12,6 @@
 				<a href ui-sref="contact" title="Contact Us">Contact Us</a> 
 				<!-- <a ng-show="!footer.authentication.user" ui-sref="authentication.signin">Log In (Siteminder)</a> -->
                  		| <a ng-show="!footer.authentication.token" href="{{footer.loginLink}}">Log In</a>
-        <!-- TODO: Siteminder! get the Siteminder logout url and set it here -->
         			<a ng-show="footer.authentication.token" ng-click="footer.signout()" target="_self">Logout</a>
     			</div>
 </div>
