@@ -339,30 +339,29 @@ angular.module('documents')
 							self.busy = false;
 						}
 					)
-					
-//					.then(function () {
-//						// Go through each of the currently available folders in view, and attach the object
-//						// to the model dynamically so that the permissions directive will work by using the
-//						// correct x-object=folderObject instead of a doc.
-//						FolderModel.lookupForProjectIn($scope.project._id, self.currentNode.model.id)
-//						.then(function (folder) {
-//							console.log("FOLDER:", folder);
-//							_.each(folder, function (fs) {
-//								// We do breadth-first because we like to talk to our neighbours before moving
-//								// onto the next level (where we bail for performance reasons).
-//								theNode.walk({strategy: 'breadth'}, function (n) {
-//									if (n.model.id === fs.itemID) {
-//										n.model.displayName = fs.displayName;
-//										n.model.name = fs.name;
-//										n.model.documentDate = fs.documentDate;
-//										n.model.published = fs.securityMetadata.generalVisibility === "ExternallyVisible";
-//										return false;
-//									}
-//								});
-//							});
-//							$scope.$apply();
-//						});
-//					});
+					.then(function () {
+						// Go through each of the currently available folders in view, and attach the object
+						// to the model dynamically so that the permissions directive will work by using the
+						// correct x-object=folderObject instead of a doc.
+						FolderModel.lookupForProjectIn($scope.project._id, self.currentNode.model.id)
+						.then(function (folder) {
+							console.log("FOLDER:", folder);
+							_.each(folder, function (fs) {
+								// We do breadth-first because we like to talk to our neighbours before moving
+								// onto the next level (where we bail for performance reasons).
+								theNode.walk({strategy: 'breadth'}, function (n) {
+									if (n.model.id === fs.itemID) {
+										n.model.displayName = fs.displayName;
+										n.model.name = fs.name;
+										n.model.documentDate = fs.documentDate;
+										n.model.published = fs.securityMetadata.generalVisibility === "ExternallyVisible";
+										return false;
+									}
+								});
+							});
+							$scope.$apply();
+						});
+					});
 				};
 
 				self.syncCheckedItems = function(doc) {
