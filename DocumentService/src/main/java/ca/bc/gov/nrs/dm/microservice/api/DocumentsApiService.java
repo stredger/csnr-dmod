@@ -14,7 +14,7 @@ public interface DocumentsApiService {
       public Response documentsGetFolder(String id, HttpHeaders headers);
       public Response documentsDeleteFolder(String id, HttpHeaders headers);
       public Response documentsGetFileHistory(String id, HttpHeaders headers);
-      public Response documentsPutFile(String id, String filename, Attachment file, HttpHeaders headers);
+      public Response documentsPutFile(String id, String filename, Attachment file,  HttpHeaders headers);
       public Response documentsPostFile(String id, String filename, Attachment item, HttpHeaders headers);
       public Response documentsSearchGet(String fullTextWordsSearch, HttpHeaders headers);
       public Response documentsPostFolder(String id, String data, HttpHeaders headers);

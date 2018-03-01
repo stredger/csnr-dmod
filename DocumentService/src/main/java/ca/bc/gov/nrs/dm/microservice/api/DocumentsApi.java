@@ -150,7 +150,7 @@ public class DocumentsApi  {
         if (file == null) {
             return Response.status(Status.NOT_FOUND.getStatusCode()).entity("Missing file Data").type(MediaType.TEXT_PLAIN).build();
         } else {   
-        	String filename = file.getDataHandler().getName();
+        	String filename = multipart.getAttachment("name").getObject(String.class);
             return delegate.documentsPutFile(id, filename, file, headers);
         }
     }
@@ -171,7 +171,7 @@ public class DocumentsApi  {
     	if (file == null) {
             return Response.status(Status.NOT_FOUND.getStatusCode()).entity("Missing file Data").type(MediaType.TEXT_PLAIN).build();
         } else {
-        	String filename = file.getDataHandler().getName();
+        	String filename = multipart.getAttachment("name").getObject(String.class);
             return delegate.documentsPostFile(null, filename, file, headers);
         }
     }
@@ -197,7 +197,7 @@ public class DocumentsApi  {
     	if (file == null) {
             return Response.status(400).entity("Missing file data").type(MediaType.TEXT_PLAIN).build();
         } else {
-        	String filename = file.getDataHandler().getName();
+        	String filename = multipart.getAttachment("name").getObject(String.class);
             return delegate.documentsPostFile(id, filename, file, headers);
         }
     }

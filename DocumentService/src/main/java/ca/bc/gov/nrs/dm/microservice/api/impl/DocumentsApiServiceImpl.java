@@ -24,8 +24,8 @@ import com.google.gson.GsonBuilder;
 
 import ca.bc.gov.nrs.dm.microservice.api.DocumentsApiService;
 import ca.bc.gov.nrs.dm.microservice.model.MessageHelper;
+import ca.bc.gov.nrs.dm.microservice.utils.DateUtil;
 import ca.bc.gov.nrs.dm.microservice.utils.ServiceUtil;
-import ca.bc.gov.nrs.dm.microservice.utils.ValidationUtil;
 import ca.bc.gov.nrs.dm.model.v1.DefaultFileMetadata.DocType;
 import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementException;
 import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementService;
@@ -141,9 +141,11 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     		String ocioSecurityClassification = dataMap.get("ocioSecurityClassification");
             FileResource fr = dmsService.getFileByID(id);
             
+            
             if(expiryDate != null && !expiryDate.trim().isEmpty()) {
-            	if(ValidationUtil.isValidDateFormat(expiryDate)) {
-            		fr.setExpireyDate(expiryDate);
+            	if(DateUtil.isValidDateFormat(expiryDate)) {
+            		String dmsDate = DateUtil.convertISOStringToDMSFormat(expiryDate);
+            		fr.setExpireyDate(dmsDate);
             	} else {
             		validationFailure = true;
             	}
@@ -164,8 +166,6 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
             	
             	FileResource fileResource = dmsService.updateFileMetadata(fr);
             	
-            	//undo checkout after update, checkin requires file to be updated
-            	dmsService.checkoutFile(id);
                 String jsonString = gson.toJson(fileResource);
                 response =  Response.ok().entity(jsonString).build();
             } else {
