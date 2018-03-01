@@ -5,8 +5,6 @@ documentMgrService.$inject = ['$http'];
 /* @ngInject */
 function documentMgrService($http) {
 
-	// PUT /api/project/:project/directory/add/:parentid'
-	// Body: foldername: foldername
 	var headers = null;
 	var bearer_token = window.localStorage.getItem('access_token');
 	if (bearer_token) {
@@ -14,48 +12,35 @@ function documentMgrService($http) {
 	}
 
 	var addDirectory = function(project, parentDir, newdirname) {
-		return $http({method:'PUT', url: '/api/project/' + project._id + '/directory/add/' + parentDir.model.id, data: {foldername: newdirname}, headers: headers});
+		return $http({method:'POST', url: '/api/document/' + project._id + '/directory/add/' + parentDir.model.id, data: {foldername: newdirname}, headers: headers});
 	};
 
-	// PUT /api/project/:project/directory/rename/:folderid')
-	// Body: foldername: newname
+	
+    var deleteDocument = function (document) {
+    	return $http({method:'PUT', url: '/api/document/' + document._id +'/expire', headers: headers});
+    };
 
-//	var renameDirectory = function(project, dir, newname) {
-//		return $http({method:'PUT', url: '/api/project/' + project._id + '/directory/rename/' + dir.model.id, data: {foldername: newname}, headers: headers});
-//	};
-//
-//	// PUT /api/project/:project/directory/remove/:folderid
-//
-//	var removeDirectory = function(project, dir) {
-//		return $http({method:'PUT', url: '/api/project/' + project._id + '/directory/remove/' + dir.model.id, data: {}, headers: headers});
-//	};
-//
-//	// PUT /api/project/:project/directory/move/:folderid/:newparentid
-//
-//	var moveDirectory = function(project, sourceDir, destDir) {
-//		return $http({method:'PUT', url: '/api/project/' + project._id + '/directory/move/' + sourceDir.model.id + '/' + destDir.model.id, data: {}, headers: headers});
-//	};
-
-
+    var deleteDir = function (directoryID) {
+    	return $http({method:'DELETE', url: '/api/document/'+ directoryID +'/directory/delete', headers: headers});
+    };
+    
 	var getDirectoryDocuments = function (project, directoryID) {
-		// return $http({method: 'GET', url: '/api/query/document?project=' + project._id.toString() + '&directoryID=' + directoryID.toString(), headers: headers});
 		return $http({method: 'GET', url: '/api/documents?directoryID=' + directoryID, headers: headers});
 	};
 
 	var publish = function (document) {
-		return $http({method:'PUT', url: '/api/document/publish/' + document._id, data:{"type": document.type}, headers: headers});
+		return $http({method:'PUT', url: '/api/document/' + document._id +'/publish', data:{"type": document.type}, headers: headers});
 	};
 	
 	var unpublish = function (document) {
-		return $http({method:'PUT', url: '/api/document/unpublish/' + document._id, data:{"type" : document.type}, headers: headers});
+		return $http({method:'PUT', url: '/api/document/' + document._id +'/unpublish', data:{"type" : document.type}, headers: headers});
 		
 	};
 
 	return {
 		addDirectory: addDirectory,
-	//	renameDirectory: renameDirectory,
-	//	removeDirectory: removeDirectory,
-	//	moveDirectory: moveDirectory,
+		deleteDir: deleteDir,
+		deleteDocument: deleteDocument,
 		getDirectoryDocuments: getDirectoryDocuments,
 		publish: publish,
 		unpublish: unpublish

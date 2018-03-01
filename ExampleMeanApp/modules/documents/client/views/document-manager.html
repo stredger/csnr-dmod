@@ -12,7 +12,7 @@
 		</ul>
 		<div class="file-batch-actions">
 			<button class="btn icon-btn" title="Add New Folder"
-					ng-if="authorization.token"
+					ng-if="authentication.token"
 					ng-disabled="!documentMgr.selectedNode"
 					x-document-mgr-add-folder
 					x-project="project"
@@ -20,7 +20,7 @@
 					x-node="documentMgr.selectedNode"><span class="glyphicon glyphicon-folder-close"></span></button>
 
 			<button class="btn icon-btn" title="Upload Files"
-					ng-if="authorization.token"
+					ng-if="authentication.token"
 					ng-disabled="!documentMgr.selectedNode"
 					x-document-mgr-upload-modal
 					x-project="project"
@@ -137,7 +137,7 @@
 
 					<div class="empty-directory-msg" ng-if="documentMgr.currentDirs.length == 0 && documentMgr.currentFiles.length == 0">This folder is empty.</div>
 					<ul>
-						<li class="fb-list-item" ng-class="{'selected': doc.selected}" ng-repeat="doc in documentMgr.currentDirs" ng-if="doc.isPublished || authentication.token">
+						<li class="fb-list-item" ng-class="{'selected': doc.selected}" ng-repeat="doc in documentMgr.currentDirs" ng-if="doc.model.published || authentication.token">
 							<span class="col checkbox-col" ng-if="authentication.token">
 								<input id="{{doc.model.id}}" type="checkbox" ng-model="doc.selected" ng-click="documentMgr.checkDir(doc)"/>
 								<label for="{{doc.model.id}}">

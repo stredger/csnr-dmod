@@ -196,23 +196,7 @@ angular.module('documents').factory('Document', function (ModelBase, _) {
 		},
 		getProjectDocumentVersions: function(document) {
 			return this.get('/api/documents/versions/' + document);
-		},
-		downloadAndApprove: function(documentObj) {
-			return this.put('/api/documents/approveAndDownload/', documentObj);
-		},
-		deleteDocument: function(document) {
-			return this.delete('/api/document/' + document);
-		},
-		makeLatestVersion: function (document) {
-			return this.put('/api/document/makeLatest/' + document);
 		}
-//		,
-//		publish: function (document) {
-//			return this.put('/api/publish/document/' + document._id);
-//		},
-//		unpublish: function (document) {
-//			return this.put('/api/unpublish/document/' + document._id);
-//		}
 	});
 	return new Class();
 });

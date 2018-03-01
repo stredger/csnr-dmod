@@ -34,19 +34,15 @@ angular.module('documents')
 							self.parentId = scope.parentId;
 
 							self.title = "Upload Files to '" + self.selectedNode.model.name + "'";
+							
 							if (self.selectedNode.model.name === 'ROOT') {
 								self.title = "Upload Files to '" + $scope.project.name + "'";
 							}
 
-							var getTargetUrl = function(type) {
-								var t = type || 'project';
-								// determine URL for upload, default to project if none set.
-								if (t === 'comment' && self.parentId) {
-									return '/api/commentdocument/publiccomment/' + self.parentId + '/upload';
-								}
-								if (t === 'project' && $scope.project) {
-									return '/api/document/' + $scope.project._id + '/upload';
-								}
+							var getTargetUrl = function(type, parentID) {
+
+								return '/api/document/' + $scope.project._id + '/upload/' + parentID;
+								
 							};
 
 							self.cancel = function () {
@@ -55,7 +51,9 @@ angular.module('documents')
 							};
 
 							self.startUploads = function () {
-								DocumentsUploadService.startUploads(getTargetUrl(self.type), self.selectedNode.model.id, false, new Date());
+								var type = self.selectedNode.model.name === 'ROOT' ? 'project' : 'folder';
+								var parentID = self.selectedNode.model.name === 'ROOT' ? '1' : self.selectedNode.model.id;
+								DocumentsUploadService.startUploads(getTargetUrl(type, parentID), self.selectedNode.model.id, false, new Date());
 							};
 
 							$scope.$watch(function ($scope) {

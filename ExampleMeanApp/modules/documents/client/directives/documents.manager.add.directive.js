@@ -38,7 +38,6 @@ angular.module('documents')
 											$modalInstance.close(result.data);
 										},
 										function (err) {
-											//$log.error('addDirectory error: ', JSON.stringify(err));
 											AlertService.error("Could not add folder: " + err.data.message);
 										}
 									);
