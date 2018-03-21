@@ -1,8 +1,7 @@
 package ca.bc.gov.nrs.dm.microservice.api;
 
-import io.fabric8.utils.Strings;
-import io.fabric8.utils.Systems;
 import java.net.InetSocketAddress;
+
 import org.apache.cxf.cdi.CXFCdiServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -11,6 +10,9 @@ import org.jboss.weld.environment.servlet.BeanManagerResourceBindingListener;
 import org.jboss.weld.environment.servlet.Listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.fabric8.utils.Strings;
+import io.fabric8.utils.Systems;
 
 @javax.annotation.Generated(value = "class com.quartech.codegen.FuseGenerator", date = "2017-04-24T09:07:23.579-07:00")
 public class ApplicationStarter {
@@ -65,6 +67,7 @@ public class ApplicationStarter {
         
         
         server.start();
+        
         return server;
     }
 

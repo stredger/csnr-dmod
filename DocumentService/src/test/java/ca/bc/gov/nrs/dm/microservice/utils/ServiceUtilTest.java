@@ -3,115 +3,139 @@ package ca.bc.gov.nrs.dm.microservice.utils;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import ca.bc.gov.nrs.dm.rest.client.v1.DocumentManagementService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiceUtilTest {
 	
-	@Mock
-	private FileSystemXmlApplicationContext context;
 	
 	@Mock
 	private HttpHeaders headers;
 	
+	@Mock
+	private DocumentManagementService dmsService;
+	
+	Map<String, String> envData = null;
+	
+
+	@Before
+	public void setup() {
+		envData = new HashMap<String, String>();
+		envData.put(ServiceUtil.SERVICE_CLIENT_ID, "TEST");
+		envData.put(ServiceUtil.SERVICE_CLIENT_SECRET, "TEST");
+		envData.put(ServiceUtil.APPLICATION_ACRONYM, "TEST");
+		envData.put(ServiceUtil.APPLICATION_ROOT_DIRECTORY, "NRS");
+		envData.put(ServiceUtil.ISSS_SERVER, "http://localhost:8080");
+		envData.put(ServiceUtil.DMS_SERVICE_URI_PATH, "/dms/v1/");
+		envData.put(ServiceUtil.DMS_SERVICE_URI_PATH, "/oauth/test");
+		envData.put(ServiceUtil.OAUTH_AUTHORIZATION_URI_PATH, "/authorization");
+		envData.put(ServiceUtil.OAUTH_ACCESS_TOKEN_URI_PATH, "/oauth");
+		
+		
+	}
 	
 	@Test
 	public void testNoHeader() {
-		ServiceUtil serviceUtil = ServiceUtil.getInstance();
+		
 		when(headers.getRequestHeader("Authorization")).thenReturn(null);
 		
-		DocumentManagementService service = serviceUtil.getServiceClient(headers);
-		Assert.assertNotNull(service);
+		ServiceUtil serviceUtil = new ServiceUtil(envData);
+		serviceUtil.setDmsServiceClient(dmsService);
 		
 		DocumentManagementService defaultServiceClient = serviceUtil.getServiceClient();
 		Assert.assertNotNull(defaultServiceClient);
-		Assert.assertEquals(service, defaultServiceClient);
+		Assert.assertEquals(dmsService, defaultServiceClient);
 	}
 	
 	@Test
 	public void testNoBearerAuthorization() {
-		ServiceUtil serviceUtil = ServiceUtil.getInstance();
+		ServiceUtil serviceUtil = new ServiceUtil(envData);
 		
 		List<String> authorizationList = new ArrayList<String>();
 		authorizationList.add("test");
 		authorizationList.add("12345");
 		
 		when(headers.getRequestHeader("Authorization")).thenReturn(authorizationList);
-		DocumentManagementService service = serviceUtil.getServiceClient(headers);
-		Assert.assertNotNull(service);
+		serviceUtil.setDmsServiceClient(dmsService);
 		
 		DocumentManagementService defaultServiceClient = serviceUtil.getServiceClient();
 		Assert.assertNotNull(defaultServiceClient);
-		Assert.assertEquals(service, defaultServiceClient);
+		Assert.assertEquals(dmsService, defaultServiceClient);
 	}
 	
 	@Test
 	public void testBearerWithoutToken() {
-		ServiceUtil serviceUtil = ServiceUtil.getInstance();
+
+		ServiceUtil serviceUtil = new ServiceUtil(envData);
+		
 		List<String> authorizationList = new ArrayList<String>();
 		authorizationList.add("Bearer");
 		authorizationList.add("34567");
 		
 		when(headers.getRequestHeader("Authorization")).thenReturn(authorizationList);
+		serviceUtil.setDmsServiceClient(dmsService);
+		
 		DocumentManagementService service = serviceUtil.getServiceClient(headers);
 		Assert.assertNotNull(service);
 		
-		DocumentManagementService defaultServiceClient = serviceUtil.getServiceClient();
-		Assert.assertNotNull(defaultServiceClient);
-		Assert.assertEquals(service, defaultServiceClient);
+		Assert.assertEquals(dmsService, service);
 	}
 	
 	@Test
 	public void testUserTokenAuthorization() {
-		ServiceUtil serviceUtil = ServiceUtil.getInstance();
+		ServiceUtil serviceUtil = new ServiceUtil(envData);
+		
 		List<String> authorizationList = new ArrayList<String>();
 		authorizationList.add("Bearer 12345");
 		authorizationList.add("34567");
 		
 		when(headers.getRequestHeader("Authorization")).thenReturn(authorizationList);
+
+		serviceUtil.setDmsServiceClient(dmsService);
+		
 		DocumentManagementService service = serviceUtil.getServiceClient(headers);
 		Assert.assertNotNull(service);
+
 		
-		DocumentManagementService defaultServiceClient = serviceUtil.getServiceClient();
-		Assert.assertNotNull(defaultServiceClient);
-		Assert.assertNotEquals(service, defaultServiceClient);
+
+		Assert.assertNotEquals(dmsService, service);
 		
 	}
 	
 	@Test
 	public void testUserTokenAuthorizationWithWhitespace() {
-		ServiceUtil serviceUtil = ServiceUtil.getInstance();
+		ServiceUtil serviceUtil = new ServiceUtil(envData);
+		
 		List<String> authorizationList = new ArrayList<String>();
 		authorizationList.add("   Bearer    12345       ");
 		authorizationList.add("34567");
 		
 		when(headers.getRequestHeader("Authorization")).thenReturn(authorizationList);
+		serviceUtil.setDmsServiceClient(dmsService);
 		DocumentManagementService service = serviceUtil.getServiceClient(headers);
 		Assert.assertNotNull(service);
 		
-		DocumentManagementService defaultServiceClient = serviceUtil.getServiceClient();
-		Assert.assertNotNull(defaultServiceClient);
-		Assert.assertNotEquals(service, defaultServiceClient);
+		Assert.assertNotEquals(dmsService, service);
 	}
 	
 	
 	@Test
 	public void testGetScopes() {
-
-		when(context.getBean("applicationAcronym")).thenReturn("TEST");
 		
-		ServiceUtil serviceUtil = new ServiceUtil(context);
+		ServiceUtil serviceUtil = new ServiceUtil(envData);
 
 		try {
 			String scope = serviceUtil.getScopes();
@@ -124,19 +148,25 @@ public class ServiceUtilTest {
 	
 	@Test(expected = Exception.class)
 	public void testGetScopesNull()throws Exception {
-		when(context.getBean("applicationAcronym")).thenReturn(null);
+		Map<String, String> testData = new HashMap<String, String>();
+		testData.putAll(envData);
+		testData.put(ServiceUtil.APPLICATION_ACRONYM, null);
+		
 
-		ServiceUtil serviceUtil = new ServiceUtil(context);
+		ServiceUtil serviceUtil = new ServiceUtil(testData);
 		serviceUtil.getScopes();
 	}
 	
 	@Test
 	public void testGetRootDir() {
 
-		when(context.getBean("applicationRootDir")).thenReturn("ROOT");
-		when(context.getBean("applicationAcronym")).thenReturn("TEST");
+		Map<String, String> testData = new HashMap<String, String>();
+		testData.putAll(envData);
+		testData.put(ServiceUtil.APPLICATION_ACRONYM, "TEST");
+		testData.put(ServiceUtil.APPLICATION_ROOT_DIRECTORY, "ROOT");
 		
-		ServiceUtil serviceUtil = new ServiceUtil(context);
+		
+		ServiceUtil serviceUtil = new ServiceUtil(testData);
 
 		try {
 			String rootDir = serviceUtil.getRootDirectory();
@@ -148,20 +178,24 @@ public class ServiceUtilTest {
 	
 	@Test(expected = Exception.class)
 	public void testGetRootNull()throws Exception {
-		when(context.getBean("applicationRootDir")).thenReturn(null);
-		when(context.getBean("applicationAcronym")).thenReturn("TEST");
+		Map<String, String> testData = new HashMap<String, String>();
+		testData.putAll(envData);
+		testData.put(ServiceUtil.APPLICATION_ACRONYM, "TEST");
+		testData.put(ServiceUtil.APPLICATION_ROOT_DIRECTORY, null);
 		
-		ServiceUtil serviceUtil = new ServiceUtil(context);
+		ServiceUtil serviceUtil = new ServiceUtil(testData);
 		serviceUtil.getRootDirectory();
 	}
 	
 	@Test(expected = Exception.class)
 	public void testGetRootNullAcronym()throws Exception {
-		when(context.getBean("applicationRootDir")).thenReturn("ROOT");
-		when(context.getBean("applicationAcronym")).thenReturn(null);
+		Map<String, String> testData = new HashMap<String, String>();
+		testData.putAll(envData);
+		testData.put(ServiceUtil.APPLICATION_ACRONYM, null);
+		testData.put(ServiceUtil.APPLICATION_ROOT_DIRECTORY, "ROOT");
 		
 
-		ServiceUtil serviceUtil = new ServiceUtil(context);
+		ServiceUtil serviceUtil = new ServiceUtil(testData);
 		serviceUtil.getRootDirectory();
 	}
 }
