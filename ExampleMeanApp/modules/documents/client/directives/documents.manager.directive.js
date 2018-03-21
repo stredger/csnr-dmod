@@ -1,7 +1,7 @@
 'use strict';
 angular.module('documents')
 
-	.directive('documentMgr', ['_', 'moment', 'Authentication', 'DocumentMgrService', 'AlertService', 'ConfirmService', 'CodeLists', 'TreeModel', 'ProjectModel', 'Document', 'FolderModel', function (_, moment, Authentication, DocumentMgrService, AlertService, ConfirmService, CodeLists, TreeModel, ProjectModel, Document, FolderModel) {
+	.directive('documentMgr', ['_', 'moment', 'Authentication', 'DocumentMgrService', 'AlertService', 'ConfirmService',  'TreeModel', 'ProjectModel', 'Document', 'FolderModel', function (_, moment, Authentication, DocumentMgrService, AlertService, ConfirmService, TreeModel, ProjectModel, Document, FolderModel) {
 		return {
 			restrict: 'E',
 			scope: {
@@ -9,7 +9,7 @@ angular.module('documents')
 				opendir: '='
 			},
 			templateUrl: 'modules/documents/client/views/document-manager.html',
-			controller: function ($scope, $filter, $log, $modal, $timeout, _, moment, Authentication, DocumentMgrService, CodeLists, TreeModel, ProjectModel, Document) {
+			controller: function ($scope, $filter, $log, $modal, $timeout, _, moment, Authentication, DocumentMgrService, TreeModel, ProjectModel, Document) {
 				var tree = new TreeModel();
 				var self = this;
 				self.busy = true;
@@ -26,7 +26,6 @@ angular.module('documents')
 				}
 
 				$scope.authentication = Authentication;
-				$scope.documentTypes = CodeLists.documentTypes;
 
 				ProjectModel.getProjectDirectory($scope.project)
 				.then( function (dir) {
@@ -96,7 +95,10 @@ angular.module('documents')
 						if (self.lastChecked) {
 							if (self.lastChecked.fileId) {
 								self.infoPanel.type = 'File';
-								var file = _.find(self.currentFiles, function(o) { return o._id.toString() === self.lastChecked.fileId; });
+								
+								var file = _.find(self.currentFiles, function(o) {
+									return o.itemID === self.lastChecked.fileId;
+								});
 								self.infoPanel.data = file ? file : undefined;
 							} else if (self.lastChecked.directoryID) {
 								self.infoPanel.type = 'Directory';
@@ -146,7 +148,7 @@ angular.module('documents')
 						} else if (self.sorting.column === 'type') {
 							return _.isEmpty(f.internalExt) ? null : f.internalExt.toLowerCase();
 						} else if (self.sorting.column === 'size') {
-							return _.isEmpty(f.internalExt) ? 0 : f.internalSize;
+							return _.isEmpty(f.internalExt) ? 0 : f.fileSize;
 						} else if (self.sorting.column === 'date') {
 							//date uploaded
 							return _.isEmpty(f.dateUploaded) ? 0 : f.dateUploaded;
@@ -217,7 +219,7 @@ angular.module('documents')
 							If user selects yes then download the file.
 							Else no op
 					 */
-					if(!doc.userCan.read) {
+					if(!$scope.authentication.token) {
 						AlertService.success('You can not have access to read this document.');
 						return;
 					}
@@ -226,7 +228,7 @@ angular.module('documents')
 						return;
 					}
 					// $filter bytes is filterBytes in documents.client.controllers.js
-					var size = $filter('bytes')(doc.internalSize, 2);
+					var size = doc.fileSize;
 					var msg = 'Confirm download of: ' + doc.displayName + ' (' + size + ')';
 
 					var scope = {
@@ -298,25 +300,25 @@ angular.module('documents')
 					self.currentDirs = [];
 
 					//$log.debug('currentNode (' + self.currentNode.model.name + ') get documents...');
-					DocumentMgrService.getDirectoryDocuments($scope.project, self.currentNode.model.id)
+					
+					DocumentMgrService.getDirectoryDocuments($scope.project, self.currentNode.model.id )
 					.then(
 						function (result) {
 							//$log.debug('...currentNode (' + self.currentNode.model.name + ') got '+ _.size(result.data ) + '.');
-
+							// console.log("RES:", result.data);
 							self.unsortedFiles = _.map(result.data, function(f) {
+								// console.log("File:", f);
 								// making sure that the displayName is set...
 								if (_.isEmpty(f.displayName)) {
-									f.displayName = f.documentFileName || f.internalOriginalName;
+									f.displayName = f.filename;
 								}
-								if (_.isEmpty(f.dateUploaded) && !_.isEmpty(f.oldData)) {
-									var od = JSON.parse(f.oldData);
-									//console.log(od);
-									try {
-										f.dateUploaded = moment(od.WHEN_CREATED, "MM/DD/YYYY HH:mm").toDate();
-									} catch(ex) {
-										console.log('Error parsing WHEN_CREATED from oldData', JSON.stringify(f.oldData));
-									}
-								}
+								f._id = f.itemID;
+								
+								var extIndex = f.filename.lastIndexOf(".");
+								var ext = f.filename.substring(extIndex+1, f.filename.length);
+								f.internalExt = ext;
+								
+								f.isPublished= (f.fileMetadata.securityMetadata.generalVisibility === "ExternallyVisible" && f.fileMetadata.ocioSecurityClassification === "PUBLIC");
 								return _.extend(f,{selected:  (_.find(self.checkedFiles, function(d) { return d._id.toString() === f._id.toString(); }) !== undefined), type: 'File'});
 							});
 
@@ -336,18 +338,23 @@ angular.module('documents')
 							$log.error('getDirectoryDocuments error: ', JSON.stringify(error));
 							self.busy = false;
 						}
-					).then(function () {
+					)
+					.then(function () {
 						// Go through each of the currently available folders in view, and attach the object
 						// to the model dynamically so that the permissions directive will work by using the
 						// correct x-object=folderObject instead of a doc.
 						FolderModel.lookupForProjectIn($scope.project._id, self.currentNode.model.id)
 						.then(function (folder) {
+							console.log("FOLDER:", folder);
 							_.each(folder, function (fs) {
 								// We do breadth-first because we like to talk to our neighbours before moving
 								// onto the next level (where we bail for performance reasons).
 								theNode.walk({strategy: 'breadth'}, function (n) {
-									if (n.model.id === fs.directoryID) {
-										n.model.folderObj = fs;
+									if (n.model.id === fs.itemID) {
+										n.model.displayName = fs.displayName;
+										n.model.name = fs.name;
+										n.model.documentDate = fs.documentDate;
+										n.model.published = fs.securityMetadata.generalVisibility === "ExternallyVisible";
 										return false;
 									}
 								});
@@ -363,10 +370,11 @@ angular.module('documents')
 					// any kind of contexts that depend on what is selected needs to be done here too...
 					self.lastChecked = undefined;
 					if (doc && doc.selected && (_.size(self.checkedDirs) + _.size(self.checkedFiles) === 1)){
+						// console.log("DOC:", doc);
 						if (doc.model) {
 							self.lastChecked = { directoryID: doc.model.id, fileId: undefined };
 						} else {
-							self.lastChecked = { directoryID: undefined, fileId: doc._id.toString() };
+							self.lastChecked = { directoryID: undefined, fileId: doc.itemID };
 						}
 					}
 					if (!doc && (_.size(self.checkedDirs) + _.size(self.checkedFiles) === 1)){
@@ -385,58 +393,43 @@ angular.module('documents')
 
 					// in the batch menu, we have some folder management and publish/unpublish of files.
 					// so user needs to be able to manage folders, or have some selected files they can pub/unpub
-					self.batchMenuEnabled = ($scope.project.userCan.manageFolders && _.size(self.checkedDirs) > 0) || _.size(self.publishSelected.publishableFiles) > 0 || _.size(self.publishSelected.unpublishableFiles) > 0;
+					self.batchMenuEnabled = ($scope.authentication.token && _.size(self.checkedDirs) > 0) || _.size(self.publishSelected.publishableFiles) > 0 || _.size(self.publishSelected.unpublishableFiles) > 0;
 				};
 
-				self.deleteDocument = function(documentID) {
-					return Document.lookup(documentID)
-						.then( function (doc) {
-							return Document.getProjectDocumentVersions(doc._id);
-						})
-						.then( function (docs) {
-							// Are there any prior versions?  If so, make them the latest and then delete
-							// otherwise delete
-							if (docs.length > 0) {
-								return Document.makeLatestVersion(docs[docs.length-1]._id);
-							} else {
-								return null;
-							}
-						})
-						.then( function () {
-							// Delete it from the system.
-							return Document.deleteDocument(documentID);
-						});
+				self.deleteDocument = function(document) {
+					return DocumentMgrService.deleteDocument(document)
+					.then(function(result) {
+						return null;
+					}, function(err) {
+						self.busy = false;
+						AlertService.error('Error deleting document.');
+					});
 				};
 
-				self.deleteDir = function(doc) {
+				self.deleteDir = function(folder) {
 					self.busy = true;
-					return DocumentMgrService.removeDirectory($scope.project, doc)
-						.then(function (result) {
-							$scope.project.directoryStructure = result.data;
-							$scope.$broadcast('documentMgrRefreshNode', {directoryStructure: result.data});
-							self.busy = false;
-							AlertService.success('The selected folder was deleted.');
-						}, function(docs) {
-							var msg = "";
-							var theDocs = [];
-							if (docs.data.message && docs.data.message[0] && docs.data.message[0].documentFileName) {
-								_.each(docs.data.message, function (d) {
-									theDocs.push(d.documentFileName);
-								});
-								msg = 'This action cannot be completed as the following documents are in the folder: ' + theDocs + '.';
-							} else {
-								msg = "Could not delete folder, there are still files in the folder.";
-							}
-
-							$log.error('DocumentMgrService.removeDirectory error: ', msg);
-							self.busy = false;
-							AlertService.error(msg);
+					return DocumentMgrService.deleteDir(folder.model.id)
+					.then(function(result) {
+						//update the directoryStructure
+						$scope.project.directoryStructure.children.forEach(function(item, index, object) {
+							  if (item.id === folder.model.id) {
+							    object.splice(index, 1);
+							  }
 						});
+						
+						$scope.$broadcast('documentMgrRefreshNode', { directoryStructure: $scope.project.directoryStructure });
+						
+						self.busy = false;
+						AlertService.success('The selected folder was deleted.');
+					}, function(err) {
+						self.busy = false;
+						AlertService.error('Error deleting folder. Check that there are no files in the folder.');
+					});
 				};
 
 				self.deleteFile = function(doc) {
 					self.busy = true;
-					return self.deleteDocument(doc._id)
+					return self.deleteDocument(doc)
 						.then(function(result) {
 							self.selectNode(self.currentNode.model.id); // will mark as not busy...
 							var name = doc.displayName || doc.documentFileName || doc.internalOriginalName;
@@ -475,7 +468,7 @@ angular.module('documents')
 							});
 
 							var filePromises = _.map(self.deleteSelected.deleteableFiles, function(f) {
-								return self.deleteDocument(f._id);
+								return self.deleteDocument(f);
 							});
 
 							var directoryStructure;
@@ -532,17 +525,17 @@ angular.module('documents')
 						self.deleteSelected.deleteableFiles = [];
 
 						_.each(self.checkedDirs, function(o) {
-							if ($scope.project.userCan.manageFolders) {
+							if ($scope.authentication.token) {
 								self.deleteSelected.confirmItems.push(o.model.name);
 								self.deleteSelected.deleteableFolders.push(o);
 							}
 						});
 						_.each(self.checkedFiles, function(o) {
-							if (o.userCan.delete) {
-								var name = o.displayName || o.documentFileName || o.internalOriginalName;
-								self.deleteSelected.confirmItems.push(name);
-								self.deleteSelected.deleteableFiles.push(o);
-							}
+							 if ($scope.authentication.token) {
+							 	var name = o.displayName || o.documentFileName || o.internalOriginalName;
+							 	self.deleteSelected.confirmItems.push(name);
+							 	self.deleteSelected.deleteableFiles.push(o);
+							 }
 						});
 
 					}
@@ -551,7 +544,7 @@ angular.module('documents')
 				self.publishFiles = function(files) {
 					self.busy = true;
 					var filePromises = _.map(files, function(f) {
-						return Document.publish(f);
+						return DocumentMgrService.publish(f);
 					});
 					return Promise.all(filePromises)
 						.then(function(result) {
@@ -570,7 +563,7 @@ angular.module('documents')
 				self.unpublishFiles = function(files) {
 					self.busy = true;
 					var filePromises = _.map(files, function(f) {
-						return Document.unpublish(f);
+						return DocumentMgrService.unpublish(f);
 					});
 					return Promise.all(filePromises)
 						.then(function(result) {
@@ -588,39 +581,55 @@ angular.module('documents')
 
 				self.publishFolder = function(folder) {
 					self.busy = true;
-					return ProjectModel.publishDirectory($scope.project, folder.model.id)
-						.then(function (directoryStructure) {
-							$scope.project.directoryStructure = directoryStructure;
-							$scope.$broadcast('documentMgrRefreshNode', { directoryStructure: directoryStructure });
+					return DocumentMgrService.publish(folder.model)
+						.then(function(result) {
+							
+							//update folder status
+							var childFolders =  _.map($scope.project.directoryStructure.children, function(o) {
+								if(o.id === folder.model.id) {
+									o.published = true;
+								}
+								
+								return o;
+							});
+							
+							$scope.project.directoryStructure.children = childFolders;
+							
+							$scope.$broadcast('documentMgrRefreshNode', { directoryStructure: $scope.project.directoryStructure });
+							self.selectNode(self.currentNode.model.id);
 							AlertService.success(folder.model.name + ' folder successfully published.');
-						}, function () {
+						}, function(err) {
 							self.busy = false;
-							AlertService.error('The selected folder could not be published.');
+							AlertService.error('The selected files could not be published.');
+						});
+				};
+				
+				
+				self.unpublishFolder = function(folder) {
+					self.busy = true;
+					return  DocumentMgrService.unpublish(folder.model)
+						.then(function(result) {
+							
+							//update folder status
+							var childFolders =  _.map($scope.project.directoryStructure.children, function(o) {
+								if(o.id === folder.model.id) {
+									o.published = false;
+								}
+								
+								return o;
+							});
+							
+							$scope.project.directoryStructure.children = childFolders;
+							
+							$scope.$broadcast('documentMgrRefreshNode', { directoryStructure: $scope.project.directoryStructure });
+							self.selectNode(self.currentNode.model.id);
+							AlertService.success(folder.model.name + ' folder successfully un-published.');
+						}, function(err) {
+							self.busy = false;
+							AlertService.error('The selected folder could not be unpublished.');
 						});
 				};
 
-				self.unpublishFolder = function(folder) {
-					self.busy = true;
-					return ProjectModel.unpublishDirectory($scope.project, folder.model.id)
-						.then(function (directoryStructure) {
-							$scope.project.directoryStructure = directoryStructure;
-							$scope.$broadcast('documentMgrRefreshNode', { directoryStructure: directoryStructure });
-							AlertService.success(folder.model.name + ' folder successfully un-published.');
-						}, function (docs) {
-							var theDocs = [];
-							var msg = "";
-							if (docs.message && docs.message[0] && docs.message[0].documentFileName) {
-								_.each(docs.message, function (d) {
-									theDocs.push(d.documentFileName);
-								});
-								msg = 'This action cannot be completed as the following documents are published: ' + theDocs + '.  Please unpublish each document and attempt your action again.';
-							} else {
-								msg = "Could complete operation.";
-							}
-							self.busy = false;
-							AlertService.error(msg);
-						});
-				};
 
 				self.publishFile = function(file) {
 					return self.publishFiles([file]);
@@ -652,18 +661,18 @@ angular.module('documents')
 						// only documents/files....
 						_.each(self.checkedFiles, function(o) {
 							var canDoSomething = false;
-							if (o.userCan.publish) {
+							 if ($scope.authentication.token) {
 								canDoSomething = true;
 								self.publishSelected.publishableFiles.push(o);
-							}
-							if (o.userCan.unPublish) {
+							 }
+							 if ($scope.authentication.token) {
 								canDoSomething = true;
 								self.publishSelected.unpublishableFiles.push(o);
-							}
-							if (canDoSomething) {
+							 }
+							 if (canDoSomething) {
 								var name = o.displayName || o.documentFileName || o.internalOriginalName;
 								self.publishSelected.confirmItems.push(name);
-							}
+							 }
 						});
 
 					}
@@ -754,11 +763,11 @@ angular.module('documents')
 							}
 						});
 						_.each(self.checkedFiles, function(o) {
-							if (o.userCan.write) {
+							// if (o.userCan.write) {
 								var name = o.displayName || o.documentFileName || o.internalOriginalName;
 								self.moveSelected.confirmItems.push(name);
 								self.moveSelected.moveableFiles.push(o);
-							}
+							// }
 						});
 
 					}

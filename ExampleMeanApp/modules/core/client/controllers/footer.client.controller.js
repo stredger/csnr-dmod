@@ -27,11 +27,7 @@ function controllerFooter(Authentication, $rootScope) {
 
 	$rootScope.$on('$stateChangeSuccess', 
 	function(event, toState, toParams, fromState, fromParams){ 
-	// sidebar if user is logged in or on a project page.
-            if(Authentication.user) {
-                Authentication.user.roles = ['admin','user','eao'];
-            } 
-	    footer.side = (!!Authentication.user || toState.name.match(/^p\./i)) && toState.name !== 'not-found';
+	    footer.side = (!!Authentication.token || toState.name.match(/^p\./i)) && toState.name !== 'not-found';
 	});
 
 	

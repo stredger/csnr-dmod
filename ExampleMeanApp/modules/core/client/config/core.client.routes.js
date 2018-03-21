@@ -35,10 +35,10 @@ angular.module('core').config (
     })
     .state('demo', {
             url: '/',
-            templateUrl: 'modules/core/client/views/demo.client.view.html',
-            data: {
-                ignoreState: true
-            }
+            controller: function($state, $scope) {
+            	//redirect to the project page
+				$state.go('p.docs', {projectid: 'd-1'});
+			}
     })
 	// Home state routing
 	.state('not-found', {

@@ -34,7 +34,7 @@
 	<!-- PROJECT MENU - AUTHENTICATED -->
 	<div ng-if="(menu.context === 'project' || menu.context === 'activity')">
 
-		<a class="project-home-link" ui-sref="p.detail({projectid: menu.project.code})" onclick="toggleSideNav();" title="Project Details">
+		<a class="project-home-link">
 			<span class="glyphicon glyphicon-map-marker"></span>
 			<span>{{project.name}}</span>
 			<span ng-if="!project.name">Untitled Project</span>

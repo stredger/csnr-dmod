@@ -99,11 +99,7 @@ angular.module('users').config(['$stateProvider',
 					var access_token = theHash.split('&')[0].split('=')[1];
 					window.localStorage.setItem("access_token", access_token);
 					// Hardcoded - go to the only project that exists in this environment.
-					//$state.go("p.docs", { projectid: 'd-1'});
-                                     
-                    			//this is a hack for now, a lot of permissions are built into the local login
-					$state.go("authentication.local");  
-                                        
+					$state.go('p.docs', {projectid: 'd-1'});
 				}
 			})
 			.state('password', {

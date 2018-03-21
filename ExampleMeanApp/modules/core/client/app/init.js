@@ -133,25 +133,26 @@ angular.element(document).ready(function () {
 	window.ga('set', 'hostname', window.location.hostname);
 	window.ga('send', 'pageview');
 
-	//Then init the app
-	fetchInitData()
-		.then(bootstrapApplication);
+//	//Then init the app
+//	fetchInitData()
+//		.then(bootstrapApplication);
+//
+//	function fetchInitData() {
+//		var initInjector = angular.injector(["ng"]);
+//		var $http = initInjector.get("$http");
+//
+//		// Get the stored Code Lists
+//		// make them available to the CodeList service (which can parse / refresh as necessary)
+//		return $http.get('api/codelists?date=' + new Date().getTime()).then(function(response) {
+//			console.log("Response Data" + JSON.stringify(response.data));
+//			angular.module(ApplicationConfiguration.applicationModuleName).constant("INIT_DATA.CODE_LISTS", response.data);
+//		}, function(errorResponse) {
+//			console.log('Error ', errorResponse);
+//		});
+//	}
 
-	function fetchInitData() {
-		var initInjector = angular.injector(["ng"]);
-		var $http = initInjector.get("$http");
-
-		// Get the stored Code Lists
-		// make them available to the CodeList service (which can parse / refresh as necessary)
-		return $http.get('api/codelists?date=' + new Date().getTime()).then(function(response) {
-			angular.module(ApplicationConfiguration.applicationModuleName).constant("INIT_DATA.CODE_LISTS", response.data);
-		}, function(errorResponse) {
-			console.log('Error ', errorResponse);
-		});
-	}
-
-	function bootstrapApplication() {
+//	function bootstrapApplication() {
 		angular.bootstrap(document, [ApplicationConfiguration.applicationModuleName]);
-	}
+//	}
 
 });

@@ -462,42 +462,20 @@ module.exports = DBModel.extend ({
 		var self = this;
 		var folders = [];
 		return new Promise(function (resolve, reject) {
-			var f = new FolderClass (self.opts);
-			return f.list({project: projectId})
-			.then(function (foldersViewable) {
-				// console.log("Folders viewable:", foldersViewable);
-				folders = foldersViewable;
-				return self.findById(projectId);
-			})
-			.then(function (project) {
-				var tree = new TreeModel();
-				if (!project.directoryStructure) {
-					project.directoryStructure = {id: 1, name: 'ROOT', lastId: 1, published: true};
-				}
-				var root = tree.parse(project.directoryStructure);
-				root.all(function (node) {
-				    return true;
-				    // return node.model.published !== true;
-				}).forEach( function (n) {
-					// console.log("n:", n.model.id);
-					var found = folders.find(function (el) {
-						// console.log("el:", el.directoryID);
-						return el.directoryID === parseInt(n.model.id);
-					});
-					// Make sure we could have read that folder, otherwise consider it dropped.
-					// console.log("FOUND:", found);
-					if (!found) {
-						// console.log("dropping node:", n);
-						n.drop();
-					}
-				});
-
-				resolve(root.model);
-			})
-			.catch(function (err) {
-				console.log("Err:", err);
-				resolve({id: 1, name: 'ROOT', lastId: 1, published: true});
-			});
+			var dir = {
+				"id" : 1,
+				"name" : "ROOT",
+				"lastId" : 2,
+				"children" : [ 
+					{
+						"id" : 2,
+						"name" : "Under Review",
+						"published" : true
+					}, 
+				],
+				"published" : true
+			};
+			resolve(dir);
 		});
 	},
 	publishDirectory: function (projectId, directoryId) {
