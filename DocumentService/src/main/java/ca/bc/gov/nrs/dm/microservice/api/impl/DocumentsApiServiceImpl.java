@@ -61,7 +61,9 @@ public class DocumentsApiServiceImpl implements DocumentsApiService {
     public Response documentsGet(HttpHeaders headers) {
     	Response response = null;
         try {
-        	DocumentManagementService dmsService = serviceUtil.getServiceClient(headers);
+        	//always use the default service account when getting the folders and files
+        	//so that even if login user is not assign to have permission, it will still be able to view documents
+        	DocumentManagementService dmsService = serviceUtil.getServiceClient();
         	
             AbstractFolderResource folderContents = dmsService.getFolderByPath(serviceUtil.getRootDirectory());
             

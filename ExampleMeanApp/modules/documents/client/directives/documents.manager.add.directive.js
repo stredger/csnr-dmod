@@ -31,6 +31,7 @@ angular.module('documents')
 								$modalInstance.dismiss('cancel');
 							};
 
+							self.directoryStructure = $scope.project.directoryStructure; 
 							self.ok = function () {
 								DocumentMgrService.addDirectory($scope.project, $scope.node, self.entryText)
 									.then(
@@ -38,17 +39,17 @@ angular.module('documents')
 											$modalInstance.close(result.data);
 										},
 										function (err) {
-											AlertService.error("Could not add folder: " + err.data.message);
+											AlertService.error("Could not add folder: " + err.data);
 										}
 									);
 							};
 
 						}
 					}).result.then(function (data) {
-						$rootScope.$broadcast('documentMgrRefreshNode', { directoryStructure: data });
+						$rootScope.$broadcast('documentMgrRefreshNode', { newNode : data });
 					})
 					.catch(function (err) {
-						//$log.error(err);
+						$log.error(err);
 					});
 				});
 			}

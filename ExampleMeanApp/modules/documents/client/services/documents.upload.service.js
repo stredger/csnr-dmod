@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('documents')
-	.service('DocumentsUploadService', ['$rootScope', '$timeout', '$log', 'Upload', '_', 'Authentication', 'DocumentMgrService', 'Document', function ($rootScope, $timeout, $log, Upload, _, Authentication, DocumentMgrService, Document) {
+	.service('DocumentsUploadService', ['$rootScope', '$timeout', '$log', 'Upload', '_', 'Authentication', 'DocumentMgrService', function ($rootScope, $timeout, $log, Upload, _, Authentication, DocumentMgrService) {
 
 		var inProgressFiles = [];
 
@@ -154,19 +154,7 @@ angular.module('documents')
 					file.cancelled = false;
 					file.failed = false;
 
-					/*
-					 body...
 
-					 projectfolderauthor,
-					 documentauthor,
-					 documentfilename,
-					 documentfileurl,
-					 documentfilesize,
-					 documentfileformat,
-					 documentisinreview,
-					 directoryid
-
-					 */
 					var data = {
 						documenttype: "Not Specified",
 						documentsubtype: "Not Specified",

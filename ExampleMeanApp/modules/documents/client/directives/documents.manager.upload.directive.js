@@ -78,7 +78,7 @@ angular.module('documents')
 		};
 
 	}])
-	.directive('documentMgrUpload', ['$rootScope', '$timeout', '$log', 'Upload', '_', 'DocumentsUploadService', 'DocumentMgrService', 'Document', function ($rootScope, $timeout, $log, Upload, _, DocumentsUploadService) {
+	.directive('documentMgrUpload', ['$rootScope', '$timeout', '$log', 'Upload', '_', 'DocumentsUploadService', function ($rootScope, $timeout, $log, Upload, _, DocumentsUploadService) {
 		return {
 			restrict: 'E',
 			scope: {

@@ -1,13 +1,10 @@
 'use strict';
 // =========================================================================
 //
-// Routes for Documents
-//
-// Does not use the normal crud routes, mostly special sauce
+// This routes calls the Document Service
 //
 // =========================================================================
-//var DocumentClass  = require ('../controllers/core.document.controller');
-var routes = require ('../../../core/server/controllers/core.routes.controller');
+
 var policy = require('../../../core/server/controllers/core.policy.controller');
 var config = require('../../../../config/config');
 var _ = require('lodash');
@@ -21,7 +18,7 @@ module.exports = function (app) {
 			var agent1 = superagent.agent();
 			var bearer_token = req.headers.authorization; 
 			console.log("params:", req.query.directoryID);
-			// console.log("bearer_token ", bearer_token);
+
 			var dmsurl = 'http://' + config.dmservice + ':8080/api/documents';
 			
 			if (req.query.directoryID !== '1') {
@@ -139,7 +136,7 @@ module.exports = function (app) {
                         .set('Authorization', bearer_token)
                         .end(function (err, res) {
 							if (err) {
-								console.log(err);
+								console.log("Error: " + err);
 								return err;
 							}
                           var jsonResponse = JSON.parse(res.text);
@@ -171,14 +168,18 @@ module.exports = function (app) {
                 .end(function (err, res) {
 					if (err) {
 						console.log(err);
-						return err;
+						response.status(500);
+						return response.json({"data: " : err });
 					}
                   var jsonResponse = JSON.parse(res.text);
                   console.log("response is " + res.text);
 
-                  return response.json({"data":jsonResponse.itemID});
+                  return response.json({"data":jsonResponse});
 				});
 		});	
+		
+		
+
 	
 	  app.put('/api/document/:document/expire', function (req, response) {
 			var bearer_token = req.headers.authorization;
@@ -194,7 +195,7 @@ module.exports = function (app) {
 	    	.end(function (err, res) {
 				if (err) {
 					console.log(err);
-					return err;
+					return response.json({});
 				}
 				var files = [];
 				var obj = JSON.parse(res.text);
@@ -265,7 +266,6 @@ module.exports = function (app) {
     	.set('Content-Type','application/json')
     	.end(function (err, res) {
 			if (err) {
-				console.log("Error occurred");
 				console.log(err);
 				return response.json({});
 			}
