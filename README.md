@@ -42,7 +42,7 @@ Run Locally Through Command Line
 Run Locally Using Eclipse IDE
 ```
     Install Eclipse (http://www.eclipse.org/downloads/)
-    Install Node.js plugin for Eclipse (http://www.nodeclipse.org/)
+    Install Node.js plugin for Eclipse (https://marketplace.eclipse.org/content/nodeclipse)
     Create a new Node.js project in eclipse and browse the ExampleMeanApp as the location of the project
     Right click on the server.js file and execute Run As Node.js Application 
 ```
@@ -57,6 +57,7 @@ Run Locally Using Eclipse IDE
 	- Java IDE (e.g. Eclipse IDE)
 2. The following must be installed:
 	- Download the following libraries from the NRS Artifactory
+
 | Artifact | Version |
 | -------- | ------- |
 | nrs-dm-model           | 1.2.0.4 |
@@ -64,6 +65,7 @@ Run Locally Using Eclipse IDE
 | nrs-dm-rest-common     | 1.2.0.4 |
 | nrs-dm-service         | 1.2.0.4 |
 | webade-oauth2-rest-token-client | 1.2.0.4 |
+
 	- For each of the required artifacts, create a directory in /tmp folder following the package structure. E.g. nrs-dm-model 1.2.0.4 should have a folder ca\bc\gov\nrs\common\dm\nsrs-dm-model\1.2.0.4 and place the nrs-dm-model inside this folder
 	- Create an archive of all the artifacts that have been created in its appropriate folder. Name this archive ca.zip. (The ca.zip is not needed to run locally but required in further steps to setup the DocumentServices in Openshift environment)
 
