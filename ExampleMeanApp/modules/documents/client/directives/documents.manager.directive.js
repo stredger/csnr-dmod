@@ -361,8 +361,9 @@ angular.module('documents')
 							$log.error('getDirectoryDocuments error: ', JSON.stringify(error));
 							self.busy = false;
 						}
-					)
+					);
 				};
+			   
 
 				self.syncCheckedItems = function(doc) {
 					self.checkedDirs = _.filter(self.currentDirs, function(o) { return o.selected; }) || [];
